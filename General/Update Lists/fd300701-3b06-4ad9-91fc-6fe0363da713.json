@@ -405,7 +405,7 @@
             "authentication": "@parameters('$authentication')"
           }
         },
-        "Apply_to_each_4": {
+        "SMG_System_Admin_Apply_to_each": {
           "foreach": "@outputs('List_rows_present_in_a_table_4')?['body/value']",
           "actions": {
             "Create_item_4": {
@@ -423,11 +423,11 @@
                 "parameters": {
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                   "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
-                  "item/Title": "@items('Apply_to_each_4')?['hostname']",
+                  "item/Title": "@items('SMG_System_Admin_Apply_to_each')?['hostname']",
                   "item/field_0": "@substring(outputs('Get_file_metadata')?['body/Name'],4,7)",
-                  "item/field_2": "@items('Apply_to_each_4')?['class']",
-                  "item/field_3": "@items('Apply_to_each_4')?['service']",
-                  "item/field_4": "@items('Apply_to_each_4')?['platform']"
+                  "item/field_2": "@items('SMG_System_Admin_Apply_to_each')?['class']",
+                  "item/field_3": "@items('SMG_System_Admin_Apply_to_each')?['service']",
+                  "item/field_4": "@items('SMG_System_Admin_Apply_to_each')?['platform']"
                 },
                 "authentication": "@parameters('$authentication')"
               }
