@@ -288,7 +288,7 @@
             "authentication": "@parameters('$authentication')"
           }
         },
-        "Apply_to_each_3": {
+        "WSAA_System_Admin_Apply_to_each": {
           "foreach": "@outputs('List_rows_present_in_a_table_3')?['body/value']",
           "actions": {
             "Create_item_3": {
@@ -306,17 +306,17 @@
                 "parameters": {
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                   "table": "c9f0c68e-c8af-4f61-adf7-3be4e398d26d",
-                  "item/Title": "@items('Apply_to_each_3')?['IT Pros']",
+                  "item/Title": "@items('WSAA_System_Admin_Apply_to_each')?['IT Pros']",
                   "item/Month": "@substring(outputs('Get_file_metadata')?['body/Name'],16,7)",
-                  "item/field_1": "@items('Apply_to_each_3')?['AssetName']",
-                  "item/field_2": "@items('Apply_to_each_3')?['FunctionalLevel']",
-                  "item/field_3": "@items('Apply_to_each_3')?['AssetTypename']",
-                  "item/OperatingSystem": "@items('Apply_to_each_3')?['OperatingSystem']",
-                  "item/field_4": "@items('Apply_to_each_3')?['Service']",
-                  "item/field_5": "@items('Apply_to_each_3')?['UptimeDays']",
-                  "item/field_6": "@items('Apply_to_each_3')?['End Customer Departments']",
-                  "item/field_7": "@items('Apply_to_each_3')?['CFOP']",
-                  "item/field_8": "@items('Apply_to_each_3')?['ActivityCode']"
+                  "item/field_1": "@items('WSAA_System_Admin_Apply_to_each')?['AssetName']",
+                  "item/field_2": "@items('WSAA_System_Admin_Apply_to_each')?['FunctionalLevel']",
+                  "item/field_3": "@items('WSAA_System_Admin_Apply_to_each')?['AssetTypename']",
+                  "item/OperatingSystem": "@items('WSAA_System_Admin_Apply_to_each')?['OperatingSystem']",
+                  "item/field_4": "@items('WSAA_System_Admin_Apply_to_each')?['Service']",
+                  "item/field_5": "@items('WSAA_System_Admin_Apply_to_each')?['UptimeDays']",
+                  "item/field_6": "@items('WSAA_System_Admin_Apply_to_each')?['End Customer Departments']",
+                  "item/field_7": "@items('WSAA_System_Admin_Apply_to_each')?['CFOP']",
+                  "item/field_8": "@items('WSAA_System_Admin_Apply_to_each')?['ActivityCode']"
                 },
                 "authentication": "@parameters('$authentication')"
               }
