@@ -381,7 +381,7 @@
             "authentication": "@parameters('$authentication')"
           }
         },
-        "List_rows_present_in_a_table_4": {
+        "SMG_System_Admin_List_Rows": {
           "runAfter": {
             "Create_table_2": ["Succeeded"]
           },
@@ -406,7 +406,7 @@
           }
         },
         "SMG_System_Admin_Apply_to_each": {
-          "foreach": "@outputs('List_rows_present_in_a_table_4')?['body/value']",
+          "foreach": "@outputs('SMG_System_Admin_List_Rows')?['body/value']",
           "actions": {
             "Create_item_4": {
               "runAfter": {},
@@ -434,7 +434,7 @@
             }
           },
           "runAfter": {
-            "List_rows_present_in_a_table_4": ["Succeeded"]
+            "SMG_System_Admin_List_Rows": ["Succeeded"]
           },
           "metadata": {
             "operationMetadataId": "4025cf1b-a937-456d-af70-16920caf2c49"
