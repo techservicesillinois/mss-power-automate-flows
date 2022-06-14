@@ -63,7 +63,7 @@
             "authentication": "@parameters('$authentication')"
           }
         },
-        "Apply_to_each": {
+        "TDX_Survey_Apply_to_each": {
           "foreach": "@outputs('List_rows_present_in_a_table')?['body/value']",
           "actions": {
             "Create_item": {
@@ -81,12 +81,12 @@
                 "parameters": {
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                   "table": "86dbed14-4bca-4d0e-b90b-9324a1759657",
-                  "item/Title": "@items('Apply_to_each')?['Ticket ID']",
-                  "item/field_1/Value": "@items('Apply_to_each')?['Satsified']",
-                  "item/field_2": "@items('Apply_to_each')?['Comments-TS']",
-                  "item/field_3": "@items('Apply_to_each')?['*TechSvc-Request Area']",
-                  "item/field_4": "@items('Apply_to_each')?['Pri Resp Group']",
-                  "item/SurveyCompleted2": "@items('Apply_to_each')?['Survey Completed']"
+                  "item/Title": "@items('TDX_Survey_Apply_to_each')?['Ticket ID']",
+                  "item/field_1/Value": "@items('TDX_Survey_Apply_to_each')?['Satsified']",
+                  "item/field_2": "@items('TDX_Survey_Apply_to_each')?['Comments-TS']",
+                  "item/field_3": "@items('TDX_Survey_Apply_to_each')?['*TechSvc-Request Area']",
+                  "item/field_4": "@items('TDX_Survey_Apply_to_each')?['Pri Resp Group']",
+                  "item/SurveyCompleted2": "@items('TDX_Survey_Apply_to_each')?['Survey Completed']"
                 },
                 "authentication": "@parameters('$authentication')"
               }
