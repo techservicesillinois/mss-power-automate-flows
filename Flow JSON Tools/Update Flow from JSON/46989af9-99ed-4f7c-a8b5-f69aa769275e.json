@@ -1,0 +1,372 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    },
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    }
+  },
+  "triggers": {
+    "manual": {
+      "metadata": {
+        "operationMetadataId": "91bdd507-a3c1-4d4c-8829-b8a1d1b1f342"
+      },
+      "type": "Request",
+      "kind": "Button",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "title": "Definition",
+              "type": "object",
+              "x-ms-dynamically-added": true,
+              "description": "Please select file or image",
+              "x-ms-content-hint": "FILE",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "contentBytes": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            },
+            "file_1": {
+              "title": "Connections",
+              "type": "object",
+              "x-ms-dynamically-added": true,
+              "description": "Please select file or image",
+              "x-ms-content-hint": "FILE",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "contentBytes": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          },
+          "required": []
+        }
+      }
+    }
+  },
+  "actions": {
+    "Turn_On_Flow": {
+      "runAfter": {
+        "Update_Flow": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "fb6d3f58-c2d4-4bbc-9093-4f8596ca4045"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+          "connectionName": "shared_flowmanagement",
+          "operationId": "StartFlow"
+        },
+        "parameters": {
+          "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
+          "flowName": "@outputs('Get_Flow_ID')"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Parse_JSON_-_Definition": {
+      "runAfter": {
+        "Get_Flow_ID": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "24ab86ef-2934-4867-89f8-407e7a6896ba"
+      },
+      "type": "ParseJson",
+      "inputs": {
+        "content": "@json(body('Get_file_content_-_Temporary_Definition'))",
+        "schema": {}
+      }
+    },
+    "Parse_JSON_-_Connection": {
+      "runAfter": {
+        "Parse_JSON_-_Definition": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "025b0d70-4762-483b-b022-54e7f3c66291"
+      },
+      "type": "ParseJson",
+      "inputs": {
+        "content": "@json(body('Get_file_content_-_Temporary_Connection'))",
+        "schema": {}
+      }
+    },
+    "Update_Flow": {
+      "runAfter": {
+        "Get_Flow_Details": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "2ff7e419-5e1b-4de4-8730-37bc36f4f617"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+          "connectionName": "shared_flowmanagement",
+          "operationId": "UpdateFlow"
+        },
+        "parameters": {
+          "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
+          "flowName": "@outputs('Get_Flow_ID')",
+          "Flow/properties/displayName": "@outputs('Get_Flow_Details')?['body/properties/displayName']",
+          "Flow/properties/definition": "@body('Parse_JSON_-_Definition')",
+          "Flow/properties/state": "Stopped",
+          "Flow/properties/connectionReferences": "@body('Select')"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Get_Flow_ID": {
+      "runAfter": {
+        "Get_file_content_-_Temporary_Connection": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "97183bf8-ab30-446f-9b0c-d7c2d8ef006e"
+      },
+      "type": "Compose",
+      "inputs": "@replace(triggerBody()['file']['name'],'.json','')"
+    },
+    "Get_Flow_Details": {
+      "runAfter": {
+        "Select": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "ef1d724c-05c7-4614-a42a-ec2c9c829ea9"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+          "connectionName": "shared_flowmanagement",
+          "operationId": "GetFlow"
+        },
+        "parameters": {
+          "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
+          "flowName": "@outputs('Get_Flow_ID')"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Create_file_-_Temporary_Definition": {
+      "runAfter": {},
+      "metadata": {
+        "operationMetadataId": "4362b89d-bc00-4837-9311-449cd6099457"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "CreateFile"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "folderPath": "/Shared Documents/General/-inbox",
+          "name": "@triggerBody()['file']['name']",
+          "body": "@triggerBody()?['file']?['contentBytes']"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      },
+      "runtimeConfiguration": {
+        "contentTransfer": {
+          "transferMode": "Chunked"
+        }
+      }
+    },
+    "Create_file_-_Temporary_Connection": {
+      "runAfter": {
+        "Create_file_-_Temporary_Definition": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "4362b89d-bc00-4837-9311-449cd6099457"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "CreateFile"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "folderPath": "/Shared Documents/General/-inbox",
+          "name": "@triggerBody()['file_1']['name']",
+          "body": "@triggerBody()?['file_1']?['contentBytes']"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      },
+      "runtimeConfiguration": {
+        "contentTransfer": {
+          "transferMode": "Chunked"
+        }
+      }
+    },
+    "Get_file_content_-_Temporary_Definition": {
+      "runAfter": {
+        "Delay": ["Succeeded"]
+      },
+      "metadata": {
+        "%252fShared%2bDocuments%252fGeneral%252ffd300701-3b06-4ad9-91fc-6fe0363da713-conn.json": "/Shared Documents/General/fd300701-3b06-4ad9-91fc-6fe0363da713-conn.json",
+        "operationMetadataId": "116e68c2-76a5-4a00-afe0-0cdc1b30d858",
+        "%252fShared%2bDocuments%252fGeneral%252fClean%2bInbox%252fa90758b5-a60f-4c4a-98f6-c54ff000c9bd-conn.json": "/Shared Documents/General/Clean Inbox/a90758b5-a60f-4c4a-98f6-c54ff000c9bd-conn.json",
+        "%252fShared%2bDocuments%252fGeneral%252f-inbox%252ffd300701-3b06-4ad9-91fc-6fe0363da713-conn.json": "/Shared Documents/General/-inbox/fd300701-3b06-4ad9-91fc-6fe0363da713-conn.json"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetFileContent"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "id": "@outputs('Create_file_-_Temporary_Definition')?['body/Id']",
+          "inferContentType": false
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Get_file_content_-_Temporary_Connection": {
+      "runAfter": {
+        "Get_file_content_-_Temporary_Definition": ["Succeeded"]
+      },
+      "metadata": {
+        "%252fShared%2bDocuments%252fGeneral%252ffd300701-3b06-4ad9-91fc-6fe0363da713-conn.json": "/Shared Documents/General/fd300701-3b06-4ad9-91fc-6fe0363da713-conn.json",
+        "operationMetadataId": "116e68c2-76a5-4a00-afe0-0cdc1b30d858",
+        "%252fShared%2bDocuments%252fGeneral%252fClean%2bInbox%252fa90758b5-a60f-4c4a-98f6-c54ff000c9bd-conn.json": "/Shared Documents/General/Clean Inbox/a90758b5-a60f-4c4a-98f6-c54ff000c9bd-conn.json",
+        "%252fShared%2bDocuments%252fGeneral%252f-inbox%252ffd300701-3b06-4ad9-91fc-6fe0363da713-conn.json": "/Shared Documents/General/-inbox/fd300701-3b06-4ad9-91fc-6fe0363da713-conn.json"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetFileContent"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "id": "@outputs('Create_file_-_Temporary_Connection')?['body/Id']",
+          "inferContentType": false
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Delete_file_-_Temporary_Definition": {
+      "runAfter": {
+        "Turn_On_Flow": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "90623eee-c4e6-4f55-9f28-6acebbb02024"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "DeleteFile"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "id": "@outputs('Create_file_-_Temporary_Definition')?['body/ItemId']"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Delete_file_-_Temporary_Connection": {
+      "runAfter": {
+        "Delete_file_-_Temporary_Definition": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "4e2681f3-fd78-41e3-90fc-6e660b778d7c"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "DeleteFile"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "id": "@outputs('Create_file_-_Temporary_Connection')?['body/ItemId']"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Delay": {
+      "runAfter": {
+        "Create_file_-_Temporary_Connection": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "42e39fa6-c1e3-4d8e-bbf0-2805a5c4ad98"
+      },
+      "type": "Wait",
+      "inputs": {
+        "interval": {
+          "count": 30,
+          "unit": "Second"
+        }
+      }
+    },
+    "Select": {
+      "runAfter": {
+        "Parse_JSON_-_Connection": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "1fa9049b-84f5-48f1-b6bf-41f1a3a64dcd"
+      },
+      "type": "Select",
+      "inputs": {
+        "from": "@body('Parse_JSON_-_Connection')",
+        "select": {
+          "connectionName": "@item()['connectionName']",
+          "id": "@item()['id']"
+        }
+      }
+    }
+  }
+}
