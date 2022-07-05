@@ -248,7 +248,8 @@
               "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
               "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
               "file": "@triggerOutputs()?['headers/x-ms-file-id']",
-              "table": "Export_Table"
+              "table": "Export_Table",
+              "dateTimeFormat": "ISO 8601"
             },
             "authentication": "@parameters('$authentication')"
           }
@@ -364,7 +365,8 @@
           },
           "metadata": {
             "tableId": "Export_Table",
-            "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-database_37_2022-07-01T12_03_29+00_00.xlsx"
+            "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-database_37_2022-07-01T12_03_29+00_00.xlsx",
+            "operationMetadataId": "218a5b01-b60e-4706-aabd-56a0dbb3b028"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -384,15 +386,21 @@
         },
         "Set_variable_-_WSAA_Database": {
           "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "b39f4a34-6244-4ae8-ab50-275d4962f435"
+          },
           "type": "SetVariable",
           "inputs": {
             "name": "rowCount",
-            "value": "@int(substring(outputs('Get_file_metadata')?['body/Name'],12,3))"
+            "value": "@int(substring(outputs('Get_file_metadata')?['body/Name'],12,2))"
           }
         },
         "Increment_variable_-_WSAA_Database": {
           "runAfter": {
             "Set_variable_-_WSAA_Database": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "12485283-835d-43a0-b596-aa02f1bf236c"
           },
           "type": "IncrementVariable",
           "inputs": {
@@ -405,7 +413,8 @@
             "Increment_variable_-_WSAA_Database": ["Succeeded"]
           },
           "metadata": {
-            "tableId": null
+            "tableId": null,
+            "operationMetadataId": "4dea131f-33e9-4d08-9190-4d1af5d94401"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -429,6 +438,9 @@
           "actions": {
             "Create_item_-_WSAA_Database": {
               "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "21cca146-82c2-49ad-8fac-f3fd7fd69fcf"
+              },
               "type": "OpenApiConnection",
               "inputs": {
                 "host": {
@@ -439,9 +451,9 @@
                 "parameters": {
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                   "table": "b8660d3f-bf62-4d31-9ffb-800bf55c1c47",
-                  "item/field_0": "@items('Apply_to_each_-_WSAA_Database')?['IT Pros']",
-                  "item/field_9": "@substring(outputs('Get_file_metadata')?['body/Name'],16,7)",
                   "item/Title": "@items('Apply_to_each_-_WSAA_Database')?['AssetName']",
+                  "item/field_9": "@substring(outputs('Get_file_metadata')?['body/Name'],15,7)",
+                  "item/field_0": "@items('Apply_to_each_-_WSAA_Database')?['IT Pros']",
                   "item/field_2": "@items('Apply_to_each_-_WSAA_Database')?['Edition']",
                   "item/field_3": "@items('Apply_to_each_-_WSAA_Database')?['License']",
                   "item/field_4": "@items('Apply_to_each_-_WSAA_Database')?['SQLServicePack']",
@@ -457,6 +469,9 @@
           "runAfter": {
             "List_rows_-_WSAA_Database": ["Succeeded"]
           },
+          "metadata": {
+            "operationMetadataId": "08d8183f-4efa-4848-8619-2fc13873387c"
+          },
           "type": "Foreach"
         }
       },
@@ -465,6 +480,9 @@
       },
       "expression": {
         "startsWith": ["@outputs('Get_file_metadata')?['body/Name']", "ls-database_"]
+      },
+      "metadata": {
+        "operationMetadataId": "a853e3f8-16a1-42ad-8d71-9379e5f69258"
       },
       "type": "If"
     },
@@ -476,7 +494,8 @@
           },
           "metadata": {
             "tableId": "Export_Table",
-            "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-filestor_126_2022-07-01T12_03_12+00_00.xlsx"
+            "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-filestor_126_2022-07-01T12_03_12+00_00.xlsx",
+            "operationMetadataId": "80adb309-f2ca-4196-858c-498fa7f60412"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -489,13 +508,17 @@
               "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
               "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
               "file": "@triggerOutputs()?['headers/x-ms-file-id']",
-              "table": "Export_Table"
+              "table": "Export_Table",
+              "dateTimeFormat": "ISO 8601"
             },
             "authentication": "@parameters('$authentication')"
           }
         },
         "Set_variable_-_WSAA_File_Storage": {
           "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "4fea2097-f4b1-47b2-ac7a-abeb311f022c"
+          },
           "type": "SetVariable",
           "inputs": {
             "name": "rowCount",
@@ -505,6 +528,9 @@
         "Increment_variable_-_WSAA_File_Storage": {
           "runAfter": {
             "Set_variable_-_WSAA_File_Storage": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "a0e2fc5d-48ab-4e38-8307-a414f090bb77"
           },
           "type": "IncrementVariable",
           "inputs": {
@@ -517,7 +543,8 @@
             "Increment_variable_-_WSAA_File_Storage": ["Succeeded"]
           },
           "metadata": {
-            "tableId": null
+            "tableId": null,
+            "operationMetadataId": "3946db56-f445-4437-bb79-c511da88e8e1"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -541,6 +568,9 @@
           "actions": {
             "Create_item_-_WSAA_File_Storage": {
               "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "55bf422c-9d86-469b-ba76-726a3b96981b"
+              },
               "type": "OpenApiConnection",
               "inputs": {
                 "host": {
@@ -552,8 +582,8 @@
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                   "table": "bbbad72f-9052-4ded-9a9f-0f12516c6598",
                   "item/Title": "@items('Apply_to_each_-_WSAA_File_Storage')?['AssetName']",
-                  "item/field_1": "@items('Apply_to_each_-_WSAA_File_Storage')?['IT Pros']",
                   "item/field_0": "@substring(outputs('Get_file_metadata')?['body/Name'],16,7)",
+                  "item/field_1": "@items('Apply_to_each_-_WSAA_File_Storage')?['IT Pros']",
                   "item/field_3": "@items('Apply_to_each_-_WSAA_File_Storage')?['VolumeName']",
                   "item/field_4": "@items('Apply_to_each_-_WSAA_File_Storage')?['DriveLetter']",
                   "item/field_5": "@items('Apply_to_each_-_WSAA_File_Storage')?['LogicalDiskName']"
@@ -565,6 +595,9 @@
           "runAfter": {
             "List_rows_-_WSAA_File_Storage": ["Succeeded"]
           },
+          "metadata": {
+            "operationMetadataId": "bc49b611-b826-48c5-b7bb-fbae807218be"
+          },
           "type": "Foreach"
         }
       },
@@ -573,6 +606,9 @@
       },
       "expression": {
         "startsWith": ["@outputs('Get_file_metadata')?['body/Name']", "ls-filestor_"]
+      },
+      "metadata": {
+        "operationMetadataId": "0a5f82c0-d9ca-4b26-82df-199d96b42fb0"
       },
       "type": "If"
     },
@@ -584,7 +620,8 @@
           },
           "metadata": {
             "tableId": "Export_Table",
-            "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-webahost_64_2022-07-01T12_03_10+00_00.xlsx"
+            "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-webahost_64_2022-07-01T12_03_10+00_00.xlsx",
+            "operationMetadataId": "f23794d4-6372-4380-a721-0d0e0d12cf39"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -597,22 +634,29 @@
               "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
               "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
               "file": "@triggerOutputs()?['headers/x-ms-file-id']",
-              "table": "Export_Table"
+              "table": "Export_Table",
+              "dateTimeFormat": "ISO 8601"
             },
             "authentication": "@parameters('$authentication')"
           }
         },
         "Set_variable_-_WSAA_WebApp": {
           "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "07203352-2e05-4cb0-bac4-9ea0108c612b"
+          },
           "type": "SetVariable",
           "inputs": {
             "name": "rowCount",
-            "value": "@int(substring(outputs('Get_file_metadata')?['body/Name'],12,3))"
+            "value": "@int(substring(outputs('Get_file_metadata')?['body/Name'],12,2))"
           }
         },
         "Increment_variable_-_WSAA_WebApp": {
           "runAfter": {
             "Set_variable_-_WSAA_WebApp": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "9a2c1927-4567-4aa1-a9c0-a73f70445d2c"
           },
           "type": "IncrementVariable",
           "inputs": {
@@ -625,7 +669,8 @@
             "Increment_variable_-_WSAA_WebApp": ["Succeeded"]
           },
           "metadata": {
-            "tableId": null
+            "tableId": null,
+            "operationMetadataId": "21c3d357-89e8-4034-9e69-73f8edb6221f"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -649,6 +694,9 @@
           "actions": {
             "Create_item_-_WSAA_WebApp": {
               "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "17bbe597-1db5-4627-bff1-3fd662b55493"
+              },
               "type": "OpenApiConnection",
               "inputs": {
                 "host": {
@@ -660,7 +708,7 @@
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                   "table": "88166712-6a06-4cbb-8137-18c1bfd6e727",
                   "item/Title": "@items('Apply_to_each_-_WSAA_WebApp')?['IT Pros']",
-                  "item/field_0": "@substring(outputs('Get_file_metadata')?['body/Name'],16,7)",
+                  "item/field_0": "@substring(outputs('Get_file_metadata')?['body/Name'],15,7)",
                   "item/field_1": "@items('Apply_to_each_-_WSAA_WebApp')?['AssetGroup']",
                   "item/field_3": "@items('Apply_to_each_-_WSAA_WebApp')?['Last IIS Change']",
                   "item/field_4": "@items('Apply_to_each_-_WSAA_WebApp')?['UserDomain']",
@@ -675,6 +723,9 @@
           "runAfter": {
             "List_rows_-_WSAA_WebApp": ["Succeeded"]
           },
+          "metadata": {
+            "operationMetadataId": "12f013a7-d863-4f6d-91b0-ba2291fcf84c"
+          },
           "type": "Foreach"
         }
       },
@@ -683,6 +734,9 @@
       },
       "expression": {
         "startsWith": ["@outputs('Get_file_metadata')?['body/Name']", "ls-webahost_"]
+      },
+      "metadata": {
+        "operationMetadataId": "54404af7-9aa8-4311-8ac0-06348ccf087d"
       },
       "type": "If"
     },
@@ -730,7 +784,8 @@
               "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
               "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
               "file": "@triggerOutputs()?['headers/x-ms-file-id']",
-              "table": "Table1"
+              "table": "Table1",
+              "dateTimeFormat": "ISO 8601"
             },
             "authentication": "@parameters('$authentication')"
           }
@@ -799,7 +854,7 @@
         },
         "parameters": {
           "groupid": "myworkspace",
-          "datasetid": "d7f38a48-214d-4fc5-9002-5407b0197e0d"
+          "datasetid": "881d685e-c6cf-4233-b772-2f39f9b4f1e8"
         },
         "authentication": "@parameters('$authentication')"
       }
