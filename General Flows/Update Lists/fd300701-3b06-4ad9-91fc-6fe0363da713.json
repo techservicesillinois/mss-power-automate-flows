@@ -707,7 +707,7 @@
                 "parameters": {
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                   "table": "88166712-6a06-4cbb-8137-18c1bfd6e727",
-                  "item/Title": "@items('Apply_to_each_-_WSAA_WebApp')?['IT Pros']",
+                  "item/Title": "@items('Apply_to_each_-_WSAA_WebApp')?['AssetName']",
                   "item/field_0": "@substring(outputs('Get_file_metadata')?['body/Name'],15,7)",
                   "item/field_1": "@items('Apply_to_each_-_WSAA_WebApp')?['AssetGroup']",
                   "item/field_3": "@items('Apply_to_each_-_WSAA_WebApp')?['Last IIS Change']",
