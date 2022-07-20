@@ -298,42 +298,42 @@
     },
     "Condition": {
       "actions": {
-    "Get_Flow_ID": {
-      "runAfter": {},
-      "metadata": {
-        "operationMetadataId": "97183bf8-ab30-446f-9b0c-d7c2d8ef006e"
-      },
-      "type": "Compose",
-      "inputs": "@replace(triggerBody()['file']['name'],'.json','')"
-    },
-    "Get_Flow_Details": {
-      "runAfter": {
-        "Get_Flow_ID": ["Succeeded"]
-      },
-      "metadata": {
-        "operationMetadataId": "ef1d724c-05c7-4614-a42a-ec2c9c829ea9"
-      },
-      "type": "OpenApiConnection",
-      "inputs": {
-        "host": {
-          "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
-          "connectionName": "shared_flowmanagement",
-          "operationId": "GetFlow"
+        "Get_Flow_ID": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "97183bf8-ab30-446f-9b0c-d7c2d8ef006e"
+          },
+          "type": "Compose",
+          "inputs": "@replace(triggerBody()['file']['name'],'.json','')"
         },
-        "parameters": {
-          "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
-          "flowName": "@outputs('Get_Flow_ID')"
+        "Get_Flow_Details": {
+          "runAfter": {
+            "Get_Flow_ID": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "ef1d724c-05c7-4614-a42a-ec2c9c829ea9"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+              "connectionName": "shared_flowmanagement",
+              "operationId": "GetFlow"
+            },
+            "parameters": {
+              "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
+              "flowName": "@outputs('Get_Flow_ID')"
+            },
+            "authentication": {
+              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+              "type": "Raw"
+            }
+          }
         },
-        "authentication": {
-          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-          "type": "Raw"
-        }
-      }
-    },
         "Update_Flow": {
           "runAfter": {
-        "Get_Flow_Details": ["Succeeded"]
-      },
+            "Get_Flow_Details": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "2ff7e419-5e1b-4de4-8730-37bc36f4f617"
           },

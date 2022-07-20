@@ -45,11 +45,13 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{
-          "name": "rowCount",
-          "type": "integer",
-          "value": 0
-        }]
+        "variables": [
+          {
+            "name": "rowCount",
+            "type": "integer",
+            "value": 0
+          }
+        ]
       }
     },
     "Get_file_metadata": {
@@ -140,7 +142,10 @@
         "Get_file_metadata": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('Get_file_metadata')?['body/Name']", "tdx-survey-"]
+        "startsWith": [
+          "@outputs('Get_file_metadata')?['body/Name']",
+          "tdx-survey-"
+        ]
       },
       "metadata": {
         "operationMetadataId": "6a1bc7c5-de89-40d1-bb66-fee6b90cf9d5"
@@ -219,7 +224,10 @@
         "Condition_-_TDX_Surveys": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('Get_file_metadata')?['body/Name']", "tdx-ticket-"]
+        "startsWith": [
+          "@outputs('Get_file_metadata')?['body/Name']",
+          "tdx-ticket-"
+        ]
       },
       "metadata": {
         "operationMetadataId": "933b6c3b-27e0-4ff7-b8ba-e198f733e817"
@@ -333,10 +341,6 @@
                   "item/field_6": "@items('Apply_to_each_-_WSAA_System_Admin')?['End Customer Departments']",
                   "item/field_7": "@items('Apply_to_each_-_WSAA_System_Admin')?['CFOP']",
                   "item/field_8": "@items('Apply_to_each_-_WSAA_System_Admin')?['ActivityCode']"
-					
-					
-					
-				
                 },
                 "authentication": "@parameters('$authentication')"
               }
@@ -355,7 +359,10 @@
         "Condition_-_TDX_Tickets": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('Get_file_metadata')?['body/Name']", "ls-sysadmin_"]
+        "startsWith": [
+          "@outputs('Get_file_metadata')?['body/Name']",
+          "ls-sysadmin_"
+        ]
       },
       "metadata": {
         "operationMetadataId": "6e071314-aea9-484a-9266-2229800f406d"
@@ -484,7 +491,10 @@
         "Condition_-_WSAA_System_Admin": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('Get_file_metadata')?['body/Name']", "ls-database_"]
+        "startsWith": [
+          "@outputs('Get_file_metadata')?['body/Name']",
+          "ls-database_"
+        ]
       },
       "metadata": {
         "operationMetadataId": "a853e3f8-16a1-42ad-8d71-9379e5f69258"
@@ -610,7 +620,10 @@
         "Condition_-_WSAA_Database": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('Get_file_metadata')?['body/Name']", "ls-filestor_"]
+        "startsWith": [
+          "@outputs('Get_file_metadata')?['body/Name']",
+          "ls-filestor_"
+        ]
       },
       "metadata": {
         "operationMetadataId": "0a5f82c0-d9ca-4b26-82df-199d96b42fb0"
@@ -738,7 +751,10 @@
         "Condition_-_WSAA_File_Storage": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('Get_file_metadata')?['body/Name']", "ls-webahost_"]
+        "startsWith": [
+          "@outputs('Get_file_metadata')?['body/Name']",
+          "ls-webahost_"
+        ]
       },
       "metadata": {
         "operationMetadataId": "54404af7-9aa8-4311-8ac0-06348ccf087d"
