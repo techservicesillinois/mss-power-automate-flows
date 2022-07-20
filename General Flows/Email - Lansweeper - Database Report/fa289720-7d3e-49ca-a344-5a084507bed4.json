@@ -1,1 +1,106 @@
-{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{"$connections":{"defaultValue":{},"type":"Object"},"$authentication":{"defaultValue":{},"type":"SecureObject"}},"triggers":{"When_a_new_email_arrives_(V3)":{"splitOn":"@triggerOutputs()?['body/value']","metadata":{"Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAARb7iqAAA=":"WSAA","operationMetadataId":"61bafd3b-baf4-4258-9d7f-ce5912b5b049","Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAdi-XQAAA=":"TDX Reports","Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAhZMjBAAA=":"Reports"},"type":"OpenApiConnectionNotification","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_office365","connectionName":"shared_office365","operationId":"OnNewEmailV3"},"parameters":{"folderPath":"Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAhZMjBAAA=","includeAttachments":true,"subjectFilter":"[REP] ELE - Billing - Database Hosting","importance":"Any","fetchOnlyWithAttachment":true},"authentication":"@parameters('$authentication')"}}},"actions":{"Apply_to_each":{"foreach":"@triggerOutputs()?['body/attachments']","actions":{"Create_file":{"runAfter":{},"metadata":{"operationMetadataId":"004972fe-77a8-4ab9-a8b0-c8ce85d5e744"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"CreateFile"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","folderPath":"/Shared Documents/Test","name":"ls-database_@{variables('rowCount')}_@{items('Apply_to_each')?['lastModifiedDateTime']}.xlsx","body":"@items('Apply_to_each')?['contentBytes']"},"authentication":"@parameters('$authentication')"},"runtimeConfiguration":{"contentTransfer":{"transferMode":"Chunked"}}},"Mark_as_read_or_unread_(V3)":{"runAfter":{"Create_file":["Succeeded"]},"metadata":{"operationMetadataId":"e95d58c6-43f3-4ead-89e2-d38b356539dd"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_office365","connectionName":"shared_office365","operationId":"MarkAsRead_V3"},"parameters":{"messageId":"@triggerOutputs()?['body/id']","body/isRead":true},"authentication":"@parameters('$authentication')"}}},"runAfter":{"Initialize_variable":["Succeeded"]},"metadata":{"operationMetadataId":"0fc478f2-10e0-4c65-a618-8cfc32a17358"},"type":"Foreach"},"Initialize_variable":{"runAfter":{},"metadata":{"operationMetadataId":"3eda50a0-c94b-480e-ac22-b6c6fa008efc"},"type":"InitializeVariable","inputs":{"variables":[{"name":"rowCount","type":"string","value":"@{trim(substring(triggerOutputs()?['body/body'],179,4))}"}]}}}}
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$connections": { "defaultValue": {}, "type": "Object" },
+    "$authentication": { "defaultValue": {}, "type": "SecureObject" }
+  },
+  "triggers": {
+    "When_a_new_email_arrives_(V3)": {
+      "splitOn": "@triggerOutputs()?['body/value']",
+      "metadata": {
+        "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAARb7iqAAA=": "WSAA",
+        "operationMetadataId": "61bafd3b-baf4-4258-9d7f-ce5912b5b049",
+        "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAdi-XQAAA=": "TDX Reports",
+        "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAhZMjBAAA=": "Reports"
+      },
+      "type": "OpenApiConnectionNotification",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+          "connectionName": "shared_office365",
+          "operationId": "OnNewEmailV3"
+        },
+        "parameters": {
+          "folderPath": "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAhZMjBAAA=",
+          "includeAttachments": true,
+          "subjectFilter": "[REP] ELE - Billing - Database Hosting",
+          "importance": "Any",
+          "fetchOnlyWithAttachment": true
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    }
+  },
+  "actions": {
+    "Apply_to_each": {
+      "foreach": "@triggerOutputs()?['body/attachments']",
+      "actions": {
+        "Create_file": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "004972fe-77a8-4ab9-a8b0-c8ce85d5e744"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "CreateFile"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "folderPath": "/Shared Documents/Test",
+              "name": "ls-database_@{variables('rowCount')}_@{items('Apply_to_each')?['lastModifiedDateTime']}.xlsx",
+              "body": "@items('Apply_to_each')?['contentBytes']"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runtimeConfiguration": {
+            "contentTransfer": { "transferMode": "Chunked" }
+          }
+        },
+        "Mark_as_read_or_unread_(V3)": {
+          "runAfter": { "Create_file": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "e95d58c6-43f3-4ead-89e2-d38b356539dd"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+              "connectionName": "shared_office365",
+              "operationId": "MarkAsRead_V3"
+            },
+            "parameters": {
+              "messageId": "@triggerOutputs()?['body/id']",
+              "body/isRead": true
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "runAfter": { "Initialize_variable": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "0fc478f2-10e0-4c65-a618-8cfc32a17358"
+      },
+      "type": "Foreach"
+    },
+    "Initialize_variable": {
+      "runAfter": {},
+      "metadata": {
+        "operationMetadataId": "3eda50a0-c94b-480e-ac22-b6c6fa008efc"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "rowCount",
+            "type": "string",
+            "value": "@{trim(substring(triggerOutputs()?['body/body'],179,4))}"
+          }
+        ]
+      }
+    }
+  }
+}
