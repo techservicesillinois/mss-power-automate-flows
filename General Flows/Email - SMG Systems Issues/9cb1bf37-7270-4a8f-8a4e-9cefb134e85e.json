@@ -15,9 +15,6 @@
     "When_a_new_email_arrives_(V3)": {
       "splitOn": "@triggerOutputs()?['body/value']",
       "metadata": {
-        "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAARb7iqAAA=": "WSAA",
-        "operationMetadataId": "61bafd3b-baf4-4258-9d7f-ce5912b5b049",
-        "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAdi-XQAAA=": "TDX Reports",
         "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAABmFe8IAAA=": "smg-systems-issues"
       },
       "type": "OpenApiConnectionNotification",
