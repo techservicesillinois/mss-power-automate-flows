@@ -1,1 +1,64 @@
-{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{"$connections":{"defaultValue":{},"type":"Object"},"$authentication":{"defaultValue":{},"type":"SecureObject"}},"triggers":{"When_a_new_email_arrives_(V3)":{"splitOn":"@triggerOutputs()?['body/value']","metadata":{"Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAARb7iqAAA=":"WSAA","operationMetadataId":"61bafd3b-baf4-4258-9d7f-ce5912b5b049","Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAdi-XQAAA=":"TDX Reports","Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAABmFe8IAAA=":"smg-systems-issues"},"type":"OpenApiConnectionNotification","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_office365","connectionName":"shared_office365","operationId":"OnNewEmailV3"},"parameters":{"folderPath":"Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAABmFe8IAAA=","includeAttachments":true,"importance":"Any","fetchOnlyWithAttachment":false},"authentication":"@parameters('$authentication')"}}},"actions":{"Create_item":{"runAfter":{},"metadata":{"operationMetadataId":"0f43154a-7eb6-4b54-9f72-cadcc304075e"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"3e80190b-55db-4db5-b826-28162907c252","item/Title":"@triggerOutputs()?['body/subject']","item/Body":"@triggerOutputs()?['body/body']"},"authentication":"@parameters('$authentication')"}}},"description":""}
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    },
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    }
+  },
+  "triggers": {
+    "When_a_new_email_arrives_(V3)": {
+      "splitOn": "@triggerOutputs()?['body/value']",
+      "metadata": {
+        "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAARb7iqAAA=": "WSAA",
+        "operationMetadataId": "61bafd3b-baf4-4258-9d7f-ce5912b5b049",
+        "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAdi-XQAAA=": "TDX Reports",
+        "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAABmFe8IAAA=": "smg-systems-issues"
+      },
+      "type": "OpenApiConnectionNotification",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+          "connectionName": "shared_office365",
+          "operationId": "OnNewEmailV3"
+        },
+        "parameters": {
+          "folderPath": "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAABmFe8IAAA=",
+          "includeAttachments": true,
+          "importance": "Any",
+          "fetchOnlyWithAttachment": false
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    }
+  },
+  "actions": {
+    "Create_item": {
+      "runAfter": {},
+      "metadata": {
+        "operationMetadataId": "0f43154a-7eb6-4b54-9f72-cadcc304075e"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "table": "3e80190b-55db-4db5-b826-28162907c252",
+          "item/Title": "@triggerOutputs()?['body/subject']",
+          "item/Body": "@triggerOutputs()?['body/body']"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    }
+  },
+  "description": ""
+}
