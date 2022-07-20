@@ -53,41 +53,31 @@
                   "format": "byte"
                 }
               }
+            },
+            "boolean": {
+              "title": "New Flow",
+              "type": "boolean",
+              "x-ms-dynamically-added": true,
+              "description": "Set up as new flow?",
+              "x-ms-content-hint": "BOOLEAN"
+            },
+            "text": {
+              "title": "New Flow Name",
+              "type": "string",
+              "x-ms-dynamically-added": true,
+              "description": "If new flow, enter Flow Name",
+              "x-ms-content-hint": "TEXT"
             }
           },
-          "required": []
+          "required": ["file", "file_1"]
         }
       }
     }
   },
   "actions": {
-    "Turn_On_Flow": {
-      "runAfter": {
-        "Update_Flow": ["Succeeded"]
-      },
-      "metadata": {
-        "operationMetadataId": "fb6d3f58-c2d4-4bbc-9093-4f8596ca4045"
-      },
-      "type": "OpenApiConnection",
-      "inputs": {
-        "host": {
-          "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
-          "connectionName": "shared_flowmanagement",
-          "operationId": "StartFlow"
-        },
-        "parameters": {
-          "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
-          "flowName": "@outputs('Get_Flow_ID')"
-        },
-        "authentication": {
-          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-          "type": "Raw"
-        }
-      }
-    },
     "Parse_JSON_-_Definition": {
       "runAfter": {
-        "Get_Flow_ID": ["Succeeded"]
+        "Get_file_content_-_Temporary_Connection": ["Succeeded"]
       },
       "metadata": {
         "operationMetadataId": "24ab86ef-2934-4867-89f8-407e7a6896ba"
@@ -109,68 +99,6 @@
       "inputs": {
         "content": "@json(body('Get_file_content_-_Temporary_Connection'))",
         "schema": {}
-      }
-    },
-    "Update_Flow": {
-      "runAfter": {
-        "Get_Flow_Details": ["Succeeded"]
-      },
-      "metadata": {
-        "operationMetadataId": "2ff7e419-5e1b-4de4-8730-37bc36f4f617"
-      },
-      "type": "OpenApiConnection",
-      "inputs": {
-        "host": {
-          "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
-          "connectionName": "shared_flowmanagement",
-          "operationId": "UpdateFlow"
-        },
-        "parameters": {
-          "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
-          "flowName": "@outputs('Get_Flow_ID')",
-          "Flow/properties/displayName": "@outputs('Get_Flow_Details')?['body/properties/displayName']",
-          "Flow/properties/definition": "@body('Parse_JSON_-_Definition')",
-          "Flow/properties/state": "Stopped",
-          "Flow/properties/connectionReferences": "@body('Select')"
-        },
-        "authentication": {
-          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-          "type": "Raw"
-        }
-      }
-    },
-    "Get_Flow_ID": {
-      "runAfter": {
-        "Get_file_content_-_Temporary_Connection": ["Succeeded"]
-      },
-      "metadata": {
-        "operationMetadataId": "97183bf8-ab30-446f-9b0c-d7c2d8ef006e"
-      },
-      "type": "Compose",
-      "inputs": "@replace(triggerBody()['file']['name'],'.json','')"
-    },
-    "Get_Flow_Details": {
-      "runAfter": {
-        "Select": ["Succeeded"]
-      },
-      "metadata": {
-        "operationMetadataId": "ef1d724c-05c7-4614-a42a-ec2c9c829ea9"
-      },
-      "type": "OpenApiConnection",
-      "inputs": {
-        "host": {
-          "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
-          "connectionName": "shared_flowmanagement",
-          "operationId": "GetFlow"
-        },
-        "parameters": {
-          "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
-          "flowName": "@outputs('Get_Flow_ID')"
-        },
-        "authentication": {
-          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-          "type": "Raw"
-        }
       }
     },
     "Create_file_-_Temporary_Definition": {
@@ -291,7 +219,7 @@
     },
     "Delete_file_-_Temporary_Definition": {
       "runAfter": {
-        "Turn_On_Flow": ["Succeeded"]
+        "Condition": ["Succeeded"]
       },
       "metadata": {
         "operationMetadataId": "90623eee-c4e6-4f55-9f28-6acebbb02024"
@@ -305,7 +233,7 @@
         },
         "parameters": {
           "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-          "id": "@outputs('Create_file_-_Temporary_Definition')?['body/ItemId']"
+          "id": "@outputs('Create_file_-_Temporary_Definition')?['body/Id']"
         },
         "authentication": {
           "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
@@ -329,7 +257,7 @@
         },
         "parameters": {
           "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-          "id": "@outputs('Create_file_-_Temporary_Connection')?['body/ItemId']"
+          "id": "@outputs('Create_file_-_Temporary_Connection')?['body/Id']"
         },
         "authentication": {
           "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
@@ -367,6 +295,135 @@
           "id": "@item()['id']"
         }
       }
+    },
+    "Condition": {
+      "actions": {
+    "Get_Flow_ID": {
+      "runAfter": {},
+      "metadata": {
+        "operationMetadataId": "97183bf8-ab30-446f-9b0c-d7c2d8ef006e"
+      },
+      "type": "Compose",
+      "inputs": "@replace(triggerBody()['file']['name'],'.json','')"
+    },
+    "Get_Flow_Details": {
+      "runAfter": {
+        "Get_Flow_ID": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "ef1d724c-05c7-4614-a42a-ec2c9c829ea9"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+          "connectionName": "shared_flowmanagement",
+          "operationId": "GetFlow"
+        },
+        "parameters": {
+          "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
+          "flowName": "@outputs('Get_Flow_ID')"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+        "Update_Flow": {
+          "runAfter": {
+        "Get_Flow_Details": ["Succeeded"]
+      },
+          "metadata": {
+            "operationMetadataId": "2ff7e419-5e1b-4de4-8730-37bc36f4f617"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+              "connectionName": "shared_flowmanagement",
+              "operationId": "UpdateFlow"
+            },
+            "parameters": {
+              "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
+              "flowName": "@outputs('Get_Flow_ID')",
+              "Flow/properties/displayName": "@outputs('Get_Flow_Details')?['body/properties/displayName']",
+              "Flow/properties/definition": "@body('Parse_JSON_-_Definition')",
+              "Flow/properties/state": "Stopped",
+              "Flow/properties/connectionReferences": "@body('Select')"
+            },
+            "authentication": {
+              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+              "type": "Raw"
+            }
+          }
+        },
+        "Turn_On_Flow": {
+          "runAfter": {
+            "Update_Flow": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "fb6d3f58-c2d4-4bbc-9093-4f8596ca4045"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+              "connectionName": "shared_flowmanagement",
+              "operationId": "StartFlow"
+            },
+            "parameters": {
+              "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
+              "flowName": "@outputs('Get_Flow_ID')"
+            },
+            "authentication": {
+              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+              "type": "Raw"
+            }
+          }
+        }
+      },
+      "runAfter": {
+        "Select": ["Succeeded"]
+      },
+      "else": {
+        "actions": {
+          "Create_Flow": {
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "0268e9eb-f02d-47d0-a1fd-8004420ecb67"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+                "connectionName": "shared_flowmanagement",
+                "operationId": "CreateFlow"
+              },
+              "parameters": {
+                "environmentName": "Default-44467e6f-462c-4ea2-823f-7800de5434e3",
+                "Flow/properties/displayName": "@triggerBody()['text']",
+                "Flow/properties/definition": "@body('Parse_JSON_-_Definition')",
+                "Flow/properties/state": "Stopped",
+                "Flow/properties/connectionReferences": "@body('Select')"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          }
+        }
+      },
+      "expression": {
+        "not": {
+          "equals": ["@triggerBody()['boolean']", true]
+        }
+      },
+      "metadata": {
+        "operationMetadataId": "ce722488-c6a4-4854-982e-fabb0c8ffd3b"
+      },
+      "type": "If"
     }
   }
 }
