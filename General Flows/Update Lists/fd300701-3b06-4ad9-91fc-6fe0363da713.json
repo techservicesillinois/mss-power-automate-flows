@@ -327,11 +327,16 @@
                   "item/field_2": "@items('Apply_to_each_-_WSAA_System_Admin')?['FunctionalLevel']",
                   "item/field_3": "@items('Apply_to_each_-_WSAA_System_Admin')?['AssetTypename']",
                   "item/OperatingSystem": "@items('Apply_to_each_-_WSAA_System_Admin')?['OperatingSystem']",
+                  "item/ShortOS": "@replace(replace(replace(replace(replace(replace(replace(items('Apply_to_each_-_WSAA_System_Admin')?['OperatingSystem'],'Microsoft Windows ',''),' R2',''),' LTSC',''),' Standard',''),' Datacenter',''),' Enterprise',''),' Edition','')",
                   "item/field_4": "@items('Apply_to_each_-_WSAA_System_Admin')?['Service']",
                   "item/field_5": "@items('Apply_to_each_-_WSAA_System_Admin')?['UptimeDays']",
                   "item/field_6": "@items('Apply_to_each_-_WSAA_System_Admin')?['End Customer Departments']",
                   "item/field_7": "@items('Apply_to_each_-_WSAA_System_Admin')?['CFOP']",
                   "item/field_8": "@items('Apply_to_each_-_WSAA_System_Admin')?['ActivityCode']"
+					
+					
+					
+				
                 },
                 "authentication": "@parameters('$authentication')"
               }
