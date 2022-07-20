@@ -7,7 +7,8 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-  purty:
+jobs:
+  prettier:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
