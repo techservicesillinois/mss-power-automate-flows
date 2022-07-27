@@ -115,7 +115,7 @@
         },
         "parameters": {
           "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-          "folderPath": "/Shared Documents/General/-inbox",
+          "folderPath": "/Shared Documents/flows/-inbox",
           "name": "@triggerBody()['file']['name']",
           "body": "@triggerBody()?['file']?['contentBytes']"
         },
@@ -146,7 +146,7 @@
         },
         "parameters": {
           "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-          "folderPath": "/Shared Documents/General/-inbox",
+          "folderPath": "/Shared Documents/flows/-inbox",
           "name": "@triggerBody()['file_1']['name']",
           "body": "@triggerBody()?['file_1']?['contentBytes']"
         },
@@ -164,12 +164,6 @@
     "Get_file_content_-_Temporary_Definition": {
       "runAfter": {
         "Delay": ["Succeeded"]
-      },
-      "metadata": {
-        "%252fShared%2bDocuments%252fGeneral%252ffd300701-3b06-4ad9-91fc-6fe0363da713-conn.json": "/Shared Documents/General/fd300701-3b06-4ad9-91fc-6fe0363da713-conn.json",
-        "operationMetadataId": "116e68c2-76a5-4a00-afe0-0cdc1b30d858",
-        "%252fShared%2bDocuments%252fGeneral%252fClean%2bInbox%252fa90758b5-a60f-4c4a-98f6-c54ff000c9bd-conn.json": "/Shared Documents/General/Clean Inbox/a90758b5-a60f-4c4a-98f6-c54ff000c9bd-conn.json",
-        "%252fShared%2bDocuments%252fGeneral%252f-inbox%252ffd300701-3b06-4ad9-91fc-6fe0363da713-conn.json": "/Shared Documents/General/-inbox/fd300701-3b06-4ad9-91fc-6fe0363da713-conn.json"
       },
       "type": "OpenApiConnection",
       "inputs": {
@@ -192,12 +186,6 @@
     "Get_file_content_-_Temporary_Connection": {
       "runAfter": {
         "Get_file_content_-_Temporary_Definition": ["Succeeded"]
-      },
-      "metadata": {
-        "%252fShared%2bDocuments%252fGeneral%252ffd300701-3b06-4ad9-91fc-6fe0363da713-conn.json": "/Shared Documents/General/fd300701-3b06-4ad9-91fc-6fe0363da713-conn.json",
-        "operationMetadataId": "116e68c2-76a5-4a00-afe0-0cdc1b30d858",
-        "%252fShared%2bDocuments%252fGeneral%252fClean%2bInbox%252fa90758b5-a60f-4c4a-98f6-c54ff000c9bd-conn.json": "/Shared Documents/General/Clean Inbox/a90758b5-a60f-4c4a-98f6-c54ff000c9bd-conn.json",
-        "%252fShared%2bDocuments%252fGeneral%252f-inbox%252ffd300701-3b06-4ad9-91fc-6fe0363da713-conn.json": "/Shared Documents/General/-inbox/fd300701-3b06-4ad9-91fc-6fe0363da713-conn.json"
       },
       "type": "OpenApiConnection",
       "inputs": {
