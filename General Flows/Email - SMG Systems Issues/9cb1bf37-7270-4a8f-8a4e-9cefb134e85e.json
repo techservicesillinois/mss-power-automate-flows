@@ -2,33 +2,29 @@
   "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "$connections": {
-      "defaultValue": {},
-      "type": "Object"
-    },
-    "$authentication": {
-      "defaultValue": {},
-      "type": "SecureObject"
-    }
+    "$connections": { "defaultValue": {}, "type": "Object" },
+    "$authentication": { "defaultValue": {}, "type": "SecureObject" }
   },
   "triggers": {
-    "When_a_new_email_arrives_(V3)": {
+    "When_a_new_email_arrives_in_a_shared_mailbox_(V2)": {
+      "recurrence": { "frequency": "Minute", "interval": 5 },
       "splitOn": "@triggerOutputs()?['body/value']",
       "metadata": {
-        "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAABmFe8IAAA=": "smg-systems-issues"
+        "operationMetadataId": "05ae015f-351c-47ee-990b-590f4e40cf81"
       },
-      "type": "OpenApiConnectionNotification",
+      "type": "OpenApiConnection",
       "inputs": {
         "host": {
           "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
           "connectionName": "shared_office365",
-          "operationId": "OnNewEmailV3"
+          "operationId": "SharedMailboxOnNewEmailV2"
         },
         "parameters": {
-          "folderPath": "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAABmFe8IAAA=",
-          "includeAttachments": true,
+          "mailboxAddress": "smg-systems-issues@mx.uillinois.edu",
+          "folderId": "Inbox",
           "importance": "Any",
-          "fetchOnlyWithAttachment": false
+          "hasAttachments": false,
+          "includeAttachments": false
         },
         "authentication": "@parameters('$authentication')"
       }
@@ -48,14 +44,13 @@
           "operationId": "PostItem"
         },
         "parameters": {
-          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-          "table": "3e80190b-55db-4db5-b826-28162907c252",
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/SMG",
+          "table": "32848a01-cd69-4439-8132-72a287a8640e",
           "item/Title": "@triggerOutputs()?['body/subject']",
           "item/Body": "@triggerOutputs()?['body/body']"
         },
         "authentication": "@parameters('$authentication')"
       }
     }
-  },
-  "description": ""
+  }
 }
