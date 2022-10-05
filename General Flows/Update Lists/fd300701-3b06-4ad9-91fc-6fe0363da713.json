@@ -39,8 +39,16 @@
         "variables": [{ "name": "rowCount", "type": "integer", "value": 0 }]
       }
     },
-    "03_Get_file_metadata": {
+    "02b_Initialize_variable_-_monthYear": {
       "runAfter": { "02_Initialize_variable_-_rowCount": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "61f5a9c9-3526-4e5d-b13d-55016b027e49"
+      },
+      "type": "InitializeVariable",
+      "inputs": { "variables": [{ "name": "monthYear", "type": "string" }] }
+    },
+    "03_Get_file_metadata": {
+      "runAfter": { "02b_Initialize_variable_-_monthYear": ["Succeeded"] },
       "metadata": {
         "operationMetadataId": "5e3337f8-7eaa-4c46-82d6-05fe7a0028f0"
       },
@@ -256,7 +264,7 @@
         },
         "Create_table_-_WSAA_System_Admin": {
           "runAfter": {
-            "Increment_variable_-_WSAA_System_Admin": ["Succeeded"]
+            "Set_variable_-_WSAA_System_Admin_-_monthYear": ["Succeeded"]
           },
           "metadata": {
             "operationMetadataId": "0a332193-7515-485d-b1ad-b95df9cc2469",
@@ -302,8 +310,8 @@
                   "item/field_1": "@items('Apply_to_each_-_WSAA_System_Admin')?['AssetName']",
                   "item/field_2": "@items('Apply_to_each_-_WSAA_System_Admin')?['FunctionalLevel']",
                   "item/field_3": "@items('Apply_to_each_-_WSAA_System_Admin')?['AssetTypename']",
-                  "item/OperatingSystem": "@items('Apply_to_each_-_WSAA_System_Admin')?['OperatingSystem']",
                   "item/ShortOS": "@replace(replace(replace(replace(replace(replace(replace(items('Apply_to_each_-_WSAA_System_Admin')?['OperatingSystem'],'Microsoft Windows ',''),' R2',''),' LTSC',''),' Standard',''),' Datacenter',''),' Enterprise',''),' Edition','')",
+                  "item/OperatingSystem": "@items('Apply_to_each_-_WSAA_System_Admin')?['OperatingSystem']",
                   "item/field_4": "@items('Apply_to_each_-_WSAA_System_Admin')?['Service']",
                   "item/field_5": "@items('Apply_to_each_-_WSAA_System_Admin')?['UptimeDays']",
                   "item/field_6": "@items('Apply_to_each_-_WSAA_System_Admin')?['End Customer Departments']",
@@ -319,6 +327,19 @@
             "operationMetadataId": "7b99e456-3a2a-4291-8941-61c27c946ad6"
           },
           "type": "Foreach"
+        },
+        "Set_variable_-_WSAA_System_Admin_-_monthYear": {
+          "runAfter": {
+            "Increment_variable_-_WSAA_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "c626fa9c-6686-4b17-b98e-9041ea937b5f"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)}"
+          }
         }
       },
       "runAfter": { "05_Condition_-_TDX_Tickets": ["Succeeded"] },
@@ -378,7 +399,9 @@
           "inputs": { "name": "rowCount", "value": 1 }
         },
         "Create_table_-_WSAA_Database": {
-          "runAfter": { "Increment_variable_-_WSAA_Database": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_Database_-_monthYear": ["Succeeded"]
+          },
           "metadata": {
             "tableId": null,
             "operationMetadataId": "4dea131f-33e9-4d08-9190-4d1af5d94401"
@@ -438,6 +461,17 @@
             "operationMetadataId": "08d8183f-4efa-4848-8619-2fc13873387c"
           },
           "type": "Foreach"
+        },
+        "Set_variable_-_WSAA_Database_-_monthYear": {
+          "runAfter": { "Increment_variable_-_WSAA_Database": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "0953ebed-d200-45e4-b68e-c2b80a15362a"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],15,7)}"
+          }
         }
       },
       "runAfter": { "06_Condition_-_WSAA_System_Admin": ["Succeeded"] },
@@ -499,7 +533,7 @@
         },
         "Create_table_-_WSAA_File_Storage": {
           "runAfter": {
-            "Increment_variable_-_WSAA_File_Storage": ["Succeeded"]
+            "Set_variable_-_WSAA_File_Storage_-_monthYear": ["Succeeded"]
           },
           "metadata": {
             "tableId": null,
@@ -556,6 +590,19 @@
             "operationMetadataId": "bc49b611-b826-48c5-b7bb-fbae807218be"
           },
           "type": "Foreach"
+        },
+        "Set_variable_-_WSAA_File_Storage_-_monthYear": {
+          "runAfter": {
+            "Increment_variable_-_WSAA_File_Storage": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "d80e763b-6ca9-4f71-b8bf-83a68667673e"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)}"
+          }
         }
       },
       "runAfter": { "07_Condition_-_WSAA_Database": ["Succeeded"] },
@@ -616,7 +663,9 @@
           "inputs": { "name": "rowCount", "value": 1 }
         },
         "Create_table_-_WSAA_WebApp": {
-          "runAfter": { "Increment_variable_-_WSAA_WebApp": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_WebApp_-_monthYear": ["Succeeded"]
+          },
           "metadata": {
             "tableId": null,
             "operationMetadataId": "21c3d357-89e8-4034-9e69-73f8edb6221f"
@@ -674,6 +723,17 @@
             "operationMetadataId": "12f013a7-d863-4f6d-91b0-ba2291fcf84c"
           },
           "type": "Foreach"
+        },
+        "Set_variable_-_WSAA_WebApp_-_monthYear": {
+          "runAfter": { "Increment_variable_-_WSAA_WebApp": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "e896eec3-4a5d-429f-a27b-ce9caeb5bbe5"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],15,7)}"
+          }
         }
       },
       "runAfter": { "08_Condition_-_WSAA_File_Storage": ["Succeeded"] },
@@ -707,39 +767,17 @@
               "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
               "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
               "file": "@triggerOutputs()?['headers/x-ms-file-id']",
-              "table/Range": "a1:d254",
-              "table/TableName": "Table1"
-            },
-            "authentication": "@parameters('$authentication')"
-          }
-        },
-        "List_Rows_-_SMG_System_Admin": {
-          "runAfter": { "Create_table_-_SMG_System_Admin": ["Succeeded"] },
-          "metadata": {
-            "operationMetadataId": "a4c5cae9-04d5-409f-8ff7-228371e90d0a",
-            "tableId": "Table1"
-          },
-          "type": "OpenApiConnection",
-          "inputs": {
-            "host": {
-              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
-              "connectionName": "shared_excelonlinebusiness",
-              "operationId": "GetItems"
-            },
-            "parameters": {
-              "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
-              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
-              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
-              "table": "Table1",
-              "dateTimeFormat": "ISO 8601"
+              "table/Range": "a1:d400",
+              "table/TableName": "Table1",
+              "table/ColumnsNames": "hostname,class,service,platform"
             },
             "authentication": "@parameters('$authentication')"
           }
         },
         "Apply_to_each_-_SMG_System_Admin": {
-          "foreach": "@outputs('List_Rows_-_SMG_System_Admin')?['body/value']",
+          "foreach": "@body('Filter_array')",
           "actions": {
-            "Create_item_4": {
+            "Create_item_-_SMG_System_Admin": {
               "runAfter": {},
               "metadata": {
                 "operationMetadataId": "58090706-7f75-41d8-9689-fe98ec67a86d"
@@ -764,11 +802,178 @@
               }
             }
           },
-          "runAfter": { "List_Rows_-_SMG_System_Admin": ["Succeeded"] },
+          "runAfter": { "Set_variable": ["Succeeded"] },
           "metadata": {
             "operationMetadataId": "4025cf1b-a937-456d-af70-16920caf2c49"
           },
           "type": "Foreach"
+        },
+        "Set_variable": {
+          "runAfter": { "Filter_array": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "7c1fd266-dbb5-42a7-aa1f-e3321bfbc75f"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],4,7)}"
+          }
+        },
+        "11_Get_items_-_SMG_departments": {
+          "runAfter": { "Apply_to_each_-_SMG_System_Admin": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "b3426625-4fb8-4843-ac14-1b7729a2dbe2"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
+              "$filter": "dept eq null",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "12_Apply_to_each_-_SMG_departments": {
+          "foreach": "@outputs('11_Get_items_-_SMG_departments')?['body/value']",
+          "actions": {
+            "Condition": {
+              "actions": {
+                "Update_item": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "bd0c9b18-c164-4443-b584-189258ca5947"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "PatchItem"
+                    },
+                    "parameters": {
+                      "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                      "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
+                      "id": "@items('12_Apply_to_each_-_SMG_departments')?['ID']",
+                      "item/dept": "@replace(items('12_Apply_to_each_-_SMG_departments')?['field_3'],substring(items('12_Apply_to_each_-_SMG_departments')?['field_3'],indexOf(items('12_Apply_to_each_-_SMG_departments')?['field_3'],'_')),'')"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {},
+              "else": {
+                "actions": {
+                  "Get_items_from_Crosswalk": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "9e9afdfd-b2d4-487f-9ea5-d53d8ccdbb86"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      },
+                      "parameters": {
+                        "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                        "table": "bcc3081a-ba78-4dc3-95d8-6c72aa2d6f8f",
+                        "$filter": "Title eq '@{items('12_Apply_to_each_-_SMG_departments')?['field_3']}'"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Apply_to_each_2": {
+                    "foreach": "@outputs('Get_items_from_Crosswalk')?['body/value']",
+                    "actions": {
+                      "Update_item_2": {
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "60a63695-d113-4beb-b67c-8db3a8465ce1"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "PatchItem"
+                          },
+                          "parameters": {
+                            "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                            "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
+                            "id": "@items('12_Apply_to_each_-_SMG_departments')?['ID']",
+                            "item/dept": "@items('Apply_to_each_2')?['field_1']"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    },
+                    "runAfter": { "Get_items_from_Crosswalk": ["Succeeded"] },
+                    "metadata": {
+                      "operationMetadataId": "5d41849b-6ed4-4716-9a5c-7d07094976ad"
+                    },
+                    "type": "Foreach"
+                  }
+                }
+              },
+              "expression": {
+                "contains": [
+                  "@items('12_Apply_to_each_-_SMG_departments')?['field_3']",
+                  "_"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "fe9ae04a-ecc1-4e27-9a05-7b5d9e834659"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": { "11_Get_items_-_SMG_departments": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "91f136fa-5d2d-4947-9d1c-a6a52b63c693"
+          },
+          "type": "Foreach"
+        },
+        "List_Rows_-_SMG_System_Admin": {
+          "runAfter": { "Create_table_-_SMG_System_Admin": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "a4c5cae9-04d5-409f-8ff7-228371e90d0a",
+            "tableId": "Table1"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Table1",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Filter_array": {
+          "runAfter": { "List_Rows_-_SMG_System_Admin": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "fbeb084a-0a43-4715-b1b0-25748f78e87f"
+          },
+          "type": "Query",
+          "inputs": {
+            "from": "@outputs('List_Rows_-_SMG_System_Admin')?['body/value']",
+            "where": "@not(equals(item()?['hostname'],''))"
+          }
         }
       },
       "runAfter": { "09_Condition_-_WSAA_WebApp": ["Succeeded"] },
@@ -780,7 +985,7 @@
       },
       "type": "If"
     },
-    "11_Refresh_a_dataset": {
+    "13_Refresh_a_dataset": {
       "runAfter": { "10_Condition_-_SMG_System_Admin": ["Succeeded"] },
       "metadata": {
         "operationMetadataId": "d7f38a48-214d-4fc5-9002-5407b0197e0d"
@@ -793,8 +998,8 @@
           "operationId": "RefreshDataset"
         },
         "parameters": {
-          "groupid": "myworkspace",
-          "datasetid": "881d685e-c6cf-4233-b772-2f39f9b4f1e8"
+          "groupid": "5dec65c6-dca4-47c9-a96a-5023e52854fc",
+          "datasetid": "c1c9a291-0fcc-445d-9fde-9ef456ab14c9"
         },
         "authentication": "@parameters('$authentication')"
       }
