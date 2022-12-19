@@ -2,12 +2,21 @@
   "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "$connections": { "defaultValue": {}, "type": "Object" },
-    "$authentication": { "defaultValue": {}, "type": "SecureObject" }
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    },
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    }
   },
   "triggers": {
     "01_When_a_file_is_created_in_a_folder": {
-      "recurrence": { "frequency": "Minute", "interval": 5 },
+      "recurrence": {
+        "frequency": "Minute",
+        "interval": 3
+      },
       "metadata": {
         "%252fShared%2bDocuments%252fTest": "/Shared Documents/Test",
         "operationMetadataId": "481a676d-5eba-47e6-b04d-91ac07eec610"
@@ -36,19 +45,32 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{ "name": "rowCount", "type": "integer", "value": 0 }]
+        "variables": [{
+          "name": "rowCount",
+          "type": "integer",
+          "value": 0
+        }]
       }
     },
     "02b_Initialize_variable_-_monthYear": {
-      "runAfter": { "02_Initialize_variable_-_rowCount": ["Succeeded"] },
+      "runAfter": {
+        "02_Initialize_variable_-_rowCount": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "61f5a9c9-3526-4e5d-b13d-55016b027e49"
       },
       "type": "InitializeVariable",
-      "inputs": { "variables": [{ "name": "monthYear", "type": "string" }] }
+      "inputs": {
+        "variables": [{
+          "name": "monthYear",
+          "type": "string"
+        }]
+      }
     },
     "03_Get_file_metadata": {
-      "runAfter": { "02b_Initialize_variable_-_monthYear": ["Succeeded"] },
+      "runAfter": {
+        "02b_Initialize_variable_-_monthYear": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "5e3337f8-7eaa-4c46-82d6-05fe7a0028f0"
       },
@@ -120,19 +142,20 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_TDX_Surveys": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_TDX_Surveys": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "1bd3b813-9aa8-4f04-a3d9-436d52b7b1c1"
           },
           "type": "Foreach"
         }
       },
-      "runAfter": { "03_Get_file_metadata": ["Succeeded"] },
+      "runAfter": {
+        "02c_Initialize_variable_-_fileName": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "tdx-survey-"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "tdx-survey-"]
       },
       "metadata": {
         "operationMetadataId": "6a1bc7c5-de89-40d1-bb66-fee6b90cf9d5"
@@ -198,19 +221,20 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_TDX_Tickets": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_TDX_Tickets": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "14913abd-751f-49c2-9958-98e2203b2a31"
           },
           "type": "Foreach"
         }
       },
-      "runAfter": { "04_Condition_-_TDX_Surveys": ["Succeeded"] },
+      "runAfter": {
+        "04_Condition_-_TDX_Surveys": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "tdx-ticket-"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "tdx-ticket-"]
       },
       "metadata": {
         "operationMetadataId": "933b6c3b-27e0-4ff7-b8ba-e198f733e817"
@@ -220,7 +244,9 @@
     "06_Condition_-_WSAA_System_Admin": {
       "actions": {
         "List_rows_-_WSAA_System_Admin": {
-          "runAfter": { "Create_table_-_WSAA_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_WSAA_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "5d4c8f85-555b-41e8-8e84-199e8411b860",
             "tableId": "Export_Table",
@@ -255,12 +281,17 @@
           }
         },
         "Increment_variable_-_WSAA_System_Admin": {
-          "runAfter": { "Set_variable_-_WSAA_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "ccf46b7d-bbce-4634-9ce3-7c3542479913"
           },
           "type": "IncrementVariable",
-          "inputs": { "name": "rowCount", "value": 1 }
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
         },
         "Create_table_-_WSAA_System_Admin": {
           "runAfter": {
@@ -322,7 +353,9 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_WSAA_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_WSAA_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "7b99e456-3a2a-4291-8941-61c27c946ad6"
           },
@@ -342,12 +375,11 @@
           }
         }
       },
-      "runAfter": { "05_Condition_-_TDX_Tickets": ["Succeeded"] },
+      "runAfter": {
+        "05_Condition_-_TDX_Tickets": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "ls-sysadmin_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-sysadmin_"]
       },
       "metadata": {
         "operationMetadataId": "6e071314-aea9-484a-9266-2229800f406d"
@@ -357,7 +389,9 @@
     "07_Condition_-_WSAA_Database": {
       "actions": {
         "List_rows_-_WSAA_Database": {
-          "runAfter": { "Create_table_-_WSAA_Database": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_WSAA_Database": ["Succeeded"]
+          },
           "metadata": {
             "tableId": "Export_Table",
             "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-database_37_2022-07-01T12_03_29+00_00.xlsx",
@@ -391,12 +425,17 @@
           }
         },
         "Increment_variable_-_WSAA_Database": {
-          "runAfter": { "Set_variable_-_WSAA_Database": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_Database": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "12485283-835d-43a0-b596-aa02f1bf236c"
           },
           "type": "IncrementVariable",
-          "inputs": { "name": "rowCount", "value": 1 }
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
         },
         "Create_table_-_WSAA_Database": {
           "runAfter": {
@@ -456,14 +495,18 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_WSAA_Database": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_WSAA_Database": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "08d8183f-4efa-4848-8619-2fc13873387c"
           },
           "type": "Foreach"
         },
         "Set_variable_-_WSAA_Database_-_monthYear": {
-          "runAfter": { "Increment_variable_-_WSAA_Database": ["Succeeded"] },
+          "runAfter": {
+            "Increment_variable_-_WSAA_Database": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "0953ebed-d200-45e4-b68e-c2b80a15362a"
           },
@@ -474,12 +517,11 @@
           }
         }
       },
-      "runAfter": { "06_Condition_-_WSAA_System_Admin": ["Succeeded"] },
+      "runAfter": {
+        "06_Condition_-_WSAA_System_Admin": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "ls-database_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-database_"]
       },
       "metadata": {
         "operationMetadataId": "a853e3f8-16a1-42ad-8d71-9379e5f69258"
@@ -489,7 +531,9 @@
     "08_Condition_-_WSAA_File_Storage": {
       "actions": {
         "List_rows_-_WSAA_File_Storage": {
-          "runAfter": { "Create_table_-_WSAA_File_Storage": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_WSAA_File_Storage": ["Succeeded"]
+          },
           "metadata": {
             "tableId": "Export_Table",
             "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-filestor_126_2022-07-01T12_03_12+00_00.xlsx",
@@ -524,12 +568,17 @@
           }
         },
         "Increment_variable_-_WSAA_File_Storage": {
-          "runAfter": { "Set_variable_-_WSAA_File_Storage": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_File_Storage": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "a0e2fc5d-48ab-4e38-8307-a414f090bb77"
           },
           "type": "IncrementVariable",
-          "inputs": { "name": "rowCount", "value": 1 }
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
         },
         "Create_table_-_WSAA_File_Storage": {
           "runAfter": {
@@ -550,7 +599,7 @@
               "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
               "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
               "file": "@triggerOutputs()?['headers/x-ms-file-id']",
-              "table/Range": "a1:i@{variables('rowCount')}",
+              "table/Range": "a1:h@{variables('rowCount')}",
               "table/TableName": "Export_Table"
             },
             "authentication": "@parameters('$authentication')"
@@ -576,16 +625,20 @@
                   "table": "bbbad72f-9052-4ded-9a9f-0f12516c6598",
                   "item/Title": "@items('Apply_to_each_-_WSAA_File_Storage')?['AssetName']",
                   "item/field_0": "@substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)",
-                  "item/field_1": "@items('Apply_to_each_-_WSAA_File_Storage')?['IT Pros']",
-                  "item/field_3": "@items('Apply_to_each_-_WSAA_File_Storage')?['VolumeName']",
-                  "item/field_4": "@items('Apply_to_each_-_WSAA_File_Storage')?['DriveLetter']",
-                  "item/field_5": "@items('Apply_to_each_-_WSAA_File_Storage')?['LogicalDiskName']"
+                  "item/it_pros": "@items('Apply_to_each_-_WSAA_File_Storage')?['IT Pros']",
+                  "item/drive_letter": "@items('Apply_to_each_-_WSAA_File_Storage')?['DriveLetter']",
+                  "item/logical_name": "@items('Apply_to_each_-_WSAA_File_Storage')?['LogicalDiskName']",
+                  "item/FreeSpace": "@items('Apply_to_each_-_WSAA_File_Storage')?['FreeSpace']",
+                  "item/Capacity": "@items('Apply_to_each_-_WSAA_File_Storage')?['Capacity']",
+                  "item/EndCustomer": "@items('Apply_to_each_-_WSAA_File_Storage')?['End Customer']"
                 },
                 "authentication": "@parameters('$authentication')"
               }
             }
           },
-          "runAfter": { "List_rows_-_WSAA_File_Storage": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_WSAA_File_Storage": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "bc49b611-b826-48c5-b7bb-fbae807218be"
           },
@@ -605,12 +658,11 @@
           }
         }
       },
-      "runAfter": { "07_Condition_-_WSAA_Database": ["Succeeded"] },
+      "runAfter": {
+        "07_Condition_-_WSAA_Database": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "ls-filestor_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-filestor_"]
       },
       "metadata": {
         "operationMetadataId": "0a5f82c0-d9ca-4b26-82df-199d96b42fb0"
@@ -620,7 +672,9 @@
     "09_Condition_-_WSAA_WebApp": {
       "actions": {
         "List_rows_-_WSAA_WebApp": {
-          "runAfter": { "Create_table_-_WSAA_WebApp": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_WSAA_WebApp": ["Succeeded"]
+          },
           "metadata": {
             "tableId": "Export_Table",
             "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-webahost_64_2022-07-01T12_03_10+00_00.xlsx",
@@ -651,16 +705,21 @@
           "type": "SetVariable",
           "inputs": {
             "name": "rowCount",
-            "value": "@int(substring(outputs('03_Get_file_metadata')?['body/Name'],12,2))"
+            "value": "@int(variables('fileName')?[1])"
           }
         },
         "Increment_variable_-_WSAA_WebApp": {
-          "runAfter": { "Set_variable_-_WSAA_WebApp": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_WebApp": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "9a2c1927-4567-4aa1-a9c0-a73f70445d2c"
           },
           "type": "IncrementVariable",
-          "inputs": { "name": "rowCount", "value": 1 }
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
         },
         "Create_table_-_WSAA_WebApp": {
           "runAfter": {
@@ -706,7 +765,7 @@
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                   "table": "88166712-6a06-4cbb-8137-18c1bfd6e727",
                   "item/Title": "@items('Apply_to_each_-_WSAA_WebApp')?['AssetName']",
-                  "item/field_0": "@substring(outputs('03_Get_file_metadata')?['body/Name'],15,7)",
+                  "item/field_0": "@variables('monthYear')",
                   "item/field_1": "@items('Apply_to_each_-_WSAA_WebApp')?['AssetGroup']",
                   "item/field_3": "@items('Apply_to_each_-_WSAA_WebApp')?['Last IIS Change']",
                   "item/field_4": "@items('Apply_to_each_-_WSAA_WebApp')?['UserDomain']",
@@ -718,30 +777,33 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_WSAA_WebApp": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_WSAA_WebApp": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "12f013a7-d863-4f6d-91b0-ba2291fcf84c"
           },
           "type": "Foreach"
         },
         "Set_variable_-_WSAA_WebApp_-_monthYear": {
-          "runAfter": { "Increment_variable_-_WSAA_WebApp": ["Succeeded"] },
+          "runAfter": {
+            "Increment_variable_-_WSAA_WebApp": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "e896eec3-4a5d-429f-a27b-ce9caeb5bbe5"
           },
           "type": "SetVariable",
           "inputs": {
             "name": "monthYear",
-            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],15,7)}"
+            "value": "@{substring(variables('fileName')?[2],0,7)}"
           }
         }
       },
-      "runAfter": { "08_Condition_-_WSAA_File_Storage": ["Succeeded"] },
+      "runAfter": {
+        "08_Condition_-_WSAA_File_Storage": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "ls-webahost_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-webahost_"]
       },
       "metadata": {
         "operationMetadataId": "54404af7-9aa8-4311-8ac0-06348ccf087d"
@@ -802,14 +864,18 @@
               }
             }
           },
-          "runAfter": { "Set_variable": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "4025cf1b-a937-456d-af70-16920caf2c49"
           },
           "type": "Foreach"
         },
         "Set_variable": {
-          "runAfter": { "Filter_array": ["Succeeded"] },
+          "runAfter": {
+            "Filter_array": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "7c1fd266-dbb5-42a7-aa1f-e3321bfbc75f"
           },
@@ -820,7 +886,9 @@
           }
         },
         "11_Get_items_-_SMG_departments": {
-          "runAfter": { "Apply_to_each_-_SMG_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "Apply_to_each_-_SMG_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "b3426625-4fb8-4843-ac14-1b7729a2dbe2"
           },
@@ -915,7 +983,9 @@
                         }
                       }
                     },
-                    "runAfter": { "Get_items_from_Crosswalk": ["Succeeded"] },
+                    "runAfter": {
+                      "Get_items_from_Crosswalk": ["Succeeded"]
+                    },
                     "metadata": {
                       "operationMetadataId": "5d41849b-6ed4-4716-9a5c-7d07094976ad"
                     },
@@ -924,10 +994,7 @@
                 }
               },
               "expression": {
-                "contains": [
-                  "@items('12_Apply_to_each_-_SMG_departments')?['field_3']",
-                  "_"
-                ]
+                "contains": ["@items('12_Apply_to_each_-_SMG_departments')?['field_3']", "_"]
               },
               "metadata": {
                 "operationMetadataId": "fe9ae04a-ecc1-4e27-9a05-7b5d9e834659"
@@ -935,14 +1002,18 @@
               "type": "If"
             }
           },
-          "runAfter": { "11_Get_items_-_SMG_departments": ["Succeeded"] },
+          "runAfter": {
+            "11_Get_items_-_SMG_departments": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "91f136fa-5d2d-4947-9d1c-a6a52b63c693"
           },
           "type": "Foreach"
         },
         "List_Rows_-_SMG_System_Admin": {
-          "runAfter": { "Create_table_-_SMG_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_SMG_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "a4c5cae9-04d5-409f-8ff7-228371e90d0a",
             "tableId": "Table1"
@@ -965,7 +1036,9 @@
           }
         },
         "Filter_array": {
-          "runAfter": { "List_Rows_-_SMG_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "List_Rows_-_SMG_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "fbeb084a-0a43-4715-b1b0-25748f78e87f"
           },
@@ -976,7 +1049,9 @@
           }
         }
       },
-      "runAfter": { "09_Condition_-_WSAA_WebApp": ["Succeeded"] },
+      "runAfter": {
+        "09_Condition_-_WSAA_WebApp": ["Succeeded"]
+      },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "smg_"]
       },
@@ -986,7 +1061,9 @@
       "type": "If"
     },
     "13_Refresh_a_dataset": {
-      "runAfter": { "10_Condition_-_SMG_System_Admin": ["Succeeded"] },
+      "runAfter": {
+        "10_Condition_-_SMG_System_Admin": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "d7f38a48-214d-4fc5-9002-5407b0197e0d"
       },
@@ -1002,6 +1079,22 @@
           "datasetid": "c1c9a291-0fcc-445d-9fde-9ef456ab14c9"
         },
         "authentication": "@parameters('$authentication')"
+      }
+    },
+    "02c_Initialize_variable_-_fileName": {
+      "runAfter": {
+        "03_Get_file_metadata": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "5c77d46f-e2b4-4a3f-aa41-7cbaf70181bb"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [{
+          "name": "fileName",
+          "type": "array",
+          "value": "@split(outputs('03_Get_file_metadata')?['body/Name'],'_')"
+        }]
       }
     }
   }
