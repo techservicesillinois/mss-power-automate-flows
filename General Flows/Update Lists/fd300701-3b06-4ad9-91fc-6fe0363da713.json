@@ -45,11 +45,13 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{
-          "name": "rowCount",
-          "type": "integer",
-          "value": 0
-        }]
+        "variables": [
+          {
+            "name": "rowCount",
+            "type": "integer",
+            "value": 0
+          }
+        ]
       }
     },
     "02b_Initialize_variable_-_monthYear": {
@@ -61,10 +63,12 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{
-          "name": "monthYear",
-          "type": "string"
-        }]
+        "variables": [
+          {
+            "name": "monthYear",
+            "type": "string"
+          }
+        ]
       }
     },
     "03_Get_file_metadata": {
@@ -155,7 +159,10 @@
         "02c_Initialize_variable_-_fileName": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "tdx-survey-"]
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "tdx-survey-"
+        ]
       },
       "metadata": {
         "operationMetadataId": "6a1bc7c5-de89-40d1-bb66-fee6b90cf9d5"
@@ -234,7 +241,10 @@
         "04_Condition_-_TDX_Surveys": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "tdx-ticket-"]
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "tdx-ticket-"
+        ]
       },
       "metadata": {
         "operationMetadataId": "933b6c3b-27e0-4ff7-b8ba-e198f733e817"
@@ -379,7 +389,10 @@
         "05_Condition_-_TDX_Tickets": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-sysadmin_"]
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "ls-sysadmin_"
+        ]
       },
       "metadata": {
         "operationMetadataId": "6e071314-aea9-484a-9266-2229800f406d"
@@ -521,7 +534,10 @@
         "06_Condition_-_WSAA_System_Admin": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-database_"]
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "ls-database_"
+        ]
       },
       "metadata": {
         "operationMetadataId": "a853e3f8-16a1-42ad-8d71-9379e5f69258"
@@ -662,7 +678,10 @@
         "07_Condition_-_WSAA_Database": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-filestor_"]
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "ls-filestor_"
+        ]
       },
       "metadata": {
         "operationMetadataId": "0a5f82c0-d9ca-4b26-82df-199d96b42fb0"
@@ -803,7 +822,10 @@
         "08_Condition_-_WSAA_File_Storage": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-webahost_"]
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "ls-webahost_"
+        ]
       },
       "metadata": {
         "operationMetadataId": "54404af7-9aa8-4311-8ac0-06348ccf087d"
@@ -994,7 +1016,10 @@
                 }
               },
               "expression": {
-                "contains": ["@items('12_Apply_to_each_-_SMG_departments')?['field_3']", "_"]
+                "contains": [
+                  "@items('12_Apply_to_each_-_SMG_departments')?['field_3']",
+                  "_"
+                ]
               },
               "metadata": {
                 "operationMetadataId": "fe9ae04a-ecc1-4e27-9a05-7b5d9e834659"
@@ -1090,11 +1115,13 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{
-          "name": "fileName",
-          "type": "array",
-          "value": "@split(outputs('03_Get_file_metadata')?['body/Name'],'_')"
-        }]
+        "variables": [
+          {
+            "name": "fileName",
+            "type": "array",
+            "value": "@split(outputs('03_Get_file_metadata')?['body/Name'],'_')"
+          }
+        ]
       }
     }
   }
