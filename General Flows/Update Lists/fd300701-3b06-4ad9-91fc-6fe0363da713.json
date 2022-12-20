@@ -625,9 +625,9 @@
                   "table": "bbbad72f-9052-4ded-9a9f-0f12516c6598",
                   "item/Title": "@items('Apply_to_each_-_WSAA_File_Storage')?['AssetName']",
                   "item/field_0": "@substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)",
-                  "item/it_pros": "@items('Apply_to_each_-_WSAA_File_Storage')?['IT Pros']",
-                  "item/drive_letter": "@items('Apply_to_each_-_WSAA_File_Storage')?['DriveLetter']",
-                  "item/logical_name": "@items('Apply_to_each_-_WSAA_File_Storage')?['LogicalDiskName']",
+                  "item/field_1": "@items('Apply_to_each_-_WSAA_File_Storage')?['IT Pros']",
+                  "item/field_4": "@items('Apply_to_each_-_WSAA_File_Storage')?['DriveLetter']",
+                  "item/field_5": "@items('Apply_to_each_-_WSAA_File_Storage')?['LogicalDiskName']",
                   "item/FreeSpace": "@items('Apply_to_each_-_WSAA_File_Storage')?['FreeSpace']",
                   "item/Capacity": "@items('Apply_to_each_-_WSAA_File_Storage')?['Capacity']",
                   "item/EndCustomer": "@items('Apply_to_each_-_WSAA_File_Storage')?['End Customer']"
