@@ -75,7 +75,10 @@
           },
           "runAfter": {},
           "expression": {
-            "greater": ["@length(split(items('Apply_to_each_-_WSAA_Database')?['field_0'],'_'))", 2]
+            "greater": [
+              "@length(split(items('Apply_to_each_-_WSAA_Database')?['field_0'],'_'))",
+              2
+            ]
           },
           "type": "If"
         }
@@ -138,7 +141,10 @@
           },
           "runAfter": {},
           "expression": {
-            "greater": ["@length(split(items('Apply_to_each_-_WSAA_System')?['Title'],'_'))", 2]
+            "greater": [
+              "@length(split(items('Apply_to_each_-_WSAA_System')?['Title'],'_'))",
+              2
+            ]
           },
           "type": "If"
         }
@@ -201,7 +207,10 @@
           },
           "runAfter": {},
           "expression": {
-            "greater": ["@length(split(items('Apply_to_each_-_WSAA_File')?['field_1'],'_'))", 2]
+            "greater": [
+              "@length(split(items('Apply_to_each_-_WSAA_File')?['field_1'],'_'))",
+              2
+            ]
           },
           "type": "If"
         }
@@ -264,7 +273,10 @@
           },
           "runAfter": {},
           "expression": {
-            "greater": ["@length(split(items('Apply_to_each_-_WSAA_WebApp')?['field_1'],'_'))", 2]
+            "greater": [
+              "@length(split(items('Apply_to_each_-_WSAA_WebApp')?['field_1'],'_'))",
+              2
+            ]
           },
           "type": "If"
         }
@@ -274,6 +286,5 @@
       },
       "type": "Foreach"
     }
-
   }
 }
