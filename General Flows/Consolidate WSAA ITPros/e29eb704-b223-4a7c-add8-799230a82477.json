@@ -76,7 +76,10 @@
           },
           "runAfter": {},
           "expression": {
-            "greater": ["@length(split(items('Apply_to_each_-_WSAA_Database')?['field_0'],'_'))", 2]
+            "greater": [
+              "@length(split(items('Apply_to_each_-_WSAA_Database')?['field_0'],'_'))",
+              2
+            ]
           },
           "metadata": {
             "operationMetadataId": "c34068e8-034a-46e6-b9ed-11ee4a5a4de3"
@@ -144,7 +147,10 @@
           },
           "runAfter": {},
           "expression": {
-            "greater": ["@length(split(items('Apply_to_each_-_WSAA_System')?['Title'],'_'))", 2]
+            "greater": [
+              "@length(split(items('Apply_to_each_-_WSAA_System')?['Title'],'_'))",
+              2
+            ]
           },
           "metadata": {
             "operationMetadataId": "62a88b40-6a6e-42d2-a4d1-83366c2b1590"
@@ -212,7 +218,10 @@
           },
           "runAfter": {},
           "expression": {
-            "greater": ["@length(split(items('Apply_to_each_-_WSAA_File')?['field_1'],'_'))", 2]
+            "greater": [
+              "@length(split(items('Apply_to_each_-_WSAA_File')?['field_1'],'_'))",
+              2
+            ]
           },
           "metadata": {
             "operationMetadataId": "127a3c59-2530-4e9f-88bc-27a24379ecd4"
@@ -280,7 +289,10 @@
           },
           "runAfter": {},
           "expression": {
-            "greater": ["@length(split(items('Apply_to_each_-_WSAA_WebApp')?['field_1'],'_'))", 2]
+            "greater": [
+              "@length(split(items('Apply_to_each_-_WSAA_WebApp')?['field_1'],'_'))",
+              2
+            ]
           },
           "metadata": {
             "operationMetadataId": "3884dd66-4334-4abb-bcb5-84758ad0ea21"
