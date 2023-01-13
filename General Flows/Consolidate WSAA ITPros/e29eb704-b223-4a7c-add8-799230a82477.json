@@ -12,21 +12,25 @@
     }
   },
   "triggers": {
-    "manual": {
-      "type": "Request",
-      "kind": "Button",
-      "inputs": {
-        "schema": {
-          "type": "object",
-          "properties": {},
-          "required": []
-        }
-      }
+    "Recurrence": {
+      "recurrence": {
+        "frequency": "Month",
+        "interval": 1,
+        "timeZone": "Central Standard Time",
+        "startTime": "2023-02-01T07:15:00Z"
+      },
+      "metadata": {
+        "operationMetadataId": "92a88eea-53b9-4af2-855b-2430a6ae5543"
+      },
+      "type": "Recurrence"
     }
   },
   "actions": {
     "Get_items_-_WSAA_Database": {
       "runAfter": {},
+      "metadata": {
+        "operationMetadataId": "199a255c-faa8-4384-b9b6-4daf33cfd28a"
+      },
       "type": "OpenApiConnection",
       "inputs": {
         "host": {
@@ -40,10 +44,7 @@
           "$filter": "startswith(field_0,'WSAA_')",
           "$top": 5000
         },
-        "authentication": {
-          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-          "type": "Raw"
-        }
+        "authentication": "@parameters('$authentication')"
       }
     },
     "Apply_to_each_-_WSAA_Database": {
@@ -53,6 +54,9 @@
           "actions": {
             "Update_item_-_WSAA_Database": {
               "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "7d8fdb28-86cb-4997-aa85-15879708a02b"
+              },
               "type": "OpenApiConnection",
               "inputs": {
                 "host": {
@@ -66,10 +70,7 @@
                   "id": "@items('Apply_to_each_-_WSAA_Database')?['ID']",
                   "item/field_0": "@{split(items('Apply_to_each_-_WSAA_Database')?['field_0'],'_')?[0]}_@{split(items('Apply_to_each_-_WSAA_Database')?['field_0'],'_')?[1]}"
                 },
-                "authentication": {
-                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-                  "type": "Raw"
-                }
+                "authentication": "@parameters('$authentication')"
               }
             }
           },
@@ -77,18 +78,26 @@
           "expression": {
             "greater": ["@length(split(items('Apply_to_each_-_WSAA_Database')?['field_0'],'_'))", 2]
           },
+          "metadata": {
+            "operationMetadataId": "c34068e8-034a-46e6-b9ed-11ee4a5a4de3"
+          },
           "type": "If"
         }
       },
       "runAfter": {
         "Get_items_-_WSAA_Database": ["Succeeded"]
       },
+      "metadata": {
+        "operationMetadataId": "bacb3787-cc1b-494b-bdb8-3d134f274400"
+      },
       "type": "Foreach"
     },
-
     "Get_items_-_WSAA_System": {
       "runAfter": {
         "Apply_to_each_-_WSAA_Database": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "60734424-55c4-4efc-9775-2e2d3d0daa1b"
       },
       "type": "OpenApiConnection",
       "inputs": {
@@ -103,10 +112,7 @@
           "$filter": "startswith(Title,'WSAA_')",
           "$top": 5000
         },
-        "authentication": {
-          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-          "type": "Raw"
-        }
+        "authentication": "@parameters('$authentication')"
       }
     },
     "Apply_to_each_-_WSAA_System": {
@@ -116,6 +122,9 @@
           "actions": {
             "Update_item_-_WSAA_System": {
               "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "27571423-db9f-4939-b01d-1db63b21bb1a"
+              },
               "type": "OpenApiConnection",
               "inputs": {
                 "host": {
@@ -129,10 +138,7 @@
                   "id": "@items('Apply_to_each_-_WSAA_System')?['ID']",
                   "item/Title": "@{split(items('Apply_to_each_-_WSAA_System')?['Title'],'_')?[0]}_@{split(items('Apply_to_each_-_WSAA_System')?['Title'],'_')?[1]}"
                 },
-                "authentication": {
-                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-                  "type": "Raw"
-                }
+                "authentication": "@parameters('$authentication')"
               }
             }
           },
@@ -140,18 +146,26 @@
           "expression": {
             "greater": ["@length(split(items('Apply_to_each_-_WSAA_System')?['Title'],'_'))", 2]
           },
+          "metadata": {
+            "operationMetadataId": "62a88b40-6a6e-42d2-a4d1-83366c2b1590"
+          },
           "type": "If"
         }
       },
       "runAfter": {
         "Get_items_-_WSAA_System": ["Succeeded"]
       },
+      "metadata": {
+        "operationMetadataId": "4274c7b9-7fc9-4973-9841-de60da1b1148"
+      },
       "type": "Foreach"
     },
-
     "Get_items_-_WSAA_File": {
       "runAfter": {
         "Apply_to_each_-_WSAA_System": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "340b085c-eb11-4e67-9c69-37215c169746"
       },
       "type": "OpenApiConnection",
       "inputs": {
@@ -166,10 +180,7 @@
           "$filter": "startswith(field_1,'WSAA_')",
           "$top": 5000
         },
-        "authentication": {
-          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-          "type": "Raw"
-        }
+        "authentication": "@parameters('$authentication')"
       }
     },
     "Apply_to_each_-_WSAA_File": {
@@ -179,6 +190,9 @@
           "actions": {
             "Update_item_-_WSAA_File": {
               "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "17fa8fd3-7aee-4e95-a633-48a4718d6873"
+              },
               "type": "OpenApiConnection",
               "inputs": {
                 "host": {
@@ -192,10 +206,7 @@
                   "id": "@items('Apply_to_each_-_WSAA_File')?['ID']",
                   "item/field_1": "@{split(items('Apply_to_each_-_WSAA_File')?['field_1'],'_')?[0]}_@{split(items('Apply_to_each_-_WSAA_File')?['field_1'],'_')?[1]}"
                 },
-                "authentication": {
-                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-                  "type": "Raw"
-                }
+                "authentication": "@parameters('$authentication')"
               }
             }
           },
@@ -203,18 +214,26 @@
           "expression": {
             "greater": ["@length(split(items('Apply_to_each_-_WSAA_File')?['field_1'],'_'))", 2]
           },
+          "metadata": {
+            "operationMetadataId": "127a3c59-2530-4e9f-88bc-27a24379ecd4"
+          },
           "type": "If"
         }
       },
       "runAfter": {
         "Get_items_-_WSAA_File": ["Succeeded"]
       },
+      "metadata": {
+        "operationMetadataId": "e339d87b-1d01-414c-8c28-18fd414b3218"
+      },
       "type": "Foreach"
     },
-
     "Get_items_-_WSAA_WebApp": {
       "runAfter": {
         "Apply_to_each_-_WSAA_File": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "034fb7bf-ef62-48f1-b805-ed69dc7ce277"
       },
       "type": "OpenApiConnection",
       "inputs": {
@@ -229,10 +248,7 @@
           "$filter": "startswith(field_1,'WSAA_')",
           "$top": 5000
         },
-        "authentication": {
-          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-          "type": "Raw"
-        }
+        "authentication": "@parameters('$authentication')"
       }
     },
     "Apply_to_each_-_WSAA_WebApp": {
@@ -242,6 +258,9 @@
           "actions": {
             "Update_item_-_WSAA_WebApp": {
               "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "9da1412d-9d03-43e9-897a-29cb98391614"
+              },
               "type": "OpenApiConnection",
               "inputs": {
                 "host": {
@@ -255,10 +274,7 @@
                   "id": "@items('Apply_to_each_-_WSAA_WebApp')?['ID']",
                   "item/field_1": "@{split(items('Apply_to_each_-_WSAA_WebApp')?['field_1'],'_')?[0]}_@{split(items('Apply_to_each_-_WSAA_WebApp')?['field_1'],'_')?[1]}"
                 },
-                "authentication": {
-                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-                  "type": "Raw"
-                }
+                "authentication": "@parameters('$authentication')"
               }
             }
           },
@@ -266,14 +282,19 @@
           "expression": {
             "greater": ["@length(split(items('Apply_to_each_-_WSAA_WebApp')?['field_1'],'_'))", 2]
           },
+          "metadata": {
+            "operationMetadataId": "3884dd66-4334-4abb-bcb5-84758ad0ea21"
+          },
           "type": "If"
         }
       },
       "runAfter": {
         "Get_items_-_WSAA_WebApp": ["Succeeded"]
       },
+      "metadata": {
+        "operationMetadataId": "60058ca4-4ba0-4b7b-a61c-d9e59c5ee32e"
+      },
       "type": "Foreach"
     }
-
   }
 }
