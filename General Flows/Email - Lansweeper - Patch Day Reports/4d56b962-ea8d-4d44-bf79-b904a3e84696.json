@@ -1,0 +1,375 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    },
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    }
+  },
+  "triggers": {
+    "When_a_new_email_arrives_(V3)": {
+      "splitOn": "@triggerOutputs()?['body/value']",
+      "metadata": {
+        "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAhZMjBAAA=": "Lansweeper",
+        "operationMetadataId": "078b59ea-c579-4bd0-bc5c-8380490ec5d5"
+      },
+      "type": "OpenApiConnectionNotification",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+          "connectionName": "shared_office365",
+          "operationId": "OnNewEmailV3"
+        },
+        "parameters": {
+          "folderPath": "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAhZMjBAAA=",
+          "includeAttachments": true,
+          "subjectFilter": "[REP] ELE - Servers by Patch Day",
+          "importance": "Any",
+          "fetchOnlyWithAttachment": true
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    }
+  },
+  "actions": {
+    "Get_Patch_Tuesday_date": {
+      "runAfter": {
+        "Initialize_variable_-_patchDayOffset": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "5ac72102-3880-44d9-a219-0a7fee52a076"
+      },
+      "type": "Compose",
+      "inputs": "@addDays(startOfMonth(utcNow()),add(sub(7,dayOfWeek(startOfMonth(utcNow()))),2))"
+    },
+    "Apply_to_each": {
+      "foreach": "@triggerOutputs()?['body/attachments']",
+      "actions": {
+        "Create_file": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "5f9c72bb-a134-4b8a-a3c8-ac18ff39692f"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "CreateFile"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/WSAA",
+              "folderPath": "/Shared Documents/Lansweeper Automated Reports",
+              "name": "@items('Apply_to_each')?['name']",
+              "body": "@items('Apply_to_each')?['contentBytes']"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runtimeConfiguration": {
+            "contentTransfer": {
+              "transferMode": "Chunked"
+            }
+          }
+        },
+        "Create_table": {
+          "runAfter": {
+            "Delay": ["Succeeded"]
+          },
+          "metadata": {
+            "01T7UD4RUWHGRKA5AJJVCKV3A7NVPFAYXT": "/Lansweeper Automated Reports/ELE - Servers by Patch Day.xlsx",
+            "operationMetadataId": "3df5bc55-4613-4fe5-b172-a6187173ba81",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "groups/963a21d2-3f53-4093-9548-53af3ebff789",
+              "drive": "b!iI6tVTVxr0-G3xg8riapkbMjG6DTm9JIlX1IgeQyX7izu3rWEVRSRb2TrOuasJod",
+              "file": "/Lansweeper Automated Reports/@{items('Apply_to_each')?['name']}",
+              "table/Range": "a1:g300",
+              "table/TableName": "Table1"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "List_rows_present_in_a_table": {
+          "runAfter": {
+            "Delay_2": ["Succeeded"]
+          },
+          "metadata": {
+            "01T7UD4RUWHGRKA5AJJVCKV3A7NVPFAYXT": "/Lansweeper Automated Reports/ELE - Servers by Patch Day.xlsx",
+            "operationMetadataId": "ef31a62f-48bb-4268-b183-253b57a76c09",
+            "tableId": "Table1"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/963a21d2-3f53-4093-9548-53af3ebff789",
+              "drive": "b!iI6tVTVxr0-G3xg8riapkbMjG6DTm9JIlX1IgeQyX7izu3rWEVRSRb2TrOuasJod",
+              "file": "/Lansweeper Automated Reports/@{items('Apply_to_each')?['name']}",
+              "table": "Table1",
+              "$filter": "AssetName ne ''",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_2": {
+          "foreach": "@outputs('List_rows_present_in_a_table')?['body/value']",
+          "actions": {
+            "Switch": {
+              "runAfter": {},
+              "cases": {
+                "Case_-_Tue": {
+                  "case": "Tue",
+                  "actions": {
+                    "Set_variable_-_Tue": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "patchDayOffset",
+                        "value": 0
+                      }
+                    }
+                  }
+                },
+                "Case_-_Wed": {
+                  "case": "Wed",
+                  "actions": {
+                    "Set_variable_-_Wed": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "patchDayOffset",
+                        "value": 1
+                      }
+                    }
+                  }
+                },
+                "Case_-_Thu": {
+                  "case": "Thu",
+                  "actions": {
+                    "Set_variable_-_Thu": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "patchDayOffset",
+                        "value": 2
+                      }
+                    }
+                  }
+                },
+                "Case_-_Fri": {
+                  "case": "Fri",
+                  "actions": {
+                    "Set_variable_-_Fri": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "patchDayOffset",
+                        "value": 3
+                      }
+                    }
+                  }
+                },
+                "Case_-_Sat": {
+                  "case": "Sat",
+                  "actions": {
+                    "Set_variable_-_Sat": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "patchDayOffset",
+                        "value": 4
+                      }
+                    }
+                  }
+                },
+                "Case_-_Sun": {
+                  "case": "Sun",
+                  "actions": {
+                    "Set_variable_-_Sun": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "patchDayOffset",
+                        "value": 5
+                      }
+                    }
+                  }
+                },
+                "Case_-_Mon": {
+                  "case": "Mon",
+                  "actions": {
+                    "Set_variable_-_Mon": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "patchDayOffset",
+                        "value": 6
+                      }
+                    }
+                  }
+                }
+              },
+              "default": {
+                "actions": {}
+              },
+              "expression": "@substring(items('Apply_to_each_2')?['PatchingDay'],0,3)",
+              "metadata": {
+                "operationMetadataId": "ad903196-1fea-4dff-9f92-b8b62e6c80b9"
+              },
+              "type": "Switch"
+            },
+            "Create_item": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "2b1938e3-a018-41da-ab36-b4b43356e081"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/WSAA",
+                  "table": "ec86e780-7e8f-40b5-87e7-d281fc2690a2",
+                  "item/Title": "@items('Apply_to_each_2')?['AssetName']",
+                  "item/field_0": "@substring(outputs('Get_Patch_Tuesday_date'),0,7)",
+                  "item/field_1": "@items('Apply_to_each_2')?['IT Pros']",
+                  "item/field_3": "@items('Apply_to_each_2')?['FunctionalLevel']",
+                  "item/field_4": "@items('Apply_to_each_2')?['OperatingSystem']",
+                  "item/field_5": "@items('Apply_to_each_2')?['UptimeDays']",
+                  "item/field_6": "@items('Apply_to_each_2')?['PatchingDay']",
+                  "item/field_7": "@items('Apply_to_each_2')?['Lastseen']",
+                  "item/PatchSched": "@formatDateTime(addDays(outputs('Get_Patch_Tuesday_date'),variables('patchDayOffset')))"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "List_rows_present_in_a_table": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "540075bf-35c5-4903-93f7-43a2c4cbce33"
+          },
+          "type": "Foreach"
+        },
+        "Delay": {
+          "runAfter": {
+            "Create_file": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "a4a880d4-388d-4503-b02a-d9c05db751ce"
+          },
+          "type": "Wait",
+          "inputs": {
+            "interval": {
+              "count": 30,
+              "unit": "Second"
+            }
+          }
+        },
+        "Delay_2": {
+          "runAfter": {
+            "Create_table": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "17cd616c-c5f1-4262-a577-2a09eeed864f"
+          },
+          "type": "Wait",
+          "inputs": {
+            "interval": {
+              "count": 15,
+              "unit": "Second"
+            }
+          }
+        }
+      },
+      "runAfter": {
+        "Get_Patch_Tuesday_date": ["Succeeded"]
+      },
+
+      "metadata": {
+        "operationMetadataId": "197dd2fb-b9d0-462f-aa36-f7f9530bb5a6"
+      },
+      "type": "Foreach"
+    },
+    "Initialize_variable_-_patchDayOffset": {
+      "runAfter": {
+        "Mark_as_read_or_unread_(V3)": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "2d56d668-6c44-4df4-afdb-df814bb07abf"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [{
+          "name": "patchDayOffset",
+          "type": "integer",
+          "value": 0
+        }]
+      }
+    },
+    "Delete_file": {
+      "runAfter": {
+        "Apply_to_each": ["Succeeded"]
+      },
+      "metadata": {
+        "%252fShared%2bDocuments%252fLansweeper%2bAutomated%2bReports%252fELE%2b-%2bServers%2bby%2bPatch%2bDay.xlsx": "/Shared Documents/Lansweeper Automated Reports/ELE - Servers by Patch Day.xlsx",
+        "operationMetadataId": "53184975-3e01-4e20-86e4-0077af2d3902"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "DeleteFile"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/WSAA",
+          "id": "%252fShared%2bDocuments%252fLansweeper%2bAutomated%2bReports%252fELE%2b-%2bServers%2bby%2bPatch%2bDay.xlsx"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "Mark_as_read_or_unread_(V3)": {
+      "runAfter": {},
+      "metadata": {
+        "operationMetadataId": "48d3828a-d2c3-4568-983d-fecb4b875b70"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+          "connectionName": "shared_office365",
+          "operationId": "MarkAsRead_V3"
+        },
+        "parameters": {
+          "messageId": "@triggerOutputs()?['body/id']",
+          "mailboxAddress": "eepps2@illinois.edu;",
+          "body/isRead": true
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    }
+  }
+}
