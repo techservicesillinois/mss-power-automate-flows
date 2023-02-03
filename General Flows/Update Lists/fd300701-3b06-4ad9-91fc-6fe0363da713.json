@@ -1404,9 +1404,90 @@
       },
       "type": "If"
     },
-    "99_Refresh_a_dataset": {
+    "13_Condition_-_Azure_Charges": {
+      "actions": {
+        "Create_table_-_Azure_Charges": {
+          "runAfter": {},
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@outputs('03_Get_file_metadata')?['body/Identifier']",
+              "table/Range": "a1:a100",
+              "table/TableName": "ExportTable"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "List_rows_present_in_a_table_-_Azure_Charges": {
+          "runAfter": {
+            "Create_table_-_Azure_Charges": ["Succeeded"]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@outputs('03_Get_file_metadata')?['body/Identifier']",
+              "table": "@outputs('Create_table_-_Azure_Charges')?['body/name']",
+              "$filter": "ServiceName ne ''",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_Azure_Charges": {
+          "foreach": "@outputs('List_rows_present_in_a_table_-_Azure_Charges')?['body/value']",
+          "actions": {
+            "Create_item_-_Azure_Charges": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "78a76bf5-60db-48a3-9523-b0709e3eadc7",
+                  "item/Title": "@items('Apply_to_each_-_Azure_Charges')?['ServiceName']",
+                  "item/field_0": "@substring(items('Apply_to_each_-_Azure_Charges')?['UsageDate'],0,7)",
+                  "item/field_3": "@items('Apply_to_each_-_Azure_Charges')?['CostUSD']",
+                  "item/Subscription": "urbana-techsvc-mss-em"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "List_rows_present_in_a_table_-_Azure_Charges": ["Succeeded"]
+          },
+          "type": "Foreach"
+        }
+      },
       "runAfter": {
         "12_Condition_-_WSAA_Database_storage": ["Succeeded"]
+      },
+      "expression": {
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "CostManagement_"]
+      },
+      "type": "If"
+    },
+    "99_Refresh_a_dataset": {
+      "runAfter": {
+        "13_Condition_-_Azure_Charges": ["Succeeded"]
       },
       "metadata": {
         "operationMetadataId": "d7f38a48-214d-4fc5-9002-5407b0197e0d"
