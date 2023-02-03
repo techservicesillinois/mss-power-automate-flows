@@ -321,11 +321,13 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{
-          "name": "patchDayOffset",
-          "type": "integer",
-          "value": 0
-        }]
+        "variables": [
+          {
+            "name": "patchDayOffset",
+            "type": "integer",
+            "value": 0
+          }
+        ]
       }
     },
     "Delete_file": {
