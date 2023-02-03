@@ -24,7 +24,7 @@
         "parameters": {
           "folderPath": "Id::AAMkAGNkOGJkNTBkLWVmZGMtNDk4OC1iYjU5LWY5YTY2OGU5Njc1NgAuAAAAAAAVWMo3cB7gQYG-436vMAefAQBuv66I5cY0T4CwDetTMj3sAAAhZMjBAAA=",
           "includeAttachments": true,
-          "subjectFilter": "[REP] ELE - Billing - WebApp Hosting",
+          "subjectFilter": "[REP] ELE - Billing - Database Hosting File Storage",
           "importance": "Any",
           "fetchOnlyWithAttachment": true
         },
@@ -51,7 +51,7 @@
             "parameters": {
               "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
               "folderPath": "/Shared Documents/inbox",
-              "name": "ls-webahost_@{variables('rowCount')}_@{items('Apply_to_each')?['lastModifiedDateTime']}.xlsx",
+              "name": "ls-database-fs_@{variables('rowCount')}_@{items('Apply_to_each')?['lastModifiedDateTime']}.xlsx",
               "body": "@items('Apply_to_each')?['contentBytes']"
             },
             "authentication": "@parameters('$authentication')"
@@ -97,7 +97,7 @@
           {
             "name": "rowCount",
             "type": "string",
-            "value": "@{trim(substring(triggerOutputs()?['body/body'],177,4))}"
+            "value": "@{trim(substring(triggerOutputs()?['body/body'],179,4))}"
           }
         ]
       }

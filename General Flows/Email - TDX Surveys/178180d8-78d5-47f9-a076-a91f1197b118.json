@@ -50,7 +50,7 @@
             },
             "parameters": {
               "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-              "folderPath": "/Shared Documents/Test",
+              "folderPath": "/Shared Documents/inbox",
               "name": "tdx-survey-@{items('Apply_to_each')?['lastModifiedDateTime']}.xlsx",
               "body": "@items('Apply_to_each')?['contentBytes']"
             },
