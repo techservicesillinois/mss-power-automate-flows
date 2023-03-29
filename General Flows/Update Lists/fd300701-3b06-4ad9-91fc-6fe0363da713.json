@@ -15,11 +15,10 @@
     "01_When_a_file_is_created_in_a_folder": {
       "recurrence": {
         "frequency": "Minute",
-        "interval": 3
+        "interval": 5
       },
       "metadata": {
-        "%252fShared%2bDocuments%252fTest": "/Shared Documents/Test",
-        "operationMetadataId": "481a676d-5eba-47e6-b04d-91ac07eec610"
+        "operationMetadataId": "5f475d6c-7f0c-4c5e-80e2-7e15cf6df7d4"
       },
       "type": "OpenApiConnection",
       "inputs": {
@@ -30,7 +29,7 @@
         },
         "parameters": {
           "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-          "folderId": "%252fShared%2bDocuments%252fTest",
+          "folderId": "%252fShared%2bDocuments%252finbox",
           "inferContentType": true
         },
         "authentication": "@parameters('$authentication')"
@@ -41,7 +40,7 @@
     "02_Initialize_variable_-_rowCount": {
       "runAfter": {},
       "metadata": {
-        "operationMetadataId": "cfcc1823-e748-40d8-9d93-cb270fddadc4"
+        "operationMetadataId": "595f0bd4-d77e-490e-9822-d6bd6a5c192e"
       },
       "type": "InitializeVariable",
       "inputs": {
@@ -52,12 +51,12 @@
         }]
       }
     },
-    "02b_Initialize_variable_-_monthYear": {
+    "02_Initialize_variable_-_monthYear": {
       "runAfter": {
         "02_Initialize_variable_-_rowCount": ["Succeeded"]
       },
       "metadata": {
-        "operationMetadataId": "61f5a9c9-3526-4e5d-b13d-55016b027e49"
+        "operationMetadataId": "192d5cfa-af68-447e-83b7-9ad7bbc09e26"
       },
       "type": "InitializeVariable",
       "inputs": {
@@ -67,12 +66,12 @@
         }]
       }
     },
-    "02c_Initialize_variable_-_itPros": {
+    "02_Initialize_variable_-_itPros": {
       "runAfter": {
-        "02b_Initialize_variable_-_monthYear": ["Succeeded"]
+        "02_Initialize_variable_-_monthYear": ["Succeeded"]
       },
       "metadata": {
-        "operationMetadataId": "d846af24-8782-4495-9682-9b30443c21a7"
+        "operationMetadataId": "65def80d-8990-4304-baa2-e2f24ae2a850"
       },
       "type": "InitializeVariable",
       "inputs": {
@@ -82,12 +81,74 @@
         }]
       }
     },
-    "03_Get_file_metadata": {
+    "02_Initialize_variable_-_lineBreak": {
       "runAfter": {
-        "02c_Initialize_variable_-_itPros": ["Succeeded"]
+        "02_Initialize_variable_-_itPros": ["Succeeded"]
       },
       "metadata": {
-        "operationMetadataId": "5e3337f8-7eaa-4c46-82d6-05fe7a0028f0"
+        "operationMetadataId": "e235bb04-a6d4-49d6-a9fd-61c464ec2e13"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [{
+          "name": "lineBreak",
+          "type": "string",
+          "value": "\n"
+        }]
+      }
+    },
+    "02_Initialize_variable_-_csvRows": {
+      "runAfter": {
+        "02_Initialize_variable_-_lineBreak": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "6b3ab166-6d8a-410f-a761-0c176c7ec5d6"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [{
+          "name": "csvRows",
+          "type": "array"
+        }]
+      }
+    },
+    "02_Initialize_variable_-_rowCells": {
+      "runAfter": {
+        "02_Initialize_variable_-_csvRows": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "9fc67b0a-cf01-4069-8a2c-7be41fe2ddee"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [{
+          "name": "rowCells",
+          "type": "array"
+        }]
+      }
+    },
+    "02_Initialize_variable_-_fileLocked": {
+      "runAfter": {
+        "02_Initialize_variable_-_rowCells": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "43af5f89-0739-43a1-8b98-d88d5550334a"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [{
+          "name": "fileLocked",
+          "type": "boolean",
+          "value": true
+        }]
+      }
+    },
+    "03_Get_file_metadata": {
+      "runAfter": {
+        "02_Initialize_variable_-_fileLocked": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "4be93abf-9014-4622-b695-1198a2c18823"
       },
       "type": "OpenApiConnection",
       "inputs": {
@@ -103,12 +164,12 @@
         "authentication": "@parameters('$authentication')"
       }
     },
-    "03b_Initialize_variable_-_fileName": {
+    "03_Initialize_variable_-_fileName": {
       "runAfter": {
         "03_Get_file_metadata": ["Succeeded"]
       },
       "metadata": {
-        "operationMetadataId": "5c77d46f-e2b4-4a3f-aa41-7cbaf70181bb"
+        "operationMetadataId": "582c2d83-3f50-468f-884d-6afd378394d8"
       },
       "type": "InitializeVariable",
       "inputs": {
@@ -124,7 +185,7 @@
         "List_rows_-_TDX_Surveys": {
           "runAfter": {},
           "metadata": {
-            "operationMetadataId": "754a3e30-8e99-4ca1-916e-8a4163469aa2",
+            "operationMetadataId": "c8ab5d45-57e9-4cf4-8265-6a83389a99c4",
             "tableId": "Export_Table"
           },
           "type": "OpenApiConnection",
@@ -150,7 +211,7 @@
             "Create_item": {
               "runAfter": {},
               "metadata": {
-                "operationMetadataId": "d490737e-481d-4e75-98be-8f9ba2429c11"
+                "operationMetadataId": "36c1b93d-8e99-40c8-bab1-45505ce7bff1"
               },
               "type": "OpenApiConnection",
               "inputs": {
@@ -177,19 +238,19 @@
             "List_rows_-_TDX_Surveys": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "1bd3b813-9aa8-4f04-a3d9-436d52b7b1c1"
+            "operationMetadataId": "7338bb29-ab35-4e0d-aafd-9db56db74606"
           },
           "type": "Foreach"
         }
       },
       "runAfter": {
-        "03b_Initialize_variable_-_fileName": ["Succeeded"]
+        "03_Initialize_variable_-_fileName": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "tdx-survey-"]
       },
       "metadata": {
-        "operationMetadataId": "6a1bc7c5-de89-40d1-bb66-fee6b90cf9d5"
+        "operationMetadataId": "431877e2-7402-4436-bcb0-14354b2c048c"
       },
       "type": "If"
     },
@@ -279,9 +340,8 @@
             "Create_table_-_WSAA_System_Admin": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "5d4c8f85-555b-41e8-8e84-199e8411b860",
-            "tableId": "Export_Table",
-            "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-sysadmin-299_2022-05-16T22_22_31+00_00.xlsx"
+            "operationMetadataId": "0fc357e3-8ee1-431f-93cd-8db0faa9db23",
+            "tableId": "Export_Table"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -303,7 +363,7 @@
         "Set_variable_-_WSAA_System_Admin": {
           "runAfter": {},
           "metadata": {
-            "operationMetadataId": "c412c373-10eb-4514-b8b7-0d661b66bdc7"
+            "operationMetadataId": "96bfa37b-8299-4d28-9e12-0d97cea8353b"
           },
           "type": "SetVariable",
           "inputs": {
@@ -316,7 +376,7 @@
             "Set_variable_-_WSAA_System_Admin": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "ccf46b7d-bbce-4634-9ce3-7c3542479913"
+            "operationMetadataId": "6fbc0143-412c-45e6-9b88-14022ca4effc"
           },
           "type": "IncrementVariable",
           "inputs": {
@@ -329,7 +389,7 @@
             "Set_variable_-_WSAA_System_Admin_-_monthYear": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "0a332193-7515-485d-b1ad-b95df9cc2469",
+            "operationMetadataId": "453e19d9-a14b-448b-8ee9-e3488b4dc333",
             "tableId": null
           },
           "type": "OpenApiConnection",
@@ -355,7 +415,7 @@
             "Create_item_-_WSAA_System_Admin": {
               "runAfter": {},
               "metadata": {
-                "operationMetadataId": "acd97d6f-34a0-49ac-a6ce-6243a8df62b4"
+                "operationMetadataId": "7700935a-afe7-4355-949b-f42d636e425a"
               },
               "type": "OpenApiConnection",
               "inputs": {
@@ -388,7 +448,7 @@
             "List_rows_-_WSAA_System_Admin": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "7b99e456-3a2a-4291-8941-61c27c946ad6"
+            "operationMetadataId": "d154638b-7560-4fae-bb2a-f77e8614b59c"
           },
           "type": "Foreach"
         },
@@ -397,7 +457,7 @@
             "Increment_variable_-_WSAA_System_Admin": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "c626fa9c-6686-4b17-b98e-9041ea937b5f"
+            "operationMetadataId": "74d9e87b-0590-470b-a972-ab8df44ecb76"
           },
           "type": "SetVariable",
           "inputs": {
@@ -413,7 +473,7 @@
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-sysadmin_"]
       },
       "metadata": {
-        "operationMetadataId": "6e071314-aea9-484a-9266-2229800f406d"
+        "operationMetadataId": "4b4ac23c-cc53-451d-9114-fcccd5340cd7"
       },
       "type": "If"
     },
@@ -422,7 +482,7 @@
         "Set_variable_-_WSAA_Database": {
           "runAfter": {},
           "metadata": {
-            "operationMetadataId": "b39f4a34-6244-4ae8-ab50-275d4962f435"
+            "operationMetadataId": "9254c123-e287-49a3-b5e3-815011ecd774"
           },
           "type": "SetVariable",
           "inputs": {
@@ -435,7 +495,7 @@
             "Set_variable_-_WSAA_Database": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "12485283-835d-43a0-b596-aa02f1bf236c"
+            "operationMetadataId": "860922e4-5bd8-47a3-84b8-74bcb7bf50da"
           },
           "type": "IncrementVariable",
           "inputs": {
@@ -448,7 +508,7 @@
             "Increment_variable_-_WSAA_Database": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "0953ebed-d200-45e4-b68e-c2b80a15362a"
+            "operationMetadataId": "7ec7a676-8af0-4c80-a953-49733d6ef31b"
           },
           "type": "SetVariable",
           "inputs": {
@@ -461,8 +521,8 @@
             "Set_variable_-_WSAA_Database_-_monthYear": ["Succeeded"]
           },
           "metadata": {
-            "tableId": null,
-            "operationMetadataId": "4dea131f-33e9-4d08-9190-4d1af5d94401"
+            "operationMetadataId": "e129b229-28c4-4ecd-b4cf-066eda374a17",
+            "tableId": null
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -486,9 +546,8 @@
             "Create_table_-_WSAA_Database": ["Succeeded"]
           },
           "metadata": {
-            "tableId": "Export_Table",
-            "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-database_37_2022-07-01T12_03_29+00_00.xlsx",
-            "operationMetadataId": "218a5b01-b60e-4706-aabd-56a0dbb3b028"
+            "operationMetadataId": "ac3bb910-ceb3-4ec8-842f-865bd779d440",
+            "tableId": "Export_Table"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -514,7 +573,7 @@
                 "Get_items_from_WSAA_Database_Crosswalk": {
                   "runAfter": {},
                   "metadata": {
-                    "operationMetadataId": "00698226-9fc0-44fb-b465-4a33fda6b6b5"
+                    "operationMetadataId": "a0f13629-3b0f-40b1-9038-b4c2cc79b309"
                   },
                   "type": "OpenApiConnection",
                   "inputs": {
@@ -537,7 +596,7 @@
                     "Set_variable_-_WSAA_Database_-_itPros": {
                       "runAfter": {},
                       "metadata": {
-                        "operationMetadataId": "3cd667c1-8af4-405a-a492-9746fcd4a0b8"
+                        "operationMetadataId": "56f7c155-69d7-4010-b61e-0620dac4a907"
                       },
                       "type": "SetVariable",
                       "inputs": {
@@ -550,7 +609,7 @@
                     "Get_items_from_WSAA_Database_Crosswalk": ["Succeeded"]
                   },
                   "metadata": {
-                    "operationMetadataId": "de83be85-56d9-446c-b649-a0bb3dd1a342"
+                    "operationMetadataId": "9e3d45b3-b14e-45dd-a088-f74de7f82a3d"
                   },
                   "type": "Foreach"
                 }
@@ -561,7 +620,7 @@
                   "Set_variable_-_WSAA_Database_-_itPros_-_default": {
                     "runAfter": {},
                     "metadata": {
-                      "operationMetadataId": "9a612477-2591-47a7-a81d-d1655067ce83"
+                      "operationMetadataId": "5dcc1db8-ef82-45d4-811e-b04807f87cca"
                     },
                     "type": "SetVariable",
                     "inputs": {
@@ -577,7 +636,7 @@
                 }
               },
               "metadata": {
-                "operationMetadataId": "9b06db8a-b19c-4f4f-b4d6-c36e1c9e0bdb"
+                "operationMetadataId": "5b1e1899-866b-493c-bd7d-9fec46347cc5"
               },
               "type": "If"
             },
@@ -586,7 +645,7 @@
                 "Condition_-_WSAA_Database_Cluster": ["Succeeded"]
               },
               "metadata": {
-                "operationMetadataId": "79d92dc7-8ab1-4787-a3d1-177b497b58dc"
+                "operationMetadataId": "e5e602a0-7329-492d-b67f-06c209ac4b44"
               },
               "type": "OpenApiConnection",
               "inputs": {
@@ -617,7 +676,7 @@
             "List_rows_-_WSAA_Database": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "38fcc699-8e7b-4d23-af5d-b58a9c3f4b9a"
+            "operationMetadataId": "670207ce-6783-409e-b421-d37032b913ca"
           },
           "type": "Foreach"
         }
@@ -629,7 +688,7 @@
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-database_"]
       },
       "metadata": {
-        "operationMetadataId": "a853e3f8-16a1-42ad-8d71-9379e5f69258"
+        "operationMetadataId": "65aa756b-7a50-43ee-ac31-1f8c7a31b60b"
       },
       "type": "If"
     },
@@ -640,9 +699,8 @@
             "Create_table_-_WSAA_File_Storage": ["Succeeded"]
           },
           "metadata": {
-            "tableId": "Export_Table",
-            "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-filestor_126_2022-07-01T12_03_12+00_00.xlsx",
-            "operationMetadataId": "80adb309-f2ca-4196-858c-498fa7f60412"
+            "operationMetadataId": "625c3018-5b09-4db5-94d6-a6ba4cb9fbf2",
+            "tableId": "Export_Table"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -664,7 +722,7 @@
         "Set_variable_-_WSAA_File_Storage": {
           "runAfter": {},
           "metadata": {
-            "operationMetadataId": "4fea2097-f4b1-47b2-ac7a-abeb311f022c"
+            "operationMetadataId": "1b237986-c1de-4089-b1f7-b706eca7c55d"
           },
           "type": "SetVariable",
           "inputs": {
@@ -677,7 +735,7 @@
             "Set_variable_-_WSAA_File_Storage": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "a0e2fc5d-48ab-4e38-8307-a414f090bb77"
+            "operationMetadataId": "e5a46525-6973-4711-a9ff-a548d7c2df7d"
           },
           "type": "IncrementVariable",
           "inputs": {
@@ -690,8 +748,8 @@
             "Set_variable_-_WSAA_File_Storage_-_monthYear": ["Succeeded"]
           },
           "metadata": {
-            "tableId": null,
-            "operationMetadataId": "3946db56-f445-4437-bb79-c511da88e8e1"
+            "operationMetadataId": "86f39f44-1c28-4172-8ff1-ad55ec8c67a9",
+            "tableId": null
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -716,7 +774,7 @@
             "Create_item_-_WSAA_File_Storage": {
               "runAfter": {},
               "metadata": {
-                "operationMetadataId": "55bf422c-9d86-469b-ba76-726a3b96981b"
+                "operationMetadataId": "293c83a1-5c5d-440c-9825-132efef26369"
               },
               "type": "OpenApiConnection",
               "inputs": {
@@ -745,7 +803,7 @@
             "List_rows_-_WSAA_File_Storage": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "bc49b611-b826-48c5-b7bb-fbae807218be"
+            "operationMetadataId": "7ff1afcf-fdbb-477c-ad90-7d7d369c0b63"
           },
           "type": "Foreach"
         },
@@ -754,7 +812,7 @@
             "Increment_variable_-_WSAA_File_Storage": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "d80e763b-6ca9-4f71-b8bf-83a68667673e"
+            "operationMetadataId": "bf29c7ac-a74b-47db-8607-7fd970051400"
           },
           "type": "SetVariable",
           "inputs": {
@@ -770,7 +828,7 @@
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-filestor_"]
       },
       "metadata": {
-        "operationMetadataId": "0a5f82c0-d9ca-4b26-82df-199d96b42fb0"
+        "operationMetadataId": "ebb1e792-cf49-4111-979d-ad5788f473cf"
       },
       "type": "If"
     },
@@ -781,9 +839,8 @@
             "Create_table_-_WSAA_WebApp": ["Succeeded"]
           },
           "metadata": {
-            "tableId": "Export_Table",
-            "017W2FLZTUU5GJ4B62OJF3RGWKPMACEUZH": "/Test/ls-webahost_64_2022-07-01T12_03_10+00_00.xlsx",
-            "operationMetadataId": "f23794d4-6372-4380-a721-0d0e0d12cf39"
+            "operationMetadataId": "5d6f9d7f-7ca4-49bb-9767-85c840302650",
+            "tableId": "Export_Table"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -805,7 +862,7 @@
         "Set_variable_-_WSAA_WebApp": {
           "runAfter": {},
           "metadata": {
-            "operationMetadataId": "07203352-2e05-4cb0-bac4-9ea0108c612b"
+            "operationMetadataId": "22bc436c-dc27-4edb-bada-64ac8a157fcd"
           },
           "type": "SetVariable",
           "inputs": {
@@ -818,7 +875,7 @@
             "Set_variable_-_WSAA_WebApp": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "9a2c1927-4567-4aa1-a9c0-a73f70445d2c"
+            "operationMetadataId": "5f2c43bd-4edf-466f-9660-4b277a214520"
           },
           "type": "IncrementVariable",
           "inputs": {
@@ -831,8 +888,8 @@
             "Set_variable_-_WSAA_WebApp_-_monthYear": ["Succeeded"]
           },
           "metadata": {
-            "tableId": null,
-            "operationMetadataId": "21c3d357-89e8-4034-9e69-73f8edb6221f"
+            "operationMetadataId": "c0abdc40-1e6a-48ce-8679-f6f370468505",
+            "tableId": null
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -857,7 +914,7 @@
             "Create_item_-_WSAA_WebApp": {
               "runAfter": {},
               "metadata": {
-                "operationMetadataId": "17bbe597-1db5-4627-bff1-3fd662b55493"
+                "operationMetadataId": "ecfc872b-d64d-44b1-a082-5845a71cd766"
               },
               "type": "OpenApiConnection",
               "inputs": {
@@ -886,7 +943,7 @@
             "List_rows_-_WSAA_WebApp": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "12f013a7-d863-4f6d-91b0-ba2291fcf84c"
+            "operationMetadataId": "d1092687-2ef8-4904-83a1-e6123b26c701"
           },
           "type": "Foreach"
         },
@@ -895,7 +952,7 @@
             "Increment_variable_-_WSAA_WebApp": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "e896eec3-4a5d-429f-a27b-ce9caeb5bbe5"
+            "operationMetadataId": "8e075a8b-35a9-46c4-aae8-c64083596023"
           },
           "type": "SetVariable",
           "inputs": {
@@ -911,7 +968,7 @@
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-webahost_"]
       },
       "metadata": {
-        "operationMetadataId": "54404af7-9aa8-4311-8ac0-06348ccf087d"
+        "operationMetadataId": "9c424dbc-62b9-4556-8774-c390e8e238cd"
       },
       "type": "If"
     },
@@ -920,7 +977,7 @@
         "Create_table_-_SMG_System_Admin": {
           "runAfter": {},
           "metadata": {
-            "operationMetadataId": "d6825fb6-99df-43e3-b255-12c26c84368c",
+            "operationMetadataId": "64d868b3-18d6-48b4-a9d7-563883b88900",
             "tableId": null
           },
           "type": "OpenApiConnection",
@@ -947,7 +1004,7 @@
             "Create_item_-_SMG_System_Admin": {
               "runAfter": {},
               "metadata": {
-                "operationMetadataId": "58090706-7f75-41d8-9689-fe98ec67a86d"
+                "operationMetadataId": "3f56075f-3666-4769-897c-212141d53609"
               },
               "type": "OpenApiConnection",
               "inputs": {
@@ -973,7 +1030,7 @@
             "Set_variable": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "4025cf1b-a937-456d-af70-16920caf2c49"
+            "operationMetadataId": "5e16f5b6-7fc1-4f3d-8d79-b3c068cb1141"
           },
           "type": "Foreach"
         },
@@ -982,7 +1039,7 @@
             "Filter_array": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "7c1fd266-dbb5-42a7-aa1f-e3321bfbc75f"
+            "operationMetadataId": "bfba90ed-ded7-4cbc-bc76-a1925863b32b"
           },
           "type": "SetVariable",
           "inputs": {
@@ -995,7 +1052,7 @@
             "Apply_to_each_-_SMG_System_Admin": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "b3426625-4fb8-4843-ac14-1b7729a2dbe2"
+            "operationMetadataId": "8f9a8c2c-15ad-473a-b070-7c8256bea03c"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -1021,7 +1078,7 @@
                 "Update_item": {
                   "runAfter": {},
                   "metadata": {
-                    "operationMetadataId": "bd0c9b18-c164-4443-b584-189258ca5947"
+                    "operationMetadataId": "1d3dd0b3-0e46-4e68-98e0-cdee7521a9f9"
                   },
                   "type": "OpenApiConnection",
                   "inputs": {
@@ -1046,7 +1103,7 @@
                   "Get_items_from_Crosswalk": {
                     "runAfter": {},
                     "metadata": {
-                      "operationMetadataId": "9e9afdfd-b2d4-487f-9ea5-d53d8ccdbb86"
+                      "operationMetadataId": "b72d8dbb-3088-4697-8309-9f3e26c2fa6f"
                     },
                     "type": "OpenApiConnection",
                     "inputs": {
@@ -1069,7 +1126,7 @@
                       "Update_item_2": {
                         "runAfter": {},
                         "metadata": {
-                          "operationMetadataId": "60a63695-d113-4beb-b67c-8db3a8465ce1"
+                          "operationMetadataId": "ed7e1e6f-149c-48e3-83f2-a2de60416d9d"
                         },
                         "type": "OpenApiConnection",
                         "inputs": {
@@ -1092,7 +1149,7 @@
                       "Get_items_from_Crosswalk": ["Succeeded"]
                     },
                     "metadata": {
-                      "operationMetadataId": "5d41849b-6ed4-4716-9a5c-7d07094976ad"
+                      "operationMetadataId": "289cb4ce-43a7-47ef-b0f5-af85acaa1f26"
                     },
                     "type": "Foreach"
                   }
@@ -1102,7 +1159,7 @@
                 "contains": ["@items('12_Apply_to_each_-_SMG_departments')?['field_3']", "_"]
               },
               "metadata": {
-                "operationMetadataId": "fe9ae04a-ecc1-4e27-9a05-7b5d9e834659"
+                "operationMetadataId": "fb748f1d-b8a0-4ed7-b40b-93a2b431ff9c"
               },
               "type": "If"
             }
@@ -1111,7 +1168,7 @@
             "11_Get_items_-_SMG_departments": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "91f136fa-5d2d-4947-9d1c-a6a52b63c693"
+            "operationMetadataId": "52422942-1750-46bf-a78b-bf6d7c0e63f0"
           },
           "type": "Foreach"
         },
@@ -1120,7 +1177,7 @@
             "Create_table_-_SMG_System_Admin": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "a4c5cae9-04d5-409f-8ff7-228371e90d0a",
+            "operationMetadataId": "5d7b4871-530e-4b0f-a8c6-d7e747e88c17",
             "tableId": "Table1"
           },
           "type": "OpenApiConnection",
@@ -1145,7 +1202,7 @@
             "List_Rows_-_SMG_System_Admin": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "fbeb084a-0a43-4715-b1b0-25748f78e87f"
+            "operationMetadataId": "02f87cef-ff5c-466f-8b3a-71e9f9481c76"
           },
           "type": "Query",
           "inputs": {
@@ -1161,7 +1218,131 @@
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "smg_"]
       },
       "metadata": {
-        "operationMetadataId": "0b5be9b5-4c32-438f-bf0f-8e042b5341c9"
+        "operationMetadataId": "4339773b-ca88-4e32-bf77-35a578c87424"
+      },
+      "type": "If"
+    },
+    "10_Condition_-_SMG_Daily_System_Admin": {
+      "actions": {
+        "Create_table_-_SMG_Daily_System_Admin": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "64d868b3-18d6-48b4-a9d7-563883b88900",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:d400",
+              "table/TableName": "Table1",
+              "table/ColumnsNames": "hostname,class,service,platform"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "List_Rows_-_SMG_Daily_System_Admin": {
+          "runAfter": {
+            "Create_table_-_SMG_Daily_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "5d7b4871-530e-4b0f-a8c6-d7e747e88c17",
+            "tableId": "Table1"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Table1",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Filter_array_-_SMG_Daily_System_Admin": {
+          "runAfter": {
+            "List_Rows_-_SMG_Daily_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "02f87cef-ff5c-466f-8b3a-71e9f9481c76"
+          },
+          "type": "Query",
+          "inputs": {
+            "from": "@outputs('List_Rows_-_SMG_Daily_System_Admin')?['body/value']",
+            "where": "@not(equals(item()?['hostname'],''))"
+          }
+        },
+        "Set_variable_-_SMG_Daily_System_Admin": {
+          "runAfter": {
+            "Filter_array_-_SMG_Daily_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "bfba90ed-ded7-4cbc-bc76-a1925863b32b"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],4,7)}"
+          }
+        },
+        "Apply_to_each_-_SMG_Daily_System_Admin": {
+          "foreach": "@body('Filter_array')",
+          "actions": {
+            "Create_item_-_SMG_Daily_System_Admin": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "3f56075f-3666-4769-897c-212141d53609"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
+                  "item/Title": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['hostname']",
+                  "item/field_2": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['class']",
+                  "item/field_3": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['service']",
+                  "item/field_4": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['platform']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "Set_variable_-_SMG_Daily_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "5e16f5b6-7fc1-4f3d-8d79-b3c068cb1141"
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": {
+        "10_Condition_-_SMG_System_Admin": ["Succeeded"]
+      },
+      "expression": {
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "dailysmg_"]
+      },
+      "metadata": {
+        "operationMetadataId": "4339773b-ca88-4e32-bf77-35a578c87424"
       },
       "type": "If"
     },
@@ -1170,7 +1351,7 @@
         "List_rows_-_AWS_Charges": {
           "runAfter": {},
           "metadata": {
-            "operationMetadataId": "56a709d7-23af-453e-b5bd-4a623f80ca1c",
+            "operationMetadataId": "7eaa9ad2-3aa9-470f-b5e6-dcb747634226",
             "tableId": "AWS"
           },
           "type": "OpenApiConnection",
@@ -1196,7 +1377,7 @@
             "Create_item_-_AWS_Charges": {
               "runAfter": {},
               "metadata": {
-                "operationMetadataId": "b7c71874-f5ae-4740-a828-c2128f535ba0"
+                "operationMetadataId": "f8c68319-ad98-431f-b4a0-70d060a941b4"
               },
               "type": "OpenApiConnection",
               "inputs": {
@@ -1222,19 +1403,19 @@
             "List_rows_-_AWS_Charges": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "40e5d641-b2ed-48a8-9221-9734509d9c6b"
+            "operationMetadataId": "12e46232-9728-4c3b-af4e-bcc853c08173"
           },
           "type": "Foreach"
         }
       },
       "runAfter": {
-        "10_Condition_-_SMG_System_Admin": ["Succeeded"]
+        "10_Condition_-_SMG_Daily_System_Admin": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "AWS-MonthlyCostByTag"]
       },
       "metadata": {
-        "operationMetadataId": "e7169dd8-233f-4303-8acd-022003d570a0"
+        "operationMetadataId": "4b81dab4-8dbb-444a-919e-d9c979cf047d"
       },
       "type": "If"
     },
@@ -1243,7 +1424,7 @@
         "Set_variable_-_WSAA_Database_storage": {
           "runAfter": {},
           "metadata": {
-            "operationMetadataId": "b2172ca7-38bb-4541-9fed-42e88298985f"
+            "operationMetadataId": "33e87728-b405-4a83-8113-320e8567070c"
           },
           "type": "SetVariable",
           "inputs": {
@@ -1256,7 +1437,7 @@
             "Set_variable_-_WSAA_Database_storage": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "45d63870-1ffa-4507-8f95-a103e688b59c"
+            "operationMetadataId": "caf4ba22-36ae-4d6b-af88-35ae4c88c368"
           },
           "type": "IncrementVariable",
           "inputs": {
@@ -1269,7 +1450,7 @@
             "Increment_variable_-_WSAA_Database_storage": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "a15deb8a-0946-443c-9c9b-3305973fe594"
+            "operationMetadataId": "ded932c9-4d15-40d6-a9d9-9c74fa053ab9"
           },
           "type": "SetVariable",
           "inputs": {
@@ -1282,7 +1463,8 @@
             "Set_variable_-_WSAA_Database_storage_-_monthYear": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "0440af9a-6e79-4ebe-9e8d-ba52b0ec606a"
+            "operationMetadataId": "2d921f47-ff89-49b2-8ec3-241dec0cb093",
+            "tableId": null
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -1306,7 +1488,8 @@
             "Create_table_-_WSAA_Database_storage": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "0938ec58-5c35-4507-9400-34c56e505066"
+            "operationMetadataId": "8e008747-0c59-494c-8324-a39475a94c6b",
+            "tableId": "Export_Table"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -1330,7 +1513,7 @@
             "Get_items_from_WSAA_Database_Cluster": {
               "runAfter": {},
               "metadata": {
-                "operationMetadataId": "74cfa369-d300-49a4-bf85-adaf9cc50b3a"
+                "operationMetadataId": "47a5f2ed-e37f-407b-9c90-b17e2fd295b0"
               },
               "type": "OpenApiConnection",
               "inputs": {
@@ -1353,7 +1536,7 @@
                 "Update_item_3": {
                   "runAfter": {},
                   "metadata": {
-                    "operationMetadataId": "b6e585c3-dce4-46fd-9429-6ca3f80d926b"
+                    "operationMetadataId": "fdfa0a3b-ce96-46fc-b885-f433447b8f55"
                   },
                   "type": "OpenApiConnection",
                   "inputs": {
@@ -1379,7 +1562,7 @@
                 "Get_items_from_WSAA_Database_Cluster": ["Succeeded"]
               },
               "metadata": {
-                "operationMetadataId": "4e78eb77-9777-40fa-a0ef-bf81e4a76466"
+                "operationMetadataId": "c2f9fe28-ff9e-421a-8196-277fef223d56"
               },
               "type": "Foreach"
             }
@@ -1388,7 +1571,7 @@
             "List_rows_-_WSAA_Database_storage": ["Succeeded"]
           },
           "metadata": {
-            "operationMetadataId": "1d056579-2f97-4f9c-ba0e-8bf9c373a5e3"
+            "operationMetadataId": "2da9cfd7-74c7-4143-b5a7-df3f6c0f417a"
           },
           "type": "Foreach"
         }
@@ -1400,7 +1583,7 @@
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-fs-database_"]
       },
       "metadata": {
-        "operationMetadataId": "b6c39b2a-19f6-4894-a1e5-ad0712d6aea9"
+        "operationMetadataId": "3d08415e-09c0-479a-b0d9-38060de8e660"
       },
       "type": "If"
     },
@@ -1408,6 +1591,10 @@
       "actions": {
         "Create_table_-_Azure_Charges": {
           "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "6d2ac427-201e-4056-8000-f36520b7ca7a",
+            "tableId": null
+          },
           "type": "OpenApiConnection",
           "inputs": {
             "host": {
@@ -1418,8 +1605,8 @@
             "parameters": {
               "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
               "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
-              "file": "@outputs('03_Get_file_metadata')?['body/Identifier']",
-              "table/Range": "a1:a100",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "Data!a1:e100",
               "table/TableName": "ExportTable"
             },
             "authentication": "@parameters('$authentication')"
@@ -1428,6 +1615,10 @@
         "List_rows_present_in_a_table_-_Azure_Charges": {
           "runAfter": {
             "Create_table_-_Azure_Charges": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "a2ea4c08-63ef-4434-a3da-f53b82dbb35b",
+            "tableId": "ExportTable"
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -1439,8 +1630,8 @@
             "parameters": {
               "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
               "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
-              "file": "@outputs('03_Get_file_metadata')?['body/Identifier']",
-              "table": "@outputs('Create_table_-_Azure_Charges')?['body/name']",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "ExportTable",
               "$filter": "ServiceName ne ''",
               "dateTimeFormat": "ISO 8601"
             },
@@ -1452,6 +1643,9 @@
           "actions": {
             "Create_item_-_Azure_Charges": {
               "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "1cfe67b2-4f27-4724-98a6-24c95a4ea564"
+              },
               "type": "OpenApiConnection",
               "inputs": {
                 "host": {
@@ -1474,6 +1668,9 @@
           "runAfter": {
             "List_rows_present_in_a_table_-_Azure_Charges": ["Succeeded"]
           },
+          "metadata": {
+            "operationMetadataId": "3cb2d557-8d03-4b88-a77a-a3136b25151c"
+          },
           "type": "Foreach"
         }
       },
@@ -1483,14 +1680,121 @@
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "CostManagement_"]
       },
+      "metadata": {
+        "operationMetadataId": "e8e59f87-4038-4302-b16d-ef800f51cfe4"
+      },
+      "type": "If"
+    },
+    "14_Condition_-_VH_Charges": {
+      "actions": {
+        "Apply_to_each_-_VH_Charges": {
+          "foreach": "@variables('csvRows')",
+          "actions": {
+            "Set_variable_-_rowCells": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "edf2dd3e-2d24-4431-b472-cc54d341a9cf"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "rowCells",
+                "value": "@split(items('Apply_to_each_-_VH_Charges'),',')"
+              }
+            },
+            "Exclude_header_row": {
+              "actions": {
+                "Create_item_-_VH_Charges": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "20823818-914b-48a3-b70d-244d1e945445"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "PostItem"
+                    },
+                    "parameters": {
+                      "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                      "table": "92ae33ff-4aac-4fb6-9dc4-6e6a44bdd045",
+                      "item/Title": "@variables('rowCells')?[1]",
+                      "item/field_0": "@variables('monthYear')",
+                      "item/field_1": "@substring(variables('rowCells')?[0],0,13)",
+                      "item/field_3": "@variables('rowCells')?[3]"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {
+                "Set_variable_-_rowCells": ["Succeeded"]
+              },
+              "expression": {
+                "and": [{
+                  "not": {
+                    "startsWith": ["@items('Apply_to_each_-_VH_Charges')", "Service Description"]
+                  }
+                }, {
+                  "greater": ["@length(items('Apply_to_each_-_VH_Charges'))", 1]
+                }]
+              },
+              "metadata": {
+                "operationMetadataId": "9c22584a-eb41-4ffd-8d02-94df4b30fa98"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Set_variable_-_monthYear": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "6c169dca-6d18-453a-9e00-3c031b37eb79"
+          },
+          "type": "Foreach"
+        },
+        "Set_variable_-_csvRows": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "9445ecbe-7b50-48d4-8adb-21262949a29e"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "csvRows",
+            "value": "@split(triggerOutputs()?['body'],variables('lineBreak'))"
+          }
+        },
+        "Set_variable_-_monthYear": {
+          "runAfter": {
+            "Set_variable_-_csvRows": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "45018399-9872-4bac-88b6-d0bf7201b9bf"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],0,7)}"
+          }
+        }
+      },
+      "runAfter": {
+        "13_Condition_-_Azure_Charges": ["Succeeded"]
+      },
+      "expression": {
+        "endsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "-todate.csv"]
+      },
+      "metadata": {
+        "operationMetadataId": "411440f0-cbef-4a41-8caa-734a349496b0"
+      },
       "type": "If"
     },
     "99_Refresh_a_dataset": {
       "runAfter": {
-        "13_Condition_-_Azure_Charges": ["Succeeded"]
+        "14_Condition_-_VH_Charges": ["Succeeded"]
       },
       "metadata": {
-        "operationMetadataId": "d7f38a48-214d-4fc5-9002-5407b0197e0d"
+        "operationMetadataId": "1d5651ec-5a48-4665-aacc-a99f54463116"
       },
       "type": "OpenApiConnection",
       "inputs": {
@@ -1505,6 +1809,72 @@
         },
         "authentication": "@parameters('$authentication')"
       }
+    },
+    "Do_until": {
+      "actions": {
+        "Move_file": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "e9f0bbd5-18c2-44dd-8dec-a86dc07e9d36"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "MoveFileAsync"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "parameters/sourceFileId": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "parameters/destinationDataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "parameters/destinationFolderPath": "/Shared Documents/inbox/_backup",
+              "parameters/nameConflictBehavior": 2
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Set_variable_-_fileLocked": {
+          "runAfter": {
+            "Move_file": ["Failed", "TimedOut", "Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "905bb211-5e58-4b11-915f-a43befa21bbe"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "fileLocked",
+            "value": "@if(equals(outputs('Move_file')?['body']?['status'],400),true,false)"
+          }
+        },
+        "Delay": {
+          "runAfter": {
+            "Set_variable_-_fileLocked": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "a13082d8-13d5-49c8-ba99-d4ab6c7ebeaf"
+          },
+          "type": "Wait",
+          "inputs": {
+            "interval": {
+              "count": 30,
+              "unit": "Second"
+            }
+          }
+        }
+      },
+      "runAfter": {
+        "99_Refresh_a_dataset": ["Succeeded"]
+      },
+      "expression": "@equals(variables('fileLocked'), false)",
+      "limit": {
+        "count": 60,
+        "timeout": "PT1H"
+      },
+      "metadata": {
+        "operationMetadataId": "a3709b5e-e5a2-4bd7-98e1-05cac061ac50"
+      },
+      "type": "Until"
     }
   }
 }
