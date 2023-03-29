@@ -1286,21 +1286,8 @@
             "where": "@not(equals(item()?['hostname'],''))"
           }
         },
-        "Set_variable_-_SMG_Daily_System_Admin": {
-          "runAfter": {
-            "Filter_array_-_SMG_Daily_System_Admin": ["Succeeded"]
-          },
-          "metadata": {
-            "operationMetadataId": "bfba90ed-ded7-4cbc-bc76-a1925863b32b"
-          },
-          "type": "SetVariable",
-          "inputs": {
-            "name": "monthYear",
-            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],4,7)}"
-          }
-        },
         "Apply_to_each_-_SMG_Daily_System_Admin": {
-          "foreach": "@body('Filter_array')",
+          "foreach": "@body('Filter_array_-_SMG_Daily_System_Admin')",
           "actions": {
             "Create_item_-_SMG_Daily_System_Admin": {
               "runAfter": {},
@@ -1316,18 +1303,18 @@
                 },
                 "parameters": {
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-                  "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
+                  "table": "81e26213-f723-4b04-bfaf-3a5284cdb007",
                   "item/Title": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['hostname']",
-                  "item/field_2": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['class']",
-                  "item/field_3": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['service']",
-                  "item/field_4": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['platform']"
+                  "item/field_1": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['class']",
+                  "item/field_2": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['service']",
+                  "item/field_3": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['platform']"
                 },
                 "authentication": "@parameters('$authentication')"
               }
             }
           },
           "runAfter": {
-            "Set_variable_-_SMG_Daily_System_Admin": ["Succeeded"]
+            "Filter_array_-_SMG_Daily_System_Admin": ["Succeeded"]
           },
           "metadata": {
             "operationMetadataId": "5e16f5b6-7fc1-4f3d-8d79-b3c068cb1141"
