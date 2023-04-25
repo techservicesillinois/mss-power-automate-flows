@@ -1980,27 +1980,6 @@
       },
       "type": "If"
     },
-    "99_Refresh_a_dataset": {
-      "runAfter": {
-        "98_Do_until_-_Move_to_backup": ["Succeeded"]
-      },
-      "metadata": {
-        "operationMetadataId": "1d5651ec-5a48-4665-aacc-a99f54463116"
-      },
-      "type": "OpenApiConnection",
-      "inputs": {
-        "host": {
-          "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
-          "connectionName": "shared_powerbi",
-          "operationId": "RefreshDataset"
-        },
-        "parameters": {
-          "groupid": "5dec65c6-dca4-47c9-a96a-5023e52854fc",
-          "datasetid": "c1c9a291-0fcc-445d-9fde-9ef456ab14c9"
-        },
-        "authentication": "@parameters('$authentication')"
-      }
-    },
     "98_Do_until_-_Move_to_backup": {
       "actions": {
         "Move_file": {
@@ -2066,6 +2045,27 @@
         "operationMetadataId": "a3709b5e-e5a2-4bd7-98e1-05cac061ac50"
       },
       "type": "Until"
-    }
+    },
+    "99_Refresh_a_dataset": {
+      "runAfter": {
+        "98_Do_until_-_Move_to_backup": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "1d5651ec-5a48-4665-aacc-a99f54463116"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+          "connectionName": "shared_powerbi",
+          "operationId": "RefreshDataset"
+        },
+        "parameters": {
+          "groupid": "5dec65c6-dca4-47c9-a96a-5023e52854fc",
+          "datasetid": "c1c9a291-0fcc-445d-9fde-9ef456ab14c9"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
   }
 }
