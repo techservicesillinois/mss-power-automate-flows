@@ -522,27 +522,6 @@
           },
           "type": "Foreach"
         },
-        "List_rows_-_WSAA_Daily_System_Admin": {
-          "runAfter": {
-            "Create_table_-_WSAA_Daily_System_Admin": ["Succeeded"]
-          },
-          "type": "OpenApiConnection",
-          "inputs": {
-            "host": {
-              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
-              "connectionName": "shared_excelonlinebusiness",
-              "operationId": "GetItems"
-            },
-            "parameters": {
-              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
-              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
-              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
-              "table": "Export_Table",
-              "dateTimeFormat": "ISO 8601"
-            },
-            "authentication": "@parameters('$authentication')"
-          }
-        },
         "Set_variable_-_WSAA_Daily_System_Admin": {
           "runAfter": {
             "Apply_to_each_-_Delete_items_-_WSAA_Daily_System_Admin": ["Succeeded"]
@@ -550,7 +529,7 @@
           "type": "SetVariable",
           "inputs": {
             "name": "rowCount",
-            "value": "@int(substring(outputs('03_Get_file_metadata')?['body/Name'],12,3))"
+            "value": "@int(substring(outputs('03_Get_file_metadata')?['body/Name'],17,3))"
           }
         },
         "Increment_variable_-_WSAA_Daily_System_Admin": {
@@ -580,6 +559,27 @@
               "file": "@triggerOutputs()?['headers/x-ms-file-id']",
               "table/Range": "a1:i@{variables('rowCount')}",
               "table/TableName": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "List_rows_-_WSAA_Daily_System_Admin": {
+          "runAfter": {
+            "Create_table_-_WSAA_Daily_System_Admin": ["Succeeded"]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Export_Table",
+              "dateTimeFormat": "ISO 8601"
             },
             "authentication": "@parameters('$authentication')"
           }
