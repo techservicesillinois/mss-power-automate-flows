@@ -477,6 +477,113 @@
       },
       "type": "If"
     },
+    "06_Condition_-_WSAA_Daily_System_Admin": {
+      "actions": {
+        "List_rows_-_WSAA_Daily_System_Admin": {
+          "runAfter": {
+            "Create_table_-_WSAA_System_Admin": ["Succeeded"]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Export_Table",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Set_variable_-_WSAA_Daily_System_Admin": {
+          "runAfter": {},
+          "type": "SetVariable",
+          "inputs": {
+            "name": "rowCount",
+            "value": "@int(substring(outputs('03_Get_file_metadata')?['body/Name'],12,3))"
+          }
+        },
+        "Increment_variable_-_WSAA_Daily_System_Admin": {
+          "runAfter": {
+            "Set_variable_-_WSAA_Daily_System_Admin": ["Succeeded"]
+          },
+          "type": "IncrementVariable",
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
+        },
+        "Create_table_-_WSAA_Daily_System_Admin": {
+          "runAfter": {
+            "Increment_variable_-_WSAA_Daily_System_Admin": ["Succeeded"]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:i@{variables('rowCount')}",
+              "table/TableName": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_WSAA_Daily_System_Admin": {
+          "foreach": "@outputs('List_rows_-_WSAA_Daily_System_Admin')?['body/value']",
+          "actions": {
+            "Create_item_-_WSAA_Daily_System_Admin": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "c9f0c68e-c8af-4f61-adf7-3be4e398d26d",
+                  "item/Title": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['IT Pros']",
+                  "item/field_1": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['AssetName']",
+                  "item/field_2": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['FunctionalLevel']",
+                  "item/field_3": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['AssetTypename']",
+                  "item/ShortOS": "@replace(replace(replace(replace(replace(replace(replace(items('Apply_to_each_-_WSAA_Daily_System_Admin')?['OperatingSystem'],'Microsoft Windows ',''),' R2',''),' LTSC',''),' Standard',''),' Datacenter',''),' Enterprise',''),' Edition','')",
+                  "item/OperatingSystem": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['OperatingSystem']",
+                  "item/field_4": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['Service']",
+                  "item/field_5": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['UptimeDays']",
+                  "item/field_6": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['End Customer Departments']",
+                  "item/field_7": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['CFOP']",
+                  "item/field_8": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['ActivityCode']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "List_rows_-_WSAA_Daily_System_Admin": ["Succeeded"]
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": {
+        "06_Condition_-_WSAA_System_Admin": ["Succeeded"]
+      },
+      "expression": {
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-sysadmin_"]
+      },
+      "type": "If"
+    },
     "07_Condition_-_WSAA_Database": {
       "actions": {
         "Set_variable_-_WSAA_Database": {
