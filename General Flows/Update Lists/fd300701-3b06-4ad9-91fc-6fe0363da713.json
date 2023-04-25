@@ -479,9 +479,52 @@
     },
     "06_Condition_-_WSAA_Daily_System_Admin": {
       "actions": {
+		"Get_items_for_Delete_-_WSAA_Daily_System_Admin": {
+          "runAfter": {},
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "table": "fc7a9c27-c5a7-45a6-868d-b52688fce2ea",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_Delete_items_-_WSAA_Daily_System_Admin": {
+          "foreach": "@outputs('Get_items_for_Delete_-_WSAA_Daily_System_Admin')?['body/value']",
+          "actions": {
+            "Delete_item_-_WSAA_Daily_System_Admin": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "DeleteItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "fc7a9c27-c5a7-45a6-868d-b52688fce2ea",
+                  "id": "@items('Apply_to_each_-_Delete_items_-_WSAA_Daily_System_Admin')?['ID']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "Get_items_for_Delete_-_WSAA_Daily_System_Admin": ["Succeeded"]
+          },
+          "type": "Foreach"
+        },
         "List_rows_-_WSAA_Daily_System_Admin": {
           "runAfter": {
-            "Create_table_-_WSAA_System_Admin": ["Succeeded"]
+            "Create_table_-_WSAA_Daily_System_Admin": ["Succeeded"]
           },
           "type": "OpenApiConnection",
           "inputs": {
@@ -501,7 +544,9 @@
           }
         },
         "Set_variable_-_WSAA_Daily_System_Admin": {
-          "runAfter": {},
+          "runAfter": {
+            "Apply_to_each_-_Delete_items_-_WSAA_Daily_System_Admin": ["Succeeded"]
+          },
           "type": "SetVariable",
           "inputs": {
             "name": "rowCount",
@@ -553,7 +598,7 @@
                 },
                 "parameters": {
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-                  "table": "c9f0c68e-c8af-4f61-adf7-3be4e398d26d",
+                  "table": "fc7a9c27-c5a7-45a6-868d-b52688fce2ea",
                   "item/Title": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['IT Pros']",
                   "item/field_1": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['AssetName']",
                   "item/field_2": "@items('Apply_to_each_-_WSAA_Daily_System_Admin')?['FunctionalLevel']",
@@ -580,7 +625,7 @@
         "06_Condition_-_WSAA_System_Admin": ["Succeeded"]
       },
       "expression": {
-        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-sysadmin_"]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-dailysysadmin_"]
       },
       "type": "If"
     },
@@ -787,7 +832,7 @@
         }
       },
       "runAfter": {
-        "06_Condition_-_WSAA_System_Admin": ["Succeeded"]
+        "06_Condition_-_WSAA_Daily_System_Admin": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-database_"]
