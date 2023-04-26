@@ -1,1 +1,1791 @@
-{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{"$connections":{"defaultValue":{},"type":"Object"},"$authentication":{"defaultValue":{},"type":"SecureObject"}},"triggers":{"01_When_a_file_is_created_in_a_folder":{"recurrence":{"frequency":"Minute","interval":5},"metadata":{"operationMetadataId":"5f475d6c-7f0c-4c5e-80e2-7e15cf6df7d4"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"OnNewFile"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","folderId":"%252fShared%2bDocuments%252finbox","inferContentType":true},"authentication":"@parameters('$authentication')"}}},"actions":{"02_Initialize_variable_-_rowCount":{"runAfter":{},"metadata":{"operationMetadataId":"595f0bd4-d77e-490e-9822-d6bd6a5c192e"},"type":"InitializeVariable","inputs":{"variables":[{"name":"rowCount","type":"integer","value":0}]}},"02_Initialize_variable_-_monthYear":{"runAfter":{"02_Initialize_variable_-_rowCount":["Succeeded"]},"metadata":{"operationMetadataId":"192d5cfa-af68-447e-83b7-9ad7bbc09e26"},"type":"InitializeVariable","inputs":{"variables":[{"name":"monthYear","type":"string"}]}},"02_Initialize_variable_-_itPros":{"runAfter":{"02_Initialize_variable_-_monthYear":["Succeeded"]},"metadata":{"operationMetadataId":"65def80d-8990-4304-baa2-e2f24ae2a850"},"type":"InitializeVariable","inputs":{"variables":[{"name":"itPros","type":"string"}]}},"02_Initialize_variable_-_lineBreak":{"runAfter":{"02_Initialize_variable_-_itPros":["Succeeded"]},"metadata":{"operationMetadataId":"e235bb04-a6d4-49d6-a9fd-61c464ec2e13"},"type":"InitializeVariable","inputs":{"variables":[{"name":"lineBreak","type":"string","value":"\n"}]}},"02_Initialize_variable_-_csvRows":{"runAfter":{"02_Initialize_variable_-_lineBreak":["Succeeded"]},"metadata":{"operationMetadataId":"6b3ab166-6d8a-410f-a761-0c176c7ec5d6"},"type":"InitializeVariable","inputs":{"variables":[{"name":"csvRows","type":"array"}]}},"02_Initialize_variable_-_rowCells":{"runAfter":{"02_Initialize_variable_-_csvRows":["Succeeded"]},"metadata":{"operationMetadataId":"9fc67b0a-cf01-4069-8a2c-7be41fe2ddee"},"type":"InitializeVariable","inputs":{"variables":[{"name":"rowCells","type":"array"}]}},"02_Initialize_variable_-_fileLocked":{"runAfter":{"02_Initialize_variable_-_rowCells":["Succeeded"]},"metadata":{"operationMetadataId":"43af5f89-0739-43a1-8b98-d88d5550334a"},"type":"InitializeVariable","inputs":{"variables":[{"name":"fileLocked","type":"boolean","value":true}]}},"03_Get_file_metadata":{"runAfter":{"02_Initialize_variable_-_fileLocked":["Succeeded"]},"metadata":{"operationMetadataId":"4be93abf-9014-4622-b695-1198a2c18823"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"GetFileMetadata"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","id":"@triggerOutputs()?['headers/x-ms-file-id']"},"authentication":"@parameters('$authentication')"}},"03_Initialize_variable_-_fileName":{"runAfter":{"03_Get_file_metadata":["Succeeded"]},"metadata":{"operationMetadataId":"582c2d83-3f50-468f-884d-6afd378394d8"},"type":"InitializeVariable","inputs":{"variables":[{"name":"fileName","type":"array","value":"@split(outputs('03_Get_file_metadata')?['body/Name'],'_')"}]}},"04_Condition_-_TDX_Surveys":{"actions":{"List_rows_-_TDX_Surveys":{"runAfter":{},"metadata":{"operationMetadataId":"c8ab5d45-57e9-4cf4-8265-6a83389a99c4","tableId":"Export_Table"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"Export_Table","dateTimeFormat":"ISO 8601"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_-_TDX_Survey":{"foreach":"@outputs('List_rows_-_TDX_Surveys')?['body/value']","actions":{"Create_item":{"runAfter":{},"metadata":{"operationMetadataId":"36c1b93d-8e99-40c8-bab1-45505ce7bff1"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"86dbed14-4bca-4d0e-b90b-9324a1759657","item/Title":"@items('Apply_to_each_-_TDX_Survey')?['Ticket ID']","item/field_1/Value":"@items('Apply_to_each_-_TDX_Survey')?['Satsified']","item/field_2":"@items('Apply_to_each_-_TDX_Survey')?['Comments-TS']","item/field_3":"@items('Apply_to_each_-_TDX_Survey')?['*TechSvc-Request Area']","item/field_4":"@items('Apply_to_each_-_TDX_Survey')?['Pri Resp Group']","item/SurveyCompleted2":"@items('Apply_to_each_-_TDX_Survey')?['Survey Completed']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"List_rows_-_TDX_Surveys":["Succeeded"]},"metadata":{"operationMetadataId":"7338bb29-ab35-4e0d-aafd-9db56db74606"},"type":"Foreach"}},"runAfter":{"03_Initialize_variable_-_fileName":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","tdx-survey-"]},"metadata":{"operationMetadataId":"431877e2-7402-4436-bcb0-14354b2c048c"},"type":"If"},"05_Condition_-_TDX_Tickets":{"actions":{"List_rows_-_TDX_Tickets":{"runAfter":{},"metadata":{"operationMetadataId":"32224fba-6e99-4f01-83cb-50408649a54c","tableId":"Export_Table"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"Export_Table","dateTimeFormat":"ISO 8601"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_-_TDX_Tickets":{"foreach":"@outputs('List_rows_-_TDX_Tickets')?['body/value']","actions":{"Create_item_2":{"runAfter":{},"metadata":{"operationMetadataId":"07a89a95-163f-41b8-a360-f4bf36b997ac"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"818f3f6b-a92c-420e-bc92-22764fb04ccb","item/Title":"@items('Apply_to_each_-_TDX_Tickets')?['Title']","item/Ticket_x0020_ID":"@items('Apply_to_each_-_TDX_Tickets')?['ID']","item/field_2":"@items('Apply_to_each_-_TDX_Tickets')?['Classification']","item/field_3":"@items('Apply_to_each_-_TDX_Tickets')?['Requestor']","item/field_4":"@items('Apply_to_each_-_TDX_Tickets')?['Acct~1Dept']","item/field_6":"@items('Apply_to_each_-_TDX_Tickets')?['Status']","item/field_7":"@items('Apply_to_each_-_TDX_Tickets')?['Priority']","item/field_8":"@items('Apply_to_each_-_TDX_Tickets')?['Previous Resp Group']","item/field_9":"@items('Apply_to_each_-_TDX_Tickets')?['Prim Resp']","item/field_10":"@items('Apply_to_each_-_TDX_Tickets')?['Due']","item/LastModified":"@items('Apply_to_each_-_TDX_Tickets')?['Modified']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"List_rows_-_TDX_Tickets":["Succeeded"]},"metadata":{"operationMetadataId":"14913abd-751f-49c2-9958-98e2203b2a31"},"type":"Foreach"}},"runAfter":{"04_Condition_-_TDX_Surveys":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","tdx-ticket-"]},"metadata":{"operationMetadataId":"933b6c3b-27e0-4ff7-b8ba-e198f733e817"},"type":"If"},"06_Condition_-_WSAA_System_Admin":{"actions":{"List_rows_-_WSAA_System_Admin":{"runAfter":{"Create_table_-_WSAA_System_Admin":["Succeeded"]},"metadata":{"operationMetadataId":"0fc357e3-8ee1-431f-93cd-8db0faa9db23","tableId":"Export_Table"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"Export_Table","dateTimeFormat":"ISO 8601"},"authentication":"@parameters('$authentication')"}},"Set_variable_-_WSAA_System_Admin":{"runAfter":{},"metadata":{"operationMetadataId":"96bfa37b-8299-4d28-9e12-0d97cea8353b"},"type":"SetVariable","inputs":{"name":"rowCount","value":"@int(substring(outputs('03_Get_file_metadata')?['body/Name'],12,3))"}},"Increment_variable_-_WSAA_System_Admin":{"runAfter":{"Set_variable_-_WSAA_System_Admin":["Succeeded"]},"metadata":{"operationMetadataId":"6fbc0143-412c-45e6-9b88-14022ca4effc"},"type":"IncrementVariable","inputs":{"name":"rowCount","value":1}},"Create_table_-_WSAA_System_Admin":{"runAfter":{"Set_variable_-_WSAA_System_Admin_-_monthYear":["Succeeded"]},"metadata":{"operationMetadataId":"453e19d9-a14b-448b-8ee9-e3488b4dc333","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table/Range":"a1:i@{variables('rowCount')}","table/TableName":"Export_Table"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_-_WSAA_System_Admin":{"foreach":"@outputs('List_rows_-_WSAA_System_Admin')?['body/value']","actions":{"Create_item_-_WSAA_System_Admin":{"runAfter":{},"metadata":{"operationMetadataId":"7700935a-afe7-4355-949b-f42d636e425a"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"c9f0c68e-c8af-4f61-adf7-3be4e398d26d","item/Title":"@items('Apply_to_each_-_WSAA_System_Admin')?['IT Pros']","item/Month":"@substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)","item/field_1":"@items('Apply_to_each_-_WSAA_System_Admin')?['AssetName']","item/field_2":"@items('Apply_to_each_-_WSAA_System_Admin')?['FunctionalLevel']","item/field_3":"@items('Apply_to_each_-_WSAA_System_Admin')?['AssetTypename']","item/ShortOS":"@replace(replace(replace(replace(replace(replace(replace(items('Apply_to_each_-_WSAA_System_Admin')?['OperatingSystem'],'Microsoft Windows ',''),' R2',''),' LTSC',''),' Standard',''),' Datacenter',''),' Enterprise',''),' Edition','')","item/OperatingSystem":"@items('Apply_to_each_-_WSAA_System_Admin')?['OperatingSystem']","item/field_4":"@items('Apply_to_each_-_WSAA_System_Admin')?['Service']","item/field_5":"@items('Apply_to_each_-_WSAA_System_Admin')?['UptimeDays']","item/field_6":"@items('Apply_to_each_-_WSAA_System_Admin')?['End Customer Departments']","item/field_7":"@items('Apply_to_each_-_WSAA_System_Admin')?['CFOP']","item/field_8":"@items('Apply_to_each_-_WSAA_System_Admin')?['ActivityCode']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"List_rows_-_WSAA_System_Admin":["Succeeded"]},"metadata":{"operationMetadataId":"d154638b-7560-4fae-bb2a-f77e8614b59c"},"type":"Foreach"},"Set_variable_-_WSAA_System_Admin_-_monthYear":{"runAfter":{"Increment_variable_-_WSAA_System_Admin":["Succeeded"]},"metadata":{"operationMetadataId":"74d9e87b-0590-470b-a972-ab8df44ecb76"},"type":"SetVariable","inputs":{"name":"monthYear","value":"@{substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)}"}}},"runAfter":{"05_Condition_-_TDX_Tickets":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","ls-sysadmin_"]},"metadata":{"operationMetadataId":"4b4ac23c-cc53-451d-9114-fcccd5340cd7"},"type":"If"},"07_Condition_-_WSAA_Database":{"actions":{"Set_variable_-_WSAA_Database":{"runAfter":{},"metadata":{"operationMetadataId":"9254c123-e287-49a3-b5e3-815011ecd774"},"type":"SetVariable","inputs":{"name":"rowCount","value":"@int(substring(outputs('03_Get_file_metadata')?['body/Name'],12,2))"}},"Increment_variable_-_WSAA_Database":{"runAfter":{"Set_variable_-_WSAA_Database":["Succeeded"]},"metadata":{"operationMetadataId":"860922e4-5bd8-47a3-84b8-74bcb7bf50da"},"type":"IncrementVariable","inputs":{"name":"rowCount","value":1}},"Set_variable_-_WSAA_Database_-_monthYear":{"runAfter":{"Increment_variable_-_WSAA_Database":["Succeeded"]},"metadata":{"operationMetadataId":"7ec7a676-8af0-4c80-a953-49733d6ef31b"},"type":"SetVariable","inputs":{"name":"monthYear","value":"@{substring(outputs('03_Get_file_metadata')?['body/Name'],15,7)}"}},"Create_table_-_WSAA_Database":{"runAfter":{"Set_variable_-_WSAA_Database_-_monthYear":["Succeeded"]},"metadata":{"operationMetadataId":"e129b229-28c4-4ecd-b4cf-066eda374a17","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table/Range":"a1:i@{variables('rowCount')}","table/TableName":"Export_Table"},"authentication":"@parameters('$authentication')"}},"List_rows_-_WSAA_Database":{"runAfter":{"Create_table_-_WSAA_Database":["Succeeded"]},"metadata":{"operationMetadataId":"ac3bb910-ceb3-4ec8-842f-865bd779d440","tableId":"Export_Table"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"Export_Table"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_-_WSAA_Database":{"foreach":"@outputs('List_rows_-_WSAA_Database')?['body/value']","actions":{"Condition_-_WSAA_Database_Cluster":{"actions":{"Get_items_from_WSAA_Database_Crosswalk":{"runAfter":{},"metadata":{"operationMetadataId":"a0f13629-3b0f-40b1-9038-b4c2cc79b309"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"GetItems"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"21561bd0-db6c-4af5-b0c7-d822c225ec03","$filter":"Title eq '@{items('Apply_to_each_-_WSAA_Database')?['InstanceName']}'"},"authentication":"@parameters('$authentication')"}},"WSAA_Database_Crosswalk_Apply_to_each":{"foreach":"@outputs('Get_items_from_WSAA_Database_Crosswalk')?['body/value']","actions":{"Set_variable_-_WSAA_Database_-_itPros":{"runAfter":{},"metadata":{"operationMetadataId":"56f7c155-69d7-4010-b61e-0620dac4a907"},"type":"SetVariable","inputs":{"name":"itPros","value":"WSAA@{items('WSAA_Database_Crosswalk_Apply_to_each')?['field_1']}"}}},"runAfter":{"Get_items_from_WSAA_Database_Crosswalk":["Succeeded"]},"metadata":{"operationMetadataId":"9e3d45b3-b14e-45dd-a088-f74de7f82a3d"},"type":"Foreach"}},"runAfter":{},"else":{"actions":{"Set_variable_-_WSAA_Database_-_itPros_-_default":{"runAfter":{},"metadata":{"operationMetadataId":"5dcc1db8-ef82-45d4-811e-b04807f87cca"},"type":"SetVariable","inputs":{"name":"itPros","value":"@{items('Apply_to_each_-_WSAA_Database')?['IT Pros']}"}}}},"expression":{"equals":["@{items('Apply_to_each_-_WSAA_Database')?['InstanceName']}"," [[[ DISABLED ]]] "]},"metadata":{"operationMetadataId":"5b1e1899-866b-493c-bd7d-9fec46347cc5"},"type":"If"},"Create_item_-_WSAA_Database":{"runAfter":{"Condition_-_WSAA_Database_Cluster":["Succeeded"]},"metadata":{"operationMetadataId":"e5e602a0-7329-492d-b67f-06c209ac4b44"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"b8660d3f-bf62-4d31-9ffb-800bf55c1c47","item/Title":"@items('Apply_to_each_-_WSAA_Database')?['AssetName']","item/field_9":"@substring(outputs('03_Get_file_metadata')?['body/Name'],15,7)","item/field_0":"@variables('itPros')","item/field_2":"@items('Apply_to_each_-_WSAA_Database')?['Edition']","item/field_3":"@items('Apply_to_each_-_WSAA_Database')?['License']","item/field_4":"@items('Apply_to_each_-_WSAA_Database')?['SQLServicePack']","item/field_5":"@items('Apply_to_each_-_WSAA_Database')?['version']","item/field_6":"@items('Apply_to_each_-_WSAA_Database')?['fileVersion']","item/field_7":"@items('Apply_to_each_-_WSAA_Database')?['Service']","item/field_8":"@items('Apply_to_each_-_WSAA_Database')?['InstanceName']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"List_rows_-_WSAA_Database":["Succeeded"]},"metadata":{"operationMetadataId":"670207ce-6783-409e-b421-d37032b913ca"},"type":"Foreach"}},"runAfter":{"06_Condition_-_WSAA_System_Admin":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","ls-database_"]},"metadata":{"operationMetadataId":"65aa756b-7a50-43ee-ac31-1f8c7a31b60b"},"type":"If"},"08_Condition_-_WSAA_File_Storage":{"actions":{"List_rows_-_WSAA_File_Storage":{"runAfter":{"Create_table_-_WSAA_File_Storage":["Succeeded"]},"metadata":{"operationMetadataId":"625c3018-5b09-4db5-94d6-a6ba4cb9fbf2","tableId":"Export_Table"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"Export_Table","dateTimeFormat":"ISO 8601"},"authentication":"@parameters('$authentication')"}},"Set_variable_-_WSAA_File_Storage":{"runAfter":{},"metadata":{"operationMetadataId":"1b237986-c1de-4089-b1f7-b706eca7c55d"},"type":"SetVariable","inputs":{"name":"rowCount","value":"@int(substring(outputs('03_Get_file_metadata')?['body/Name'],12,3))"}},"Increment_variable_-_WSAA_File_Storage":{"runAfter":{"Set_variable_-_WSAA_File_Storage":["Succeeded"]},"metadata":{"operationMetadataId":"e5a46525-6973-4711-a9ff-a548d7c2df7d"},"type":"IncrementVariable","inputs":{"name":"rowCount","value":1}},"Create_table_-_WSAA_File_Storage":{"runAfter":{"Set_variable_-_WSAA_File_Storage_-_monthYear":["Succeeded"]},"metadata":{"operationMetadataId":"86f39f44-1c28-4172-8ff1-ad55ec8c67a9","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table/Range":"a1:h@{variables('rowCount')}","table/TableName":"Export_Table"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_-_WSAA_File_Storage":{"foreach":"@outputs('List_rows_-_WSAA_File_Storage')?['body/value']","actions":{"Create_item_-_WSAA_File_Storage":{"runAfter":{},"metadata":{"operationMetadataId":"293c83a1-5c5d-440c-9825-132efef26369"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"bbbad72f-9052-4ded-9a9f-0f12516c6598","item/Title":"@items('Apply_to_each_-_WSAA_File_Storage')?['AssetName']","item/field_0":"@substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)","item/field_1":"@items('Apply_to_each_-_WSAA_File_Storage')?['IT Pros']","item/field_4":"@items('Apply_to_each_-_WSAA_File_Storage')?['DriveLetter']","item/FreeSpace":"@items('Apply_to_each_-_WSAA_File_Storage')?['FreeSpace']","item/Capacity":"@items('Apply_to_each_-_WSAA_File_Storage')?['Capacity']","item/field_5":"@items('Apply_to_each_-_WSAA_File_Storage')?['LogicalDiskName']","item/EndCustomer":"@items('Apply_to_each_-_WSAA_File_Storage')?['End Customer']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"List_rows_-_WSAA_File_Storage":["Succeeded"]},"metadata":{"operationMetadataId":"7ff1afcf-fdbb-477c-ad90-7d7d369c0b63"},"type":"Foreach"},"Set_variable_-_WSAA_File_Storage_-_monthYear":{"runAfter":{"Increment_variable_-_WSAA_File_Storage":["Succeeded"]},"metadata":{"operationMetadataId":"bf29c7ac-a74b-47db-8607-7fd970051400"},"type":"SetVariable","inputs":{"name":"monthYear","value":"@{substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)}"}}},"runAfter":{"07_Condition_-_WSAA_Database":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","ls-filestor_"]},"metadata":{"operationMetadataId":"ebb1e792-cf49-4111-979d-ad5788f473cf"},"type":"If"},"09_Condition_-_WSAA_WebApp":{"actions":{"List_rows_-_WSAA_WebApp":{"runAfter":{"Create_table_-_WSAA_WebApp":["Succeeded"]},"metadata":{"operationMetadataId":"5d6f9d7f-7ca4-49bb-9767-85c840302650","tableId":"Export_Table"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"Export_Table","dateTimeFormat":"ISO 8601"},"authentication":"@parameters('$authentication')"}},"Set_variable_-_WSAA_WebApp":{"runAfter":{},"metadata":{"operationMetadataId":"22bc436c-dc27-4edb-bada-64ac8a157fcd"},"type":"SetVariable","inputs":{"name":"rowCount","value":"@int(variables('fileName')?[1])"}},"Increment_variable_-_WSAA_WebApp":{"runAfter":{"Set_variable_-_WSAA_WebApp":["Succeeded"]},"metadata":{"operationMetadataId":"5f2c43bd-4edf-466f-9660-4b277a214520"},"type":"IncrementVariable","inputs":{"name":"rowCount","value":1}},"Create_table_-_WSAA_WebApp":{"runAfter":{"Set_variable_-_WSAA_WebApp_-_monthYear":["Succeeded"]},"metadata":{"operationMetadataId":"c0abdc40-1e6a-48ce-8679-f6f370468505","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table/Range":"a1:i@{variables('rowCount')}","table/TableName":"Export_Table"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_-_WSAA_WebApp":{"foreach":"@outputs('List_rows_-_WSAA_WebApp')?['body/value']","actions":{"Create_item_-_WSAA_WebApp":{"runAfter":{},"metadata":{"operationMetadataId":"ecfc872b-d64d-44b1-a082-5845a71cd766"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"88166712-6a06-4cbb-8137-18c1bfd6e727","item/Title":"@items('Apply_to_each_-_WSAA_WebApp')?['AssetName']","item/field_0":"@variables('monthYear')","item/field_1":"@items('Apply_to_each_-_WSAA_WebApp')?['AssetGroup']","item/field_3":"@items('Apply_to_each_-_WSAA_WebApp')?['Last IIS Change']","item/field_4":"@items('Apply_to_each_-_WSAA_WebApp')?['UserDomain']","item/field_5":"@items('Apply_to_each_-_WSAA_WebApp')?['Location']","item/field_6":"@items('Apply_to_each_-_WSAA_WebApp')?['IPLocation']","item/field_7":"@items('Apply_to_each_-_WSAA_WebApp')?['OS']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"List_rows_-_WSAA_WebApp":["Succeeded"]},"metadata":{"operationMetadataId":"d1092687-2ef8-4904-83a1-e6123b26c701"},"type":"Foreach"},"Set_variable_-_WSAA_WebApp_-_monthYear":{"runAfter":{"Increment_variable_-_WSAA_WebApp":["Succeeded"]},"metadata":{"operationMetadataId":"8e075a8b-35a9-46c4-aae8-c64083596023"},"type":"SetVariable","inputs":{"name":"monthYear","value":"@{substring(variables('fileName')?[2],0,7)}"}}},"runAfter":{"08_Condition_-_WSAA_File_Storage":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","ls-webahost_"]},"metadata":{"operationMetadataId":"9c424dbc-62b9-4556-8774-c390e8e238cd"},"type":"If"},"10_Condition_-_SMG_System_Admin":{"actions":{"Create_table_-_SMG_System_Admin":{"runAfter":{},"metadata":{"operationMetadataId":"64d868b3-18d6-48b4-a9d7-563883b88900","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table/Range":"a1:d400","table/TableName":"Table1","table/ColumnsNames":"hostname,class,service,platform"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_-_SMG_System_Admin":{"foreach":"@body('Filter_array')","actions":{"Create_item_-_SMG_System_Admin":{"runAfter":{},"metadata":{"operationMetadataId":"3f56075f-3666-4769-897c-212141d53609"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"0b1e303d-bc9c-4261-8b00-7ce62164f72b","item/Title":"@items('Apply_to_each_-_SMG_System_Admin')?['hostname']","item/field_0":"@substring(outputs('03_Get_file_metadata')?['body/Name'],4,7)","item/field_2":"@items('Apply_to_each_-_SMG_System_Admin')?['class']","item/field_3":"@items('Apply_to_each_-_SMG_System_Admin')?['service']","item/field_4":"@items('Apply_to_each_-_SMG_System_Admin')?['platform']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"Set_variable":["Succeeded"]},"metadata":{"operationMetadataId":"5e16f5b6-7fc1-4f3d-8d79-b3c068cb1141"},"type":"Foreach"},"Set_variable":{"runAfter":{"Filter_array":["Succeeded"]},"metadata":{"operationMetadataId":"bfba90ed-ded7-4cbc-bc76-a1925863b32b"},"type":"SetVariable","inputs":{"name":"monthYear","value":"@{substring(outputs('03_Get_file_metadata')?['body/Name'],4,7)}"}},"11_Get_items_-_SMG_departments":{"runAfter":{"Apply_to_each_-_SMG_System_Admin":["Succeeded"]},"metadata":{"operationMetadataId":"8f9a8c2c-15ad-473a-b070-7c8256bea03c"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"GetItems"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"0b1e303d-bc9c-4261-8b00-7ce62164f72b","$filter":"dept eq null","$top":5000},"authentication":"@parameters('$authentication')"}},"12_Apply_to_each_-_SMG_departments":{"foreach":"@outputs('11_Get_items_-_SMG_departments')?['body/value']","actions":{"Condition":{"actions":{"Update_item":{"runAfter":{},"metadata":{"operationMetadataId":"1d3dd0b3-0e46-4e68-98e0-cdee7521a9f9"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PatchItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"0b1e303d-bc9c-4261-8b00-7ce62164f72b","id":"@items('12_Apply_to_each_-_SMG_departments')?['ID']","item/dept":"@replace(items('12_Apply_to_each_-_SMG_departments')?['field_3'],substring(items('12_Apply_to_each_-_SMG_departments')?['field_3'],indexOf(items('12_Apply_to_each_-_SMG_departments')?['field_3'],'_')),'')"},"authentication":"@parameters('$authentication')"}}},"runAfter":{},"else":{"actions":{"Get_items_from_Crosswalk":{"runAfter":{},"metadata":{"operationMetadataId":"b72d8dbb-3088-4697-8309-9f3e26c2fa6f"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"GetItems"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"bcc3081a-ba78-4dc3-95d8-6c72aa2d6f8f","$filter":"Title eq '@{items('12_Apply_to_each_-_SMG_departments')?['field_3']}'"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_2":{"foreach":"@outputs('Get_items_from_Crosswalk')?['body/value']","actions":{"Update_item_2":{"runAfter":{},"metadata":{"operationMetadataId":"ed7e1e6f-149c-48e3-83f2-a2de60416d9d"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PatchItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"0b1e303d-bc9c-4261-8b00-7ce62164f72b","id":"@items('12_Apply_to_each_-_SMG_departments')?['ID']","item/dept":"@items('Apply_to_each_2')?['field_1']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"Get_items_from_Crosswalk":["Succeeded"]},"metadata":{"operationMetadataId":"289cb4ce-43a7-47ef-b0f5-af85acaa1f26"},"type":"Foreach"}}},"expression":{"contains":["@items('12_Apply_to_each_-_SMG_departments')?['field_3']","_"]},"metadata":{"operationMetadataId":"fb748f1d-b8a0-4ed7-b40b-93a2b431ff9c"},"type":"If"}},"runAfter":{"11_Get_items_-_SMG_departments":["Succeeded"]},"metadata":{"operationMetadataId":"52422942-1750-46bf-a78b-bf6d7c0e63f0"},"type":"Foreach"},"List_Rows_-_SMG_System_Admin":{"runAfter":{"Create_table_-_SMG_System_Admin":["Succeeded"]},"metadata":{"operationMetadataId":"5d7b4871-530e-4b0f-a8c6-d7e747e88c17","tableId":"Table1"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"Table1","dateTimeFormat":"ISO 8601"},"authentication":"@parameters('$authentication')"}},"Filter_array":{"runAfter":{"List_Rows_-_SMG_System_Admin":["Succeeded"]},"metadata":{"operationMetadataId":"02f87cef-ff5c-466f-8b3a-71e9f9481c76"},"type":"Query","inputs":{"from":"@outputs('List_Rows_-_SMG_System_Admin')?['body/value']","where":"@not(equals(item()?['hostname'],''))"}}},"runAfter":{"09_Condition_-_WSAA_WebApp":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","smg_"]},"metadata":{"operationMetadataId":"4339773b-ca88-4e32-bf77-35a578c87424"},"type":"If"},"10_Condition_-_SMG_Daily_System_Admin":{"actions":{"List_Rows_-_SMG_Daily_System_Admin":{"runAfter":{"Create_table_-_SMG_Daily_System_Admin":["Succeeded"]},"metadata":{"operationMetadataId":"5d7b4871-530e-4b0f-a8c6-d7e747e88c17","tableId":"Table1"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"Table1","dateTimeFormat":"ISO 8601"},"authentication":"@parameters('$authentication')"}},"Filter_array_-_SMG_Daily_System_Admin":{"runAfter":{"List_Rows_-_SMG_Daily_System_Admin":["Succeeded"]},"metadata":{"operationMetadataId":"02f87cef-ff5c-466f-8b3a-71e9f9481c76"},"type":"Query","inputs":{"from":"@outputs('List_Rows_-_SMG_Daily_System_Admin')?['body/value']","where":"@not(equals(item()?['hostname'],''))"}},"Apply_to_each_-_SMG_Daily_System_Admin":{"foreach":"@body('Filter_array_-_SMG_Daily_System_Admin')","actions":{"Create_item_-_SMG_Daily_System_Admin":{"runAfter":{},"metadata":{"operationMetadataId":"3f56075f-3666-4769-897c-212141d53609"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"81e26213-f723-4b04-bfaf-3a5284cdb007","item/Title":"@items('Apply_to_each_-_SMG_Daily_System_Admin')?['hostname']","item/field_1":"@items('Apply_to_each_-_SMG_Daily_System_Admin')?['class']","item/field_2":"@items('Apply_to_each_-_SMG_Daily_System_Admin')?['service']","item/field_3":"@items('Apply_to_each_-_SMG_Daily_System_Admin')?['platform']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"Filter_array_-_SMG_Daily_System_Admin":["Succeeded"]},"metadata":{"operationMetadataId":"5e16f5b6-7fc1-4f3d-8d79-b3c068cb1141"},"type":"Foreach"},"Get_items_for_Delete":{"runAfter":{},"metadata":{"operationMetadataId":"c8679c9d-36b1-4901-88df-6c3972aefa7b"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"GetItems"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"81e26213-f723-4b04-bfaf-3a5284cdb007","$top":5000},"authentication":"@parameters('$authentication')"}},"Create_table_-_SMG_Daily_System_Admin":{"runAfter":{"Apply_to_each_-_Delete_items":["Succeeded"]},"metadata":{"operationMetadataId":"64d868b3-18d6-48b4-a9d7-563883b88900","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table/Range":"a1:d400","table/TableName":"Table1","table/ColumnsNames":"hostname,class,service,platform"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_-_Delete_items":{"foreach":"@outputs('Get_items_for_Delete')?['body/value']","actions":{"Delete_item":{"runAfter":{},"metadata":{"operationMetadataId":"deda2a8c-47a4-404d-9f94-9d240ddbad63"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"DeleteItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"81e26213-f723-4b04-bfaf-3a5284cdb007","id":"@items('Apply_to_each_-_Delete_items')?['ID']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"Get_items_for_Delete":["Succeeded"]},"metadata":{"operationMetadataId":"c226a20d-6826-4813-aa0b-9cbeb835ec48"},"type":"Foreach"}},"runAfter":{"10_Condition_-_SMG_System_Admin":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","dailysmg_"]},"metadata":{"operationMetadataId":"4339773b-ca88-4e32-bf77-35a578c87424"},"type":"If"},"11_Condition_-_AWS_Charges":{"actions":{"List_rows_-_AWS_Charges":{"runAfter":{},"metadata":{"operationMetadataId":"7eaa9ad2-3aa9-470f-b5e6-dcb747634226","tableId":"AWS"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"AWS","dateTimeFormat":"ISO 8601"},"authentication":"@parameters('$authentication')"}},"Apply_to_each":{"foreach":"@outputs('List_rows_-_AWS_Charges')?['body/value']","actions":{"Create_item_-_AWS_Charges":{"runAfter":{},"metadata":{"operationMetadataId":"f8c68319-ad98-431f-b4a0-70d060a941b4"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"2033cb82-e40f-426e-ba64-58bc834c9cc9","item/Title":"@items('Apply_to_each')?['Service']","item/field_3":"@items('Apply_to_each')?['Month']","item/field_0":"@items('Apply_to_each')?['Account']","item/field_1":"@items('Apply_to_each')?['Tag']","item/field_4":"@items('Apply_to_each')?['Amount']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"List_rows_-_AWS_Charges":["Succeeded"]},"metadata":{"operationMetadataId":"12e46232-9728-4c3b-af4e-bcc853c08173"},"type":"Foreach"}},"runAfter":{"10_Condition_-_SMG_Daily_System_Admin":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","AWS-MonthlyCostByTag"]},"metadata":{"operationMetadataId":"4b81dab4-8dbb-444a-919e-d9c979cf047d"},"type":"If"},"12_Condition_-_WSAA_Database_storage":{"actions":{"Set_variable_-_WSAA_Database_storage":{"runAfter":{},"metadata":{"operationMetadataId":"33e87728-b405-4a83-8113-320e8567070c"},"type":"SetVariable","inputs":{"name":"rowCount","value":"@int(substring(outputs('03_Get_file_metadata')?['body/Name'],15,2))"}},"Increment_variable_-_WSAA_Database_storage":{"runAfter":{"Set_variable_-_WSAA_Database_storage":["Succeeded"]},"metadata":{"operationMetadataId":"caf4ba22-36ae-4d6b-af88-35ae4c88c368"},"type":"IncrementVariable","inputs":{"name":"rowCount","value":1}},"Set_variable_-_WSAA_Database_storage_-_monthYear":{"runAfter":{"Increment_variable_-_WSAA_Database_storage":["Succeeded"]},"metadata":{"operationMetadataId":"ded932c9-4d15-40d6-a9d9-9c74fa053ab9"},"type":"SetVariable","inputs":{"name":"monthYear","value":"@{substring(outputs('03_Get_file_metadata')?['body/Name'],18,7)}"}},"Create_table_-_WSAA_Database_storage":{"runAfter":{"Set_variable_-_WSAA_Database_storage_-_monthYear":["Succeeded"]},"metadata":{"operationMetadataId":"2d921f47-ff89-49b2-8ec3-241dec0cb093","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table/Range":"a1:h@{variables('rowCount')}","table/TableName":"Export_Table"},"authentication":"@parameters('$authentication')"}},"List_rows_-_WSAA_Database_storage":{"runAfter":{"Create_table_-_WSAA_Database_storage":["Succeeded"]},"metadata":{"operationMetadataId":"8e008747-0c59-494c-8324-a39475a94c6b","tableId":"Export_Table"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"Export_Table"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_-_WSAA_Database_storage":{"foreach":"@outputs('List_rows_-_WSAA_Database_storage')?['body/value']","actions":{"Get_items_from_WSAA_Database_Cluster":{"runAfter":{},"metadata":{"operationMetadataId":"47a5f2ed-e37f-407b-9c90-b17e2fd295b0"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"GetItems"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"b8660d3f-bf62-4d31-9ffb-800bf55c1c47","$filter":"field_8 eq '@{items('Apply_to_each_-_WSAA_Database_storage')?['LogicalDiskName']}' AND field_9 eq '@{variables('monthYear')}'"},"authentication":"@parameters('$authentication')"}},"WSAA_Database_Cluster_Apply_to_each":{"foreach":"@outputs('Get_items_from_WSAA_Database_Cluster')?['body/value']","actions":{"Update_item_3":{"runAfter":{},"metadata":{"operationMetadataId":"fdfa0a3b-ce96-46fc-b885-f433447b8f55"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PatchItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"b8660d3f-bf62-4d31-9ffb-800bf55c1c47","id":"@items('WSAA_Database_Cluster_Apply_to_each')?['ID']","item/DriveLetter":"@items('Apply_to_each_-_WSAA_Database_storage')?['DriveLetter']","item/LogicalDiskName":"@items('Apply_to_each_-_WSAA_Database_storage')?['LogicalDiskName']","item/Capacity":"@items('Apply_to_each_-_WSAA_Database_storage')?['Capacity']","item/FreeSpace":"@items('Apply_to_each_-_WSAA_Database_storage')?['FreeSpace']"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"Get_items_from_WSAA_Database_Cluster":["Succeeded"]},"metadata":{"operationMetadataId":"c2f9fe28-ff9e-421a-8196-277fef223d56"},"type":"Foreach"}},"runAfter":{"List_rows_-_WSAA_Database_storage":["Succeeded"]},"metadata":{"operationMetadataId":"2da9cfd7-74c7-4143-b5a7-df3f6c0f417a"},"type":"Foreach"}},"runAfter":{"11_Condition_-_AWS_Charges":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","ls-fs-database_"]},"metadata":{"operationMetadataId":"3d08415e-09c0-479a-b0d9-38060de8e660"},"type":"If"},"13_Condition_-_Azure_Charges":{"actions":{"Create_table_-_Azure_Charges":{"runAfter":{},"metadata":{"operationMetadataId":"6d2ac427-201e-4056-8000-f36520b7ca7a","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table/Range":"Data!a1:e100","table/TableName":"ExportTable"},"authentication":"@parameters('$authentication')"}},"List_rows_present_in_a_table_-_Azure_Charges":{"runAfter":{"Create_table_-_Azure_Charges":["Succeeded"]},"metadata":{"operationMetadataId":"a2ea4c08-63ef-4434-a3da-f53b82dbb35b","tableId":"ExportTable"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"GetItems"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@triggerOutputs()?['headers/x-ms-file-id']","table":"ExportTable","$filter":"ServiceName ne ''","dateTimeFormat":"ISO 8601"},"authentication":"@parameters('$authentication')"}},"Apply_to_each_-_Azure_Charges":{"foreach":"@outputs('List_rows_present_in_a_table_-_Azure_Charges')?['body/value']","actions":{"Create_item_-_Azure_Charges":{"runAfter":{},"metadata":{"operationMetadataId":"1cfe67b2-4f27-4724-98a6-24c95a4ea564"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"78a76bf5-60db-48a3-9523-b0709e3eadc7","item/Title":"@items('Apply_to_each_-_Azure_Charges')?['ServiceName']","item/field_0":"@substring(items('Apply_to_each_-_Azure_Charges')?['UsageDate'],0,7)","item/field_3":"@items('Apply_to_each_-_Azure_Charges')?['CostUSD']","item/Subscription":"urbana-techsvc-mss-em"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"List_rows_present_in_a_table_-_Azure_Charges":["Succeeded"]},"metadata":{"operationMetadataId":"3cb2d557-8d03-4b88-a77a-a3136b25151c"},"type":"Foreach"}},"runAfter":{"12_Condition_-_WSAA_Database_storage":["Succeeded"]},"expression":{"startsWith":["@outputs('03_Get_file_metadata')?['body/Name']","CostManagement_"]},"metadata":{"operationMetadataId":"e8e59f87-4038-4302-b16d-ef800f51cfe4"},"type":"If"},"14_Condition_-_VH_Charges":{"actions":{"Apply_to_each_-_VH_Charges":{"foreach":"@variables('csvRows')","actions":{"Set_variable_-_rowCells":{"runAfter":{},"metadata":{"operationMetadataId":"edf2dd3e-2d24-4431-b472-cc54d341a9cf"},"type":"SetVariable","inputs":{"name":"rowCells","value":"@split(items('Apply_to_each_-_VH_Charges'),',')"}},"Exclude_header_row":{"actions":{"Create_item_-_VH_Charges":{"runAfter":{},"metadata":{"operationMetadataId":"20823818-914b-48a3-b70d-244d1e945445"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"PostItem"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"92ae33ff-4aac-4fb6-9dc4-6e6a44bdd045","item/Title":"@variables('rowCells')?[1]","item/field_0":"@variables('monthYear')","item/field_1":"@substring(variables('rowCells')?[0],0,13)","item/field_3":"@variables('rowCells')?[3]"},"authentication":"@parameters('$authentication')"}}},"runAfter":{"Set_variable_-_rowCells":["Succeeded"]},"expression":{"and":[{"not":{"startsWith":["@items('Apply_to_each_-_VH_Charges')","Service Description"]}},{"greater":["@length(items('Apply_to_each_-_VH_Charges'))",1]}]},"metadata":{"operationMetadataId":"9c22584a-eb41-4ffd-8d02-94df4b30fa98"},"type":"If"}},"runAfter":{"Set_variable_-_monthYear":["Succeeded"]},"metadata":{"operationMetadataId":"6c169dca-6d18-453a-9e00-3c031b37eb79"},"type":"Foreach"},"Set_variable_-_csvRows":{"runAfter":{},"metadata":{"operationMetadataId":"9445ecbe-7b50-48d4-8adb-21262949a29e"},"type":"SetVariable","inputs":{"name":"csvRows","value":"@split(triggerOutputs()?['body'],variables('lineBreak'))"}},"Set_variable_-_monthYear":{"runAfter":{"Set_variable_-_csvRows":["Succeeded"]},"metadata":{"operationMetadataId":"45018399-9872-4bac-88b6-d0bf7201b9bf"},"type":"SetVariable","inputs":{"name":"monthYear","value":"@{substring(outputs('03_Get_file_metadata')?['body/Name'],0,7)}"}}},"runAfter":{"13_Condition_-_Azure_Charges":["Succeeded"]},"expression":{"endsWith":["@outputs('03_Get_file_metadata')?['body/Name']","-todate.csv"]},"metadata":{"operationMetadataId":"411440f0-cbef-4a41-8caa-734a349496b0"},"type":"If"},"99_Refresh_a_dataset":{"runAfter":{"98_Do_until_-_Move_to_backup":["Succeeded"]},"metadata":{"operationMetadataId":"1d5651ec-5a48-4665-aacc-a99f54463116"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_powerbi","connectionName":"shared_powerbi","operationId":"RefreshDataset"},"parameters":{"groupid":"5dec65c6-dca4-47c9-a96a-5023e52854fc","datasetid":"c1c9a291-0fcc-445d-9fde-9ef456ab14c9"},"authentication":"@parameters('$authentication')"}},"98_Do_until_-_Move_to_backup":{"actions":{"Move_file":{"runAfter":{},"metadata":{"operationMetadataId":"e9f0bbd5-18c2-44dd-8dec-a86dc07e9d36"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"MoveFileAsync"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","parameters/sourceFileId":"@triggerOutputs()?['headers/x-ms-file-id']","parameters/destinationDataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","parameters/destinationFolderPath":"/Shared Documents/inbox/_backup","parameters/nameConflictBehavior":2},"authentication":"@parameters('$authentication')"}},"Set_variable_-_fileLocked":{"runAfter":{"Move_file":["Failed","TimedOut","Succeeded"]},"metadata":{"operationMetadataId":"905bb211-5e58-4b11-915f-a43befa21bbe"},"type":"SetVariable","inputs":{"name":"fileLocked","value":"@if(equals(outputs('Move_file')?['body']?['status'],400),true,false)"}},"Delay":{"runAfter":{"Set_variable_-_fileLocked":["Succeeded"]},"metadata":{"operationMetadataId":"a13082d8-13d5-49c8-ba99-d4ab6c7ebeaf"},"type":"Wait","inputs":{"interval":{"count":30,"unit":"Second"}}}},"runAfter":{"14_Condition_-_VH_Charges":["Succeeded"]},"expression":"@equals(variables('fileLocked'), false)","limit":{"count":60,"timeout":"PT1H"},"metadata":{"operationMetadataId":"a3709b5e-e5a2-4bd7-98e1-05cac061ac50"},"type":"Until"}}}
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$connections": { "defaultValue": {}, "type": "Object" },
+    "$authentication": { "defaultValue": {}, "type": "SecureObject" }
+  },
+  "triggers": {
+    "01_When_a_file_is_created_in_a_folder": {
+      "recurrence": { "frequency": "Minute", "interval": 5 },
+      "metadata": {
+        "operationMetadataId": "5f475d6c-7f0c-4c5e-80e2-7e15cf6df7d4"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "OnNewFile"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "folderId": "%252fShared%2bDocuments%252finbox",
+          "inferContentType": true
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    }
+  },
+  "actions": {
+    "02_Initialize_variable_-_rowCount": {
+      "runAfter": {},
+      "metadata": {
+        "operationMetadataId": "595f0bd4-d77e-490e-9822-d6bd6a5c192e"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [{ "name": "rowCount", "type": "integer", "value": 0 }]
+      }
+    },
+    "02_Initialize_variable_-_monthYear": {
+      "runAfter": { "02_Initialize_variable_-_rowCount": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "192d5cfa-af68-447e-83b7-9ad7bbc09e26"
+      },
+      "type": "InitializeVariable",
+      "inputs": { "variables": [{ "name": "monthYear", "type": "string" }] }
+    },
+    "02_Initialize_variable_-_itPros": {
+      "runAfter": { "02_Initialize_variable_-_monthYear": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "65def80d-8990-4304-baa2-e2f24ae2a850"
+      },
+      "type": "InitializeVariable",
+      "inputs": { "variables": [{ "name": "itPros", "type": "string" }] }
+    },
+    "02_Initialize_variable_-_lineBreak": {
+      "runAfter": { "02_Initialize_variable_-_itPros": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "e235bb04-a6d4-49d6-a9fd-61c464ec2e13"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [{ "name": "lineBreak", "type": "string", "value": "\n" }]
+      }
+    },
+    "02_Initialize_variable_-_csvRows": {
+      "runAfter": { "02_Initialize_variable_-_lineBreak": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "6b3ab166-6d8a-410f-a761-0c176c7ec5d6"
+      },
+      "type": "InitializeVariable",
+      "inputs": { "variables": [{ "name": "csvRows", "type": "array" }] }
+    },
+    "02_Initialize_variable_-_rowCells": {
+      "runAfter": { "02_Initialize_variable_-_csvRows": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "9fc67b0a-cf01-4069-8a2c-7be41fe2ddee"
+      },
+      "type": "InitializeVariable",
+      "inputs": { "variables": [{ "name": "rowCells", "type": "array" }] }
+    },
+    "02_Initialize_variable_-_fileLocked": {
+      "runAfter": { "02_Initialize_variable_-_rowCells": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "43af5f89-0739-43a1-8b98-d88d5550334a"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          { "name": "fileLocked", "type": "boolean", "value": true }
+        ]
+      }
+    },
+    "03_Get_file_metadata": {
+      "runAfter": { "02_Initialize_variable_-_fileLocked": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "4be93abf-9014-4622-b695-1198a2c18823"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetFileMetadata"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "id": "@triggerOutputs()?['headers/x-ms-file-id']"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "03_Initialize_variable_-_fileName": {
+      "runAfter": { "03_Get_file_metadata": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "582c2d83-3f50-468f-884d-6afd378394d8"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "fileName",
+            "type": "array",
+            "value": "@split(outputs('03_Get_file_metadata')?['body/Name'],'_')"
+          }
+        ]
+      }
+    },
+    "04_Condition_-_TDX_Surveys": {
+      "actions": {
+        "List_rows_-_TDX_Surveys": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "c8ab5d45-57e9-4cf4-8265-6a83389a99c4",
+            "tableId": "Export_Table"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Export_Table",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_TDX_Survey": {
+          "foreach": "@outputs('List_rows_-_TDX_Surveys')?['body/value']",
+          "actions": {
+            "Create_item": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "36c1b93d-8e99-40c8-bab1-45505ce7bff1"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "86dbed14-4bca-4d0e-b90b-9324a1759657",
+                  "item/Title": "@items('Apply_to_each_-_TDX_Survey')?['Ticket ID']",
+                  "item/field_1/Value": "@items('Apply_to_each_-_TDX_Survey')?['Satsified']",
+                  "item/field_2": "@items('Apply_to_each_-_TDX_Survey')?['Comments-TS']",
+                  "item/field_3": "@items('Apply_to_each_-_TDX_Survey')?['*TechSvc-Request Area']",
+                  "item/field_4": "@items('Apply_to_each_-_TDX_Survey')?['Pri Resp Group']",
+                  "item/SurveyCompleted2": "@items('Apply_to_each_-_TDX_Survey')?['Survey Completed']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": { "List_rows_-_TDX_Surveys": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "7338bb29-ab35-4e0d-aafd-9db56db74606"
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": { "03_Initialize_variable_-_fileName": ["Succeeded"] },
+      "expression": {
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "tdx-survey-"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "431877e2-7402-4436-bcb0-14354b2c048c"
+      },
+      "type": "If"
+    },
+    "05_Condition_-_TDX_Tickets": {
+      "actions": {
+        "List_rows_-_TDX_Tickets": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "32224fba-6e99-4f01-83cb-50408649a54c",
+            "tableId": "Export_Table"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Export_Table",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_TDX_Tickets": {
+          "foreach": "@outputs('List_rows_-_TDX_Tickets')?['body/value']",
+          "actions": {
+            "Create_item_2": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "07a89a95-163f-41b8-a360-f4bf36b997ac"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "818f3f6b-a92c-420e-bc92-22764fb04ccb",
+                  "item/Title": "@items('Apply_to_each_-_TDX_Tickets')?['Title']",
+                  "item/Ticket_x0020_ID": "@items('Apply_to_each_-_TDX_Tickets')?['ID']",
+                  "item/field_2": "@items('Apply_to_each_-_TDX_Tickets')?['Classification']",
+                  "item/field_3": "@items('Apply_to_each_-_TDX_Tickets')?['Requestor']",
+                  "item/field_4": "@items('Apply_to_each_-_TDX_Tickets')?['Acct~1Dept']",
+                  "item/field_6": "@items('Apply_to_each_-_TDX_Tickets')?['Status']",
+                  "item/field_7": "@items('Apply_to_each_-_TDX_Tickets')?['Priority']",
+                  "item/field_8": "@items('Apply_to_each_-_TDX_Tickets')?['Previous Resp Group']",
+                  "item/field_9": "@items('Apply_to_each_-_TDX_Tickets')?['Prim Resp']",
+                  "item/field_10": "@items('Apply_to_each_-_TDX_Tickets')?['Due']",
+                  "item/LastModified": "@items('Apply_to_each_-_TDX_Tickets')?['Modified']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": { "List_rows_-_TDX_Tickets": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "14913abd-751f-49c2-9958-98e2203b2a31"
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": { "04_Condition_-_TDX_Surveys": ["Succeeded"] },
+      "expression": {
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "tdx-ticket-"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "933b6c3b-27e0-4ff7-b8ba-e198f733e817"
+      },
+      "type": "If"
+    },
+    "06_Condition_-_WSAA_System_Admin": {
+      "actions": {
+        "List_rows_-_WSAA_System_Admin": {
+          "runAfter": { "Create_table_-_WSAA_System_Admin": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "0fc357e3-8ee1-431f-93cd-8db0faa9db23",
+            "tableId": "Export_Table"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Export_Table",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Set_variable_-_WSAA_System_Admin": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "96bfa37b-8299-4d28-9e12-0d97cea8353b"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "rowCount",
+            "value": "@int(substring(outputs('03_Get_file_metadata')?['body/Name'],12,3))"
+          }
+        },
+        "Increment_variable_-_WSAA_System_Admin": {
+          "runAfter": { "Set_variable_-_WSAA_System_Admin": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "6fbc0143-412c-45e6-9b88-14022ca4effc"
+          },
+          "type": "IncrementVariable",
+          "inputs": { "name": "rowCount", "value": 1 }
+        },
+        "Create_table_-_WSAA_System_Admin": {
+          "runAfter": {
+            "Set_variable_-_WSAA_System_Admin_-_monthYear": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "453e19d9-a14b-448b-8ee9-e3488b4dc333",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:i@{variables('rowCount')}",
+              "table/TableName": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_WSAA_System_Admin": {
+          "foreach": "@outputs('List_rows_-_WSAA_System_Admin')?['body/value']",
+          "actions": {
+            "Create_item_-_WSAA_System_Admin": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "7700935a-afe7-4355-949b-f42d636e425a"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "c9f0c68e-c8af-4f61-adf7-3be4e398d26d",
+                  "item/Title": "@items('Apply_to_each_-_WSAA_System_Admin')?['IT Pros']",
+                  "item/Month": "@substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)",
+                  "item/field_1": "@items('Apply_to_each_-_WSAA_System_Admin')?['AssetName']",
+                  "item/field_2": "@items('Apply_to_each_-_WSAA_System_Admin')?['FunctionalLevel']",
+                  "item/field_3": "@items('Apply_to_each_-_WSAA_System_Admin')?['AssetTypename']",
+                  "item/ShortOS": "@replace(replace(replace(replace(replace(replace(replace(items('Apply_to_each_-_WSAA_System_Admin')?['OperatingSystem'],'Microsoft Windows ',''),' R2',''),' LTSC',''),' Standard',''),' Datacenter',''),' Enterprise',''),' Edition','')",
+                  "item/OperatingSystem": "@items('Apply_to_each_-_WSAA_System_Admin')?['OperatingSystem']",
+                  "item/field_4": "@items('Apply_to_each_-_WSAA_System_Admin')?['Service']",
+                  "item/field_5": "@items('Apply_to_each_-_WSAA_System_Admin')?['UptimeDays']",
+                  "item/field_6": "@items('Apply_to_each_-_WSAA_System_Admin')?['End Customer Departments']",
+                  "item/field_7": "@items('Apply_to_each_-_WSAA_System_Admin')?['CFOP']",
+                  "item/field_8": "@items('Apply_to_each_-_WSAA_System_Admin')?['ActivityCode']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": { "List_rows_-_WSAA_System_Admin": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "d154638b-7560-4fae-bb2a-f77e8614b59c"
+          },
+          "type": "Foreach"
+        },
+        "Set_variable_-_WSAA_System_Admin_-_monthYear": {
+          "runAfter": {
+            "Increment_variable_-_WSAA_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "74d9e87b-0590-470b-a972-ab8df44ecb76"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)}"
+          }
+        }
+      },
+      "runAfter": { "05_Condition_-_TDX_Tickets": ["Succeeded"] },
+      "expression": {
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "ls-sysadmin_"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "4b4ac23c-cc53-451d-9114-fcccd5340cd7"
+      },
+      "type": "If"
+    },
+    "07_Condition_-_WSAA_Database": {
+      "actions": {
+        "Set_variable_-_WSAA_Database": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "9254c123-e287-49a3-b5e3-815011ecd774"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "rowCount",
+            "value": "@int(substring(outputs('03_Get_file_metadata')?['body/Name'],12,2))"
+          }
+        },
+        "Increment_variable_-_WSAA_Database": {
+          "runAfter": { "Set_variable_-_WSAA_Database": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "860922e4-5bd8-47a3-84b8-74bcb7bf50da"
+          },
+          "type": "IncrementVariable",
+          "inputs": { "name": "rowCount", "value": 1 }
+        },
+        "Set_variable_-_WSAA_Database_-_monthYear": {
+          "runAfter": { "Increment_variable_-_WSAA_Database": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "7ec7a676-8af0-4c80-a953-49733d6ef31b"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],15,7)}"
+          }
+        },
+        "Create_table_-_WSAA_Database": {
+          "runAfter": {
+            "Set_variable_-_WSAA_Database_-_monthYear": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "e129b229-28c4-4ecd-b4cf-066eda374a17",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:i@{variables('rowCount')}",
+              "table/TableName": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "List_rows_-_WSAA_Database": {
+          "runAfter": { "Create_table_-_WSAA_Database": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "ac3bb910-ceb3-4ec8-842f-865bd779d440",
+            "tableId": "Export_Table"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_WSAA_Database": {
+          "foreach": "@outputs('List_rows_-_WSAA_Database')?['body/value']",
+          "actions": {
+            "Condition_-_WSAA_Database_Cluster": {
+              "actions": {
+                "Get_items_from_WSAA_Database_Crosswalk": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "a0f13629-3b0f-40b1-9038-b4c2cc79b309"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "GetItems"
+                    },
+                    "parameters": {
+                      "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                      "table": "21561bd0-db6c-4af5-b0c7-d822c225ec03",
+                      "$filter": "Title eq '@{items('Apply_to_each_-_WSAA_Database')?['InstanceName']}'"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                },
+                "WSAA_Database_Crosswalk_Apply_to_each": {
+                  "foreach": "@outputs('Get_items_from_WSAA_Database_Crosswalk')?['body/value']",
+                  "actions": {
+                    "Set_variable_-_WSAA_Database_-_itPros": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "56f7c155-69d7-4010-b61e-0620dac4a907"
+                      },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "itPros",
+                        "value": "WSAA@{items('WSAA_Database_Crosswalk_Apply_to_each')?['field_1']}"
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Get_items_from_WSAA_Database_Crosswalk": ["Succeeded"]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "9e3d45b3-b14e-45dd-a088-f74de7f82a3d"
+                  },
+                  "type": "Foreach"
+                }
+              },
+              "runAfter": {},
+              "else": {
+                "actions": {
+                  "Set_variable_-_WSAA_Database_-_itPros_-_default": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "5dcc1db8-ef82-45d4-811e-b04807f87cca"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "itPros",
+                      "value": "@{items('Apply_to_each_-_WSAA_Database')?['IT Pros']}"
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "equals": [
+                  "@{items('Apply_to_each_-_WSAA_Database')?['InstanceName']}",
+                  " [[[ DISABLED ]]] "
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "5b1e1899-866b-493c-bd7d-9fec46347cc5"
+              },
+              "type": "If"
+            },
+            "Create_item_-_WSAA_Database": {
+              "runAfter": {
+                "Condition_-_WSAA_Database_Cluster": ["Succeeded"]
+              },
+              "metadata": {
+                "operationMetadataId": "e5e602a0-7329-492d-b67f-06c209ac4b44"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "b8660d3f-bf62-4d31-9ffb-800bf55c1c47",
+                  "item/Title": "@items('Apply_to_each_-_WSAA_Database')?['AssetName']",
+                  "item/field_9": "@substring(outputs('03_Get_file_metadata')?['body/Name'],15,7)",
+                  "item/field_0": "@variables('itPros')",
+                  "item/field_2": "@items('Apply_to_each_-_WSAA_Database')?['Edition']",
+                  "item/field_3": "@items('Apply_to_each_-_WSAA_Database')?['License']",
+                  "item/field_4": "@items('Apply_to_each_-_WSAA_Database')?['SQLServicePack']",
+                  "item/field_5": "@items('Apply_to_each_-_WSAA_Database')?['version']",
+                  "item/field_6": "@items('Apply_to_each_-_WSAA_Database')?['fileVersion']",
+                  "item/field_7": "@items('Apply_to_each_-_WSAA_Database')?['Service']",
+                  "item/field_8": "@items('Apply_to_each_-_WSAA_Database')?['InstanceName']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": { "List_rows_-_WSAA_Database": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "670207ce-6783-409e-b421-d37032b913ca"
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": { "06_Condition_-_WSAA_System_Admin": ["Succeeded"] },
+      "expression": {
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "ls-database_"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "65aa756b-7a50-43ee-ac31-1f8c7a31b60b"
+      },
+      "type": "If"
+    },
+    "08_Condition_-_WSAA_File_Storage": {
+      "actions": {
+        "List_rows_-_WSAA_File_Storage": {
+          "runAfter": { "Create_table_-_WSAA_File_Storage": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "625c3018-5b09-4db5-94d6-a6ba4cb9fbf2",
+            "tableId": "Export_Table"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Export_Table",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Set_variable_-_WSAA_File_Storage": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "1b237986-c1de-4089-b1f7-b706eca7c55d"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "rowCount",
+            "value": "@int(substring(outputs('03_Get_file_metadata')?['body/Name'],12,3))"
+          }
+        },
+        "Increment_variable_-_WSAA_File_Storage": {
+          "runAfter": { "Set_variable_-_WSAA_File_Storage": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "e5a46525-6973-4711-a9ff-a548d7c2df7d"
+          },
+          "type": "IncrementVariable",
+          "inputs": { "name": "rowCount", "value": 1 }
+        },
+        "Create_table_-_WSAA_File_Storage": {
+          "runAfter": {
+            "Set_variable_-_WSAA_File_Storage_-_monthYear": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "86f39f44-1c28-4172-8ff1-ad55ec8c67a9",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:h@{variables('rowCount')}",
+              "table/TableName": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_WSAA_File_Storage": {
+          "foreach": "@outputs('List_rows_-_WSAA_File_Storage')?['body/value']",
+          "actions": {
+            "Create_item_-_WSAA_File_Storage": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "293c83a1-5c5d-440c-9825-132efef26369"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "bbbad72f-9052-4ded-9a9f-0f12516c6598",
+                  "item/Title": "@items('Apply_to_each_-_WSAA_File_Storage')?['AssetName']",
+                  "item/field_0": "@substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)",
+                  "item/field_1": "@items('Apply_to_each_-_WSAA_File_Storage')?['IT Pros']",
+                  "item/field_4": "@items('Apply_to_each_-_WSAA_File_Storage')?['DriveLetter']",
+                  "item/FreeSpace": "@items('Apply_to_each_-_WSAA_File_Storage')?['FreeSpace']",
+                  "item/Capacity": "@items('Apply_to_each_-_WSAA_File_Storage')?['Capacity']",
+                  "item/field_5": "@items('Apply_to_each_-_WSAA_File_Storage')?['LogicalDiskName']",
+                  "item/EndCustomer": "@items('Apply_to_each_-_WSAA_File_Storage')?['End Customer']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": { "List_rows_-_WSAA_File_Storage": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "7ff1afcf-fdbb-477c-ad90-7d7d369c0b63"
+          },
+          "type": "Foreach"
+        },
+        "Set_variable_-_WSAA_File_Storage_-_monthYear": {
+          "runAfter": {
+            "Increment_variable_-_WSAA_File_Storage": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "bf29c7ac-a74b-47db-8607-7fd970051400"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],16,7)}"
+          }
+        }
+      },
+      "runAfter": { "07_Condition_-_WSAA_Database": ["Succeeded"] },
+      "expression": {
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "ls-filestor_"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "ebb1e792-cf49-4111-979d-ad5788f473cf"
+      },
+      "type": "If"
+    },
+    "09_Condition_-_WSAA_WebApp": {
+      "actions": {
+        "List_rows_-_WSAA_WebApp": {
+          "runAfter": { "Create_table_-_WSAA_WebApp": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "5d6f9d7f-7ca4-49bb-9767-85c840302650",
+            "tableId": "Export_Table"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Export_Table",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Set_variable_-_WSAA_WebApp": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "22bc436c-dc27-4edb-bada-64ac8a157fcd"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "rowCount",
+            "value": "@int(variables('fileName')?[1])"
+          }
+        },
+        "Increment_variable_-_WSAA_WebApp": {
+          "runAfter": { "Set_variable_-_WSAA_WebApp": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "5f2c43bd-4edf-466f-9660-4b277a214520"
+          },
+          "type": "IncrementVariable",
+          "inputs": { "name": "rowCount", "value": 1 }
+        },
+        "Create_table_-_WSAA_WebApp": {
+          "runAfter": {
+            "Set_variable_-_WSAA_WebApp_-_monthYear": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "c0abdc40-1e6a-48ce-8679-f6f370468505",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:i@{variables('rowCount')}",
+              "table/TableName": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_WSAA_WebApp": {
+          "foreach": "@outputs('List_rows_-_WSAA_WebApp')?['body/value']",
+          "actions": {
+            "Create_item_-_WSAA_WebApp": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "ecfc872b-d64d-44b1-a082-5845a71cd766"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "88166712-6a06-4cbb-8137-18c1bfd6e727",
+                  "item/Title": "@items('Apply_to_each_-_WSAA_WebApp')?['AssetName']",
+                  "item/field_0": "@variables('monthYear')",
+                  "item/field_1": "@items('Apply_to_each_-_WSAA_WebApp')?['AssetGroup']",
+                  "item/field_3": "@items('Apply_to_each_-_WSAA_WebApp')?['Last IIS Change']",
+                  "item/field_4": "@items('Apply_to_each_-_WSAA_WebApp')?['UserDomain']",
+                  "item/field_5": "@items('Apply_to_each_-_WSAA_WebApp')?['Location']",
+                  "item/field_6": "@items('Apply_to_each_-_WSAA_WebApp')?['IPLocation']",
+                  "item/field_7": "@items('Apply_to_each_-_WSAA_WebApp')?['OS']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": { "List_rows_-_WSAA_WebApp": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "d1092687-2ef8-4904-83a1-e6123b26c701"
+          },
+          "type": "Foreach"
+        },
+        "Set_variable_-_WSAA_WebApp_-_monthYear": {
+          "runAfter": { "Increment_variable_-_WSAA_WebApp": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "8e075a8b-35a9-46c4-aae8-c64083596023"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(variables('fileName')?[2],0,7)}"
+          }
+        }
+      },
+      "runAfter": { "08_Condition_-_WSAA_File_Storage": ["Succeeded"] },
+      "expression": {
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "ls-webahost_"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "9c424dbc-62b9-4556-8774-c390e8e238cd"
+      },
+      "type": "If"
+    },
+    "10_Condition_-_SMG_System_Admin": {
+      "actions": {
+        "Create_table_-_SMG_System_Admin": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "64d868b3-18d6-48b4-a9d7-563883b88900",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:d400",
+              "table/TableName": "Table1",
+              "table/ColumnsNames": "hostname,class,service,platform"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_SMG_System_Admin": {
+          "foreach": "@body('Filter_array')",
+          "actions": {
+            "Create_item_-_SMG_System_Admin": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "3f56075f-3666-4769-897c-212141d53609"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
+                  "item/Title": "@items('Apply_to_each_-_SMG_System_Admin')?['hostname']",
+                  "item/field_0": "@substring(outputs('03_Get_file_metadata')?['body/Name'],4,7)",
+                  "item/field_2": "@items('Apply_to_each_-_SMG_System_Admin')?['class']",
+                  "item/field_3": "@items('Apply_to_each_-_SMG_System_Admin')?['service']",
+                  "item/field_4": "@items('Apply_to_each_-_SMG_System_Admin')?['platform']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": { "Set_variable": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "5e16f5b6-7fc1-4f3d-8d79-b3c068cb1141"
+          },
+          "type": "Foreach"
+        },
+        "Set_variable": {
+          "runAfter": { "Filter_array": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "bfba90ed-ded7-4cbc-bc76-a1925863b32b"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],4,7)}"
+          }
+        },
+        "11_Get_items_-_SMG_departments": {
+          "runAfter": { "Apply_to_each_-_SMG_System_Admin": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "8f9a8c2c-15ad-473a-b070-7c8256bea03c"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
+              "$filter": "dept eq null",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "12_Apply_to_each_-_SMG_departments": {
+          "foreach": "@outputs('11_Get_items_-_SMG_departments')?['body/value']",
+          "actions": {
+            "Condition": {
+              "actions": {
+                "Update_item": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "1d3dd0b3-0e46-4e68-98e0-cdee7521a9f9"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "PatchItem"
+                    },
+                    "parameters": {
+                      "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                      "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
+                      "id": "@items('12_Apply_to_each_-_SMG_departments')?['ID']",
+                      "item/dept": "@replace(items('12_Apply_to_each_-_SMG_departments')?['field_3'],substring(items('12_Apply_to_each_-_SMG_departments')?['field_3'],indexOf(items('12_Apply_to_each_-_SMG_departments')?['field_3'],'_')),'')"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {},
+              "else": {
+                "actions": {
+                  "Get_items_from_Crosswalk": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "b72d8dbb-3088-4697-8309-9f3e26c2fa6f"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      },
+                      "parameters": {
+                        "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                        "table": "bcc3081a-ba78-4dc3-95d8-6c72aa2d6f8f",
+                        "$filter": "Title eq '@{items('12_Apply_to_each_-_SMG_departments')?['field_3']}'"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Apply_to_each_2": {
+                    "foreach": "@outputs('Get_items_from_Crosswalk')?['body/value']",
+                    "actions": {
+                      "Update_item_2": {
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "ed7e1e6f-149c-48e3-83f2-a2de60416d9d"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "PatchItem"
+                          },
+                          "parameters": {
+                            "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                            "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
+                            "id": "@items('12_Apply_to_each_-_SMG_departments')?['ID']",
+                            "item/dept": "@items('Apply_to_each_2')?['field_1']"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    },
+                    "runAfter": { "Get_items_from_Crosswalk": ["Succeeded"] },
+                    "metadata": {
+                      "operationMetadataId": "289cb4ce-43a7-47ef-b0f5-af85acaa1f26"
+                    },
+                    "type": "Foreach"
+                  }
+                }
+              },
+              "expression": {
+                "contains": [
+                  "@items('12_Apply_to_each_-_SMG_departments')?['field_3']",
+                  "_"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "fb748f1d-b8a0-4ed7-b40b-93a2b431ff9c"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": { "11_Get_items_-_SMG_departments": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "52422942-1750-46bf-a78b-bf6d7c0e63f0"
+          },
+          "type": "Foreach"
+        },
+        "List_Rows_-_SMG_System_Admin": {
+          "runAfter": { "Create_table_-_SMG_System_Admin": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "5d7b4871-530e-4b0f-a8c6-d7e747e88c17",
+            "tableId": "Table1"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Table1",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Filter_array": {
+          "runAfter": { "List_Rows_-_SMG_System_Admin": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "02f87cef-ff5c-466f-8b3a-71e9f9481c76"
+          },
+          "type": "Query",
+          "inputs": {
+            "from": "@outputs('List_Rows_-_SMG_System_Admin')?['body/value']",
+            "where": "@not(equals(item()?['hostname'],''))"
+          }
+        }
+      },
+      "runAfter": { "09_Condition_-_WSAA_WebApp": ["Succeeded"] },
+      "expression": {
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "smg_"]
+      },
+      "metadata": {
+        "operationMetadataId": "4339773b-ca88-4e32-bf77-35a578c87424"
+      },
+      "type": "If"
+    },
+    "10_Condition_-_SMG_Daily_System_Admin": {
+      "actions": {
+        "List_Rows_-_SMG_Daily_System_Admin": {
+          "runAfter": {
+            "Create_table_-_SMG_Daily_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "5d7b4871-530e-4b0f-a8c6-d7e747e88c17",
+            "tableId": "Table1"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Table1",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Filter_array_-_SMG_Daily_System_Admin": {
+          "runAfter": { "List_Rows_-_SMG_Daily_System_Admin": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "02f87cef-ff5c-466f-8b3a-71e9f9481c76"
+          },
+          "type": "Query",
+          "inputs": {
+            "from": "@outputs('List_Rows_-_SMG_Daily_System_Admin')?['body/value']",
+            "where": "@not(equals(item()?['hostname'],''))"
+          }
+        },
+        "Apply_to_each_-_SMG_Daily_System_Admin": {
+          "foreach": "@body('Filter_array_-_SMG_Daily_System_Admin')",
+          "actions": {
+            "Create_item_-_SMG_Daily_System_Admin": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "3f56075f-3666-4769-897c-212141d53609"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "81e26213-f723-4b04-bfaf-3a5284cdb007",
+                  "item/Title": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['hostname']",
+                  "item/field_1": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['class']",
+                  "item/field_2": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['service']",
+                  "item/field_3": "@items('Apply_to_each_-_SMG_Daily_System_Admin')?['platform']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "Filter_array_-_SMG_Daily_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "5e16f5b6-7fc1-4f3d-8d79-b3c068cb1141"
+          },
+          "type": "Foreach"
+        },
+        "Get_items_for_Delete": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "c8679c9d-36b1-4901-88df-6c3972aefa7b"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "table": "81e26213-f723-4b04-bfaf-3a5284cdb007",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Create_table_-_SMG_Daily_System_Admin": {
+          "runAfter": { "Apply_to_each_-_Delete_items": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "64d868b3-18d6-48b4-a9d7-563883b88900",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:d400",
+              "table/TableName": "Table1",
+              "table/ColumnsNames": "hostname,class,service,platform"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_Delete_items": {
+          "foreach": "@outputs('Get_items_for_Delete')?['body/value']",
+          "actions": {
+            "Delete_item": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "deda2a8c-47a4-404d-9f94-9d240ddbad63"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "DeleteItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "81e26213-f723-4b04-bfaf-3a5284cdb007",
+                  "id": "@items('Apply_to_each_-_Delete_items')?['ID']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": { "Get_items_for_Delete": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "c226a20d-6826-4813-aa0b-9cbeb835ec48"
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": { "10_Condition_-_SMG_System_Admin": ["Succeeded"] },
+      "expression": {
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "dailysmg_"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "4339773b-ca88-4e32-bf77-35a578c87424"
+      },
+      "type": "If"
+    },
+    "11_Condition_-_AWS_Charges": {
+      "actions": {
+        "List_rows_-_AWS_Charges": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "7eaa9ad2-3aa9-470f-b5e6-dcb747634226",
+            "tableId": "AWS"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "AWS",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each": {
+          "foreach": "@outputs('List_rows_-_AWS_Charges')?['body/value']",
+          "actions": {
+            "Create_item_-_AWS_Charges": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "f8c68319-ad98-431f-b4a0-70d060a941b4"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "2033cb82-e40f-426e-ba64-58bc834c9cc9",
+                  "item/Title": "@items('Apply_to_each')?['Service']",
+                  "item/field_3": "@items('Apply_to_each')?['Month']",
+                  "item/field_0": "@items('Apply_to_each')?['Account']",
+                  "item/field_1": "@items('Apply_to_each')?['Tag']",
+                  "item/field_4": "@items('Apply_to_each')?['Amount']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": { "List_rows_-_AWS_Charges": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "12e46232-9728-4c3b-af4e-bcc853c08173"
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": { "10_Condition_-_SMG_Daily_System_Admin": ["Succeeded"] },
+      "expression": {
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "AWS-MonthlyCostByTag"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "4b81dab4-8dbb-444a-919e-d9c979cf047d"
+      },
+      "type": "If"
+    },
+    "12_Condition_-_WSAA_Database_storage": {
+      "actions": {
+        "Set_variable_-_WSAA_Database_storage": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "33e87728-b405-4a83-8113-320e8567070c"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "rowCount",
+            "value": "@int(substring(outputs('03_Get_file_metadata')?['body/Name'],15,2))"
+          }
+        },
+        "Increment_variable_-_WSAA_Database_storage": {
+          "runAfter": { "Set_variable_-_WSAA_Database_storage": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "caf4ba22-36ae-4d6b-af88-35ae4c88c368"
+          },
+          "type": "IncrementVariable",
+          "inputs": { "name": "rowCount", "value": 1 }
+        },
+        "Set_variable_-_WSAA_Database_storage_-_monthYear": {
+          "runAfter": {
+            "Increment_variable_-_WSAA_Database_storage": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "ded932c9-4d15-40d6-a9d9-9c74fa053ab9"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],18,7)}"
+          }
+        },
+        "Create_table_-_WSAA_Database_storage": {
+          "runAfter": {
+            "Set_variable_-_WSAA_Database_storage_-_monthYear": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "2d921f47-ff89-49b2-8ec3-241dec0cb093",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:h@{variables('rowCount')}",
+              "table/TableName": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "List_rows_-_WSAA_Database_storage": {
+          "runAfter": { "Create_table_-_WSAA_Database_storage": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "8e008747-0c59-494c-8324-a39475a94c6b",
+            "tableId": "Export_Table"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_WSAA_Database_storage": {
+          "foreach": "@outputs('List_rows_-_WSAA_Database_storage')?['body/value']",
+          "actions": {
+            "Get_items_from_WSAA_Database_Cluster": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "47a5f2ed-e37f-407b-9c90-b17e2fd295b0"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "GetItems"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "b8660d3f-bf62-4d31-9ffb-800bf55c1c47",
+                  "$filter": "field_8 eq '@{items('Apply_to_each_-_WSAA_Database_storage')?['LogicalDiskName']}' AND field_9 eq '@{variables('monthYear')}'"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            },
+            "WSAA_Database_Cluster_Apply_to_each": {
+              "foreach": "@outputs('Get_items_from_WSAA_Database_Cluster')?['body/value']",
+              "actions": {
+                "Update_item_3": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "fdfa0a3b-ce96-46fc-b885-f433447b8f55"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "PatchItem"
+                    },
+                    "parameters": {
+                      "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                      "table": "b8660d3f-bf62-4d31-9ffb-800bf55c1c47",
+                      "id": "@items('WSAA_Database_Cluster_Apply_to_each')?['ID']",
+                      "item/DriveLetter": "@items('Apply_to_each_-_WSAA_Database_storage')?['DriveLetter']",
+                      "item/LogicalDiskName": "@items('Apply_to_each_-_WSAA_Database_storage')?['LogicalDiskName']",
+                      "item/Capacity": "@items('Apply_to_each_-_WSAA_Database_storage')?['Capacity']",
+                      "item/FreeSpace": "@items('Apply_to_each_-_WSAA_Database_storage')?['FreeSpace']"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_items_from_WSAA_Database_Cluster": ["Succeeded"]
+              },
+              "metadata": {
+                "operationMetadataId": "c2f9fe28-ff9e-421a-8196-277fef223d56"
+              },
+              "type": "Foreach"
+            }
+          },
+          "runAfter": { "List_rows_-_WSAA_Database_storage": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "2da9cfd7-74c7-4143-b5a7-df3f6c0f417a"
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": { "11_Condition_-_AWS_Charges": ["Succeeded"] },
+      "expression": {
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "ls-fs-database_"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "3d08415e-09c0-479a-b0d9-38060de8e660"
+      },
+      "type": "If"
+    },
+    "13_Condition_-_Azure_Charges": {
+      "actions": {
+        "Create_table_-_Azure_Charges": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "6d2ac427-201e-4056-8000-f36520b7ca7a",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "Data!a1:e100",
+              "table/TableName": "ExportTable"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "List_rows_present_in_a_table_-_Azure_Charges": {
+          "runAfter": { "Create_table_-_Azure_Charges": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "a2ea4c08-63ef-4434-a3da-f53b82dbb35b",
+            "tableId": "ExportTable"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "ExportTable",
+              "$filter": "ServiceName ne ''",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_Azure_Charges": {
+          "foreach": "@outputs('List_rows_present_in_a_table_-_Azure_Charges')?['body/value']",
+          "actions": {
+            "Create_item_-_Azure_Charges": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "1cfe67b2-4f27-4724-98a6-24c95a4ea564"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "78a76bf5-60db-48a3-9523-b0709e3eadc7",
+                  "item/Title": "@items('Apply_to_each_-_Azure_Charges')?['ServiceName']",
+                  "item/field_0": "@substring(items('Apply_to_each_-_Azure_Charges')?['UsageDate'],0,7)",
+                  "item/field_3": "@items('Apply_to_each_-_Azure_Charges')?['CostUSD']",
+                  "item/Subscription": "urbana-techsvc-mss-em"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "List_rows_present_in_a_table_-_Azure_Charges": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "3cb2d557-8d03-4b88-a77a-a3136b25151c"
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": { "12_Condition_-_WSAA_Database_storage": ["Succeeded"] },
+      "expression": {
+        "startsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "CostManagement_"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "e8e59f87-4038-4302-b16d-ef800f51cfe4"
+      },
+      "type": "If"
+    },
+    "14_Condition_-_VH_Charges": {
+      "actions": {
+        "Apply_to_each_-_VH_Charges": {
+          "foreach": "@variables('csvRows')",
+          "actions": {
+            "Set_variable_-_rowCells": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "edf2dd3e-2d24-4431-b472-cc54d341a9cf"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "rowCells",
+                "value": "@split(items('Apply_to_each_-_VH_Charges'),',')"
+              }
+            },
+            "Exclude_header_row": {
+              "actions": {
+                "Create_item_-_VH_Charges": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "20823818-914b-48a3-b70d-244d1e945445"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "PostItem"
+                    },
+                    "parameters": {
+                      "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                      "table": "92ae33ff-4aac-4fb6-9dc4-6e6a44bdd045",
+                      "item/Title": "@variables('rowCells')?[1]",
+                      "item/field_0": "@variables('monthYear')",
+                      "item/field_1": "@substring(variables('rowCells')?[0],0,13)",
+                      "item/field_3": "@variables('rowCells')?[3]"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": { "Set_variable_-_rowCells": ["Succeeded"] },
+              "expression": {
+                "and": [
+                  {
+                    "not": {
+                      "startsWith": [
+                        "@items('Apply_to_each_-_VH_Charges')",
+                        "Service Description"
+                      ]
+                    }
+                  },
+                  {
+                    "greater": [
+                      "@length(items('Apply_to_each_-_VH_Charges'))",
+                      1
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "9c22584a-eb41-4ffd-8d02-94df4b30fa98"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": { "Set_variable_-_monthYear": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "6c169dca-6d18-453a-9e00-3c031b37eb79"
+          },
+          "type": "Foreach"
+        },
+        "Set_variable_-_csvRows": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "9445ecbe-7b50-48d4-8adb-21262949a29e"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "csvRows",
+            "value": "@split(triggerOutputs()?['body'],variables('lineBreak'))"
+          }
+        },
+        "Set_variable_-_monthYear": {
+          "runAfter": { "Set_variable_-_csvRows": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "45018399-9872-4bac-88b6-d0bf7201b9bf"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],0,7)}"
+          }
+        }
+      },
+      "runAfter": { "13_Condition_-_Azure_Charges": ["Succeeded"] },
+      "expression": {
+        "endsWith": [
+          "@outputs('03_Get_file_metadata')?['body/Name']",
+          "-todate.csv"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "411440f0-cbef-4a41-8caa-734a349496b0"
+      },
+      "type": "If"
+    },
+    "99_Refresh_a_dataset": {
+      "runAfter": { "98_Do_until_-_Move_to_backup": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "1d5651ec-5a48-4665-aacc-a99f54463116"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+          "connectionName": "shared_powerbi",
+          "operationId": "RefreshDataset"
+        },
+        "parameters": {
+          "groupid": "5dec65c6-dca4-47c9-a96a-5023e52854fc",
+          "datasetid": "c1c9a291-0fcc-445d-9fde-9ef456ab14c9"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "98_Do_until_-_Move_to_backup": {
+      "actions": {
+        "Move_file": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "e9f0bbd5-18c2-44dd-8dec-a86dc07e9d36"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "MoveFileAsync"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "parameters/sourceFileId": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "parameters/destinationDataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "parameters/destinationFolderPath": "/Shared Documents/inbox/_backup",
+              "parameters/nameConflictBehavior": 2
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Set_variable_-_fileLocked": {
+          "runAfter": { "Move_file": ["Failed", "TimedOut", "Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "905bb211-5e58-4b11-915f-a43befa21bbe"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "fileLocked",
+            "value": "@if(equals(outputs('Move_file')?['body']?['status'],400),true,false)"
+          }
+        },
+        "Delay": {
+          "runAfter": { "Set_variable_-_fileLocked": ["Succeeded"] },
+          "metadata": {
+            "operationMetadataId": "a13082d8-13d5-49c8-ba99-d4ab6c7ebeaf"
+          },
+          "type": "Wait",
+          "inputs": { "interval": { "count": 30, "unit": "Second" } }
+        }
+      },
+      "runAfter": { "14_Condition_-_VH_Charges": ["Succeeded"] },
+      "expression": "@equals(variables('fileLocked'), false)",
+      "limit": { "count": 60, "timeout": "PT1H" },
+      "metadata": {
+        "operationMetadataId": "a3709b5e-e5a2-4bd7-98e1-05cac061ac50"
+      },
+      "type": "Until"
+    }
+  }
+}
