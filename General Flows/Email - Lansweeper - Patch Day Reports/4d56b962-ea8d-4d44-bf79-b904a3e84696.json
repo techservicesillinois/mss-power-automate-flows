@@ -37,6 +37,44 @@
     }
   },
   "actions": {
+    "Mark_as_read_or_unread_(V3)": {
+      "runAfter": {},
+      "metadata": {
+        "operationMetadataId": "48d3828a-d2c3-4568-983d-fecb4b875b70"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+          "connectionName": "shared_office365",
+          "operationId": "MarkAsRead_V3"
+        },
+        "parameters": {
+          "messageId": "@triggerOutputs()?['body/id']",
+          "mailboxAddress": "eepps2@illinois.edu;",
+          "body/isRead": true
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "Initialize_variable_-_patchDayOffset": {
+      "runAfter": {
+        "Mark_as_read_or_unread_(V3)": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "2d56d668-6c44-4df4-afdb-df814bb07abf"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "patchDayOffset",
+            "type": "integer",
+            "value": 0
+          }
+        ]
+      }
+    },
     "Get_Patch_Tuesday_date": {
       "runAfter": {
         "Initialize_variable_-_patchDayOffset": ["Succeeded"]
@@ -76,6 +114,21 @@
             }
           }
         },
+        "Delay_15_seconds_1": {
+          "runAfter": {
+            "Create_file": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "a4a880d4-388d-4503-b02a-d9c05db751ce"
+          },
+          "type": "Wait",
+          "inputs": {
+            "interval": {
+              "count": 15,
+              "unit": "Second"
+            }
+          }
+        },
         "Create_table": {
           "runAfter": {
             "Delay_15_seconds_1": ["Succeeded"]
@@ -100,6 +153,21 @@
               "table/TableName": "Table1"
             },
             "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Delay_15_seconds_2": {
+          "runAfter": {
+            "Create_table": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "17cd616c-c5f1-4262-a577-2a09eeed864f"
+          },
+          "type": "Wait",
+          "inputs": {
+            "interval": {
+              "count": 15,
+              "unit": "Second"
+            }
           }
         },
         "List_rows_present_in_a_table": {
@@ -272,36 +340,6 @@
             "operationMetadataId": "540075bf-35c5-4903-93f7-43a2c4cbce33"
           },
           "type": "Foreach"
-        },
-        "Delay_15_seconds_1": {
-          "runAfter": {
-            "Create_file": ["Succeeded"]
-          },
-          "metadata": {
-            "operationMetadataId": "a4a880d4-388d-4503-b02a-d9c05db751ce"
-          },
-          "type": "Wait",
-          "inputs": {
-            "interval": {
-              "count": 15,
-              "unit": "Second"
-            }
-          }
-        },
-        "Delay_15_seconds_2": {
-          "runAfter": {
-            "Create_table": ["Succeeded"]
-          },
-          "metadata": {
-            "operationMetadataId": "17cd616c-c5f1-4262-a577-2a09eeed864f"
-          },
-          "type": "Wait",
-          "inputs": {
-            "interval": {
-              "count": 15,
-              "unit": "Second"
-            }
-          }
         }
       },
       "runAfter": {
@@ -311,24 +349,6 @@
         "operationMetadataId": "197dd2fb-b9d0-462f-aa36-f7f9530bb5a6"
       },
       "type": "Foreach"
-    },
-    "Initialize_variable_-_patchDayOffset": {
-      "runAfter": {
-        "Mark_as_read_or_unread_(V3)": ["Succeeded"]
-      },
-      "metadata": {
-        "operationMetadataId": "2d56d668-6c44-4df4-afdb-df814bb07abf"
-      },
-      "type": "InitializeVariable",
-      "inputs": {
-        "variables": [
-          {
-            "name": "patchDayOffset",
-            "type": "integer",
-            "value": 0
-          }
-        ]
-      }
     },
     "Delete_file": {
       "runAfter": {
@@ -348,26 +368,6 @@
         "parameters": {
           "dataset": "https://uillinoisedu.sharepoint.com/sites/WSAA",
           "id": "%252fShared%2bDocuments%252fLansweeper%2bAutomated%2bReports%252fELE%2b-%2bServers%2bby%2bPatch%2bDay.xlsx"
-        },
-        "authentication": "@parameters('$authentication')"
-      }
-    },
-    "Mark_as_read_or_unread_(V3)": {
-      "runAfter": {},
-      "metadata": {
-        "operationMetadataId": "48d3828a-d2c3-4568-983d-fecb4b875b70"
-      },
-      "type": "OpenApiConnection",
-      "inputs": {
-        "host": {
-          "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
-          "connectionName": "shared_office365",
-          "operationId": "MarkAsRead_V3"
-        },
-        "parameters": {
-          "messageId": "@triggerOutputs()?['body/id']",
-          "mailboxAddress": "eepps2@illinois.edu;",
-          "body/isRead": true
         },
         "authentication": "@parameters('$authentication')"
       }
