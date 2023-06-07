@@ -153,11 +153,13 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{
-          "name": "patchDayOffset",
-          "type": "integer",
-          "value": 0
-        }]
+        "variables": [
+          {
+            "name": "patchDayOffset",
+            "type": "integer",
+            "value": 0
+          }
+        ]
       }
     },
     "Delete_file": {
@@ -211,11 +213,13 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{
-          "name": "patchMonth",
-          "type": "string",
-          "value": "@{substring(outputs('Get_Patch_Tuesday_date'),0,7)}"
-        }]
+        "variables": [
+          {
+            "name": "patchMonth",
+            "type": "string",
+            "value": "@{substring(outputs('Get_Patch_Tuesday_date'),0,7)}"
+          }
+        ]
       }
     },
     "Get_items": {
@@ -287,11 +291,13 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{
-          "name": "firstDayMonthDOW",
-          "type": "integer",
-          "value": "@dayOfWeek(startOfMonth(utcNow()))"
-        }]
+        "variables": [
+          {
+            "name": "firstDayMonthDOW",
+            "type": "integer",
+            "value": "@dayOfWeek(startOfMonth(utcNow()))"
+          }
+        ]
       }
     },
     "Initialize_variable_-_patchDate": {
@@ -303,11 +309,13 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{
-          "name": "patchDate",
-          "type": "string",
-          "value": "@{outputs('Get_Patch_Tuesday_date')}"
-        }]
+        "variables": [
+          {
+            "name": "patchDate",
+            "type": "string",
+            "value": "@{outputs('Get_Patch_Tuesday_date')}"
+          }
+        ]
       }
     },
     "Initialize_variable_-_fileName": {
@@ -319,10 +327,12 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{
-          "name": "fileName",
-          "type": "string"
-        }]
+        "variables": [
+          {
+            "name": "fileName",
+            "type": "string"
+          }
+        ]
       }
     },
     "Apply_to_each_-_add_to_list": {
