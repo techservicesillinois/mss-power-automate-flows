@@ -8,9 +8,10 @@
   "triggers": {
     "Recurrence": {
       "recurrence": {
-        "frequency": "Month",
+        "frequency": "Day",
         "interval": 1,
-        "startTime": "2023-06-01T15:00:00Z"
+        "startTime": "2023-06-01T08:00:00Z",
+        "schedule": { "hours": ["8"], "minutes": [12] }
       },
       "metadata": {
         "operationMetadataId": "d0403fbb-f5ab-4ccd-8df6-f9e071c97c0d"
@@ -19,8 +20,8 @@
     }
   },
   "actions": {
-    "Initialize_variable": {
-      "runAfter": { "Send_an_HTTP_request_to_SharePoint": ["Succeeded"] },
+    "Initialize_variable_-_Cent7": {
+      "runAfter": { "SharePoint_HTTP_request_-_Cent7": ["Succeeded"] },
       "metadata": {
         "operationMetadataId": "14cd91f6-e5eb-4491-94df-3eab4a6bebf1"
       },
@@ -30,12 +31,12 @@
           {
             "name": "countCentOS",
             "type": "float",
-            "value": "@length(body('Send_an_HTTP_request_to_SharePoint')?['d']?['results'])"
+            "value": "@length(body('SharePoint_HTTP_request_-_Cent7')?['d']?['results'])"
           }
         ]
       }
     },
-    "Send_an_HTTP_request_to_SharePoint": {
+    "SharePoint_HTTP_request_-_Cent7": {
       "runAfter": {},
       "metadata": {
         "operationMetadataId": "329b9dd0-dff3-48cc-b72a-9d95516dfed2"
@@ -59,8 +60,8 @@
         "authentication": "@parameters('$authentication')"
       }
     },
-    "Update_item": {
-      "runAfter": { "Initialize_variable": ["Succeeded"] },
+    "Update_item_-_Cent7": {
+      "runAfter": { "Initialize_variable_-_Cent7": ["Succeeded"] },
       "metadata": {
         "operationMetadataId": "22fa1d13-44b3-41d1-a2ee-38662d3a1f6d"
       },
@@ -77,7 +78,133 @@
           "id": 8,
           "item/Title": "CentOS 7 Migration",
           "item/OData__x0025_Complete": "@div(sub(118,variables('countCentOS')),118)",
-          "item/Progress/Value": "Not started"
+          "item/Progress/Value": "Target"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "Initialize_variable_-_RHEL6": {
+      "runAfter": { "SharePoint_HTTP_request_-_RHEL6": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "14cd91f6-e5eb-4491-94df-3eab4a6bebf1"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "countRHEL",
+            "type": "float",
+            "value": "@length(body('SharePoint_HTTP_request_-_RHEL6')?['d']?['results'])"
+          }
+        ]
+      }
+    },
+    "SharePoint_HTTP_request_-_RHEL6": {
+      "runAfter": { "Update_item_-_Cent7": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "329b9dd0-dff3-48cc-b72a-9d95516dfed2"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "HttpRequest"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "parameters/method": "GET",
+          "parameters/uri": "_api/web/lists/getByTitle('SMG Inventory Latest')/items?$filter=field_3 eq 'centos7'",
+          "parameters/headers": {
+            "Accept": "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose"
+          }
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "Update_item_-_RHEL6": {
+      "runAfter": { "Initialize_variable_-_RHEL6": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "22fa1d13-44b3-41d1-a2ee-38662d3a1f6d"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EMSS-Managers",
+          "table": "c8716854-7b14-4812-855c-98e4a19c68ef",
+          "id": 7,
+          "item/Title": "RHEL6 Migration",
+          "item/OData__x0025_Complete": "@div(sub(129,variables('countRHEL')),129)",
+          "item/Progress/Value": "Target"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "Initialize_variable_-_Win2012": {
+      "runAfter": { "SharePoint_HTTP_request_-_Win2012": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "14cd91f6-e5eb-4491-94df-3eab4a6bebf1"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "countWin2012",
+            "type": "float",
+            "value": "@length(body('SharePoint_HTTP_request_-_Win2012')?['d']?['results'])"
+          }
+        ]
+      }
+    },
+    "SharePoint_HTTP_request_-_Win2012": {
+      "runAfter": { "Update_item_-_RHEL6": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "329b9dd0-dff3-48cc-b72a-9d95516dfed2"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "HttpRequest"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "parameters/method": "GET",
+          "parameters/uri": "_api/web/lists/getByTitle('WSAA System Admin Latest')/items?$filter=ShortOS eq 'Server 2012'",
+          "parameters/headers": {
+            "Accept": "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose"
+          }
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "Update_item_-_Win2012": {
+      "runAfter": { "Initialize_variable_-_Win2012": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "22fa1d13-44b3-41d1-a2ee-38662d3a1f6d"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EMSS-Managers",
+          "table": "c8716854-7b14-4812-855c-98e4a19c68ef",
+          "id": 10,
+          "item/Title": "Win 2012 Migration",
+          "item/OData__x0025_Complete": "@div(sub(39,variables('countWin2012')),39)",
+          "item/Progress/Value": "Target"
         },
         "authentication": "@parameters('$authentication')"
       }
