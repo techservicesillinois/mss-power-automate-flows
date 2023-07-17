@@ -1,1 +1,307 @@
-{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{"$connections":{"defaultValue":{},"type":"Object"},"$authentication":{"defaultValue":{},"type":"SecureObject"}},"triggers":{"manual":{"metadata":{"operationMetadataId":"1b2e7aa3-6e5a-4711-9962-5dde8cfb5d99"},"type":"Request","kind":"Button","inputs":{"schema":{"type":"object","properties":{},"required":[]},"headersSchema":{"x-ms-user-timestamp":{"title":"Timestamp","type":"string","x-ms-dynamically-added":false}}}}},"actions":{"Export_To_File_for_Paginated_Reports":{"runAfter":{},"metadata":{"operationMetadataId":"f5607dce-3e35-4f9d-81eb-36483d5eeca4"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_powerbi","connectionName":"shared_powerbi","operationId":"InitiateExportToFileForPaginatedReports"},"parameters":{"groupid":"d7383efc-6fb7-4e7f-a934-644da3b756b3","reportid":"153a0430-d4dc-4a03-9524-f4719aa87cc6","ExportPayloadPaginatedReport/format":"XLSX","ExportPayloadPaginatedReport/paginatedReportConfiguration/parameterValues":[{"name":"ReportParameter1","value":"2023"}]},"authentication":{"value":"@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']","type":"Raw"}}},"Create_file":{"runAfter":{"Export_To_File_for_Paginated_Reports":["Succeeded"]},"metadata":{"operationMetadataId":"986d48f6-3035-4517-9798-dd8151f30e20"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"CreateFile"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","folderPath":"/Shared Documents/outputs","name":"wsaa-bills-@{triggerOutputs()['headers']['x-ms-user-timestamp']}.xlsx","body":"@body('Export_To_File_for_Paginated_Reports')"},"authentication":{"value":"@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']","type":"Raw"}},"runtimeConfiguration":{"contentTransfer":{"transferMode":"Chunked"}}},"Create_table_-_system":{"runAfter":{"Create_file":["Succeeded"]},"metadata":{"operationMetadataId":"27f5bee0-11d2-451d-a938-42a76601cb27","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@outputs('Create_file')?['body/Path']","table/Range":"Sheet1!B2:h100","table/TableName":"system"},"authentication":{"value":"@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']","type":"Raw"}}},"Create_worksheet":{"runAfter":{"Create_table_-_webapp":["Succeeded"]},"metadata":{"operationMetadataId":"07493da1-d961-40ef-aec9-03e396a9c5de","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateWorksheet"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@outputs('Create_file')?['body/Path']","body/name":"Summary"},"authentication":{"value":"@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']","type":"Raw"}}},"Create_table_-_database":{"runAfter":{"Create_table_-_system":["Succeeded"]},"metadata":{"operationMetadataId":"b7d2e38c-d2d0-4006-bacc-fc9b522c735b","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@outputs('Create_file')?['body/Path']","table/Range":"Sheet3!B2:h100","table/TableName":"database"},"authentication":{"value":"@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']","type":"Raw"}}},"Create_table_-_file":{"runAfter":{"Create_table_-_database":["Succeeded"]},"metadata":{"operationMetadataId":"4cd12c36-b7e5-4843-a8c5-eac6cb945efd","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@outputs('Create_file')?['body/Path']","table/Range":"Sheet5!B2:h100","table/TableName":"file"},"authentication":{"value":"@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']","type":"Raw"}}},"Create_table_-_webapp":{"runAfter":{"Create_table_-_file":["Succeeded"]},"metadata":{"operationMetadataId":"06560b28-5915-4a86-9e44-a55b0a18b8e5","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@outputs('Create_file')?['body/Path']","table/Range":"Sheet7!B2:h100","table/TableName":"webapp"},"authentication":{"value":"@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']","type":"Raw"}}},"Create_table":{"runAfter":{"Create_worksheet":["Succeeded"]},"metadata":{"operationMetadataId":"9f696222-9474-4949-9834-30612c542cc9","tableId":null},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"CreateTable"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@outputs('Create_file')?['body/Path']","table/Range":"Summary!a1:h1","table/TableName":"summary","table/ColumnsNames":"group,cfop,activity,system,database,file,webapp,total"},"authentication":{"value":"@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']","type":"Raw"}}},"Get_items":{"runAfter":{"Create_table":["Succeeded"]},"metadata":{"operationMetadataId":"19bd1ef4-1f07-4cf8-901f-3c293b5126f9"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_sharepointonline","connectionName":"shared_sharepointonline","operationId":"GetItems"},"parameters":{"dataset":"https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST","table":"ee78fac5-47ff-4607-a959-a6d3e6efdb8f"},"authentication":{"value":"@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']","type":"Raw"}}},"Apply_to_each":{"foreach":"@outputs('Get_items')?['body/value']","actions":{"Add_a_row_into_a_table":{"runAfter":{},"metadata":{"017W2FLZTI7URXQTC2XVAYG7YMIEYZVD6Q":"/outputs/wsaa-bills-2023-07-17T20_09_13.0259528Z.xlsx","operationMetadataId":"69c25139-68cc-4110-b092-b586b56af8e2","tableId":"summary","017W2FLZQ5UTDFDZ55FVGKKGFM4FEDNJ6X":"/outputs/wsaa-bills-2023-07-17T20_33_16.2357275Z.xlsx"},"type":"OpenApiConnection","inputs":{"host":{"apiId":"/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness","connectionName":"shared_excelonlinebusiness","operationId":"AddRowV2"},"parameters":{"source":"groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9","drive":"b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs","file":"@outputs('Create_file')?['body/Id']","table":"summary","item":{"group":"@items('Apply_to_each')?['Title']","cfop":"@items('Apply_to_each')?['field_1']","activity":"@items('Apply_to_each')?['field_2']","system":"=ifna(VLOOKUP([@group],system,7,FALSE),0)","database":"=ifna(VLOOKUP([@group],database,7,FALSE),0)","file":"=ifna(VLOOKUP([@group],file,7,FALSE),0)","webapp":"=ifna(VLOOKUP([@group],webapp,7,FALSE),0)","total":"=SUM(summary[@[system]:[webapp]])"}},"authentication":{"value":"@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']","type":"Raw"}}}},"runAfter":{"Get_items":["Succeeded"]},"metadata":{"operationMetadataId":"b4842ef7-7c79-4860-83c1-d1907c7ecfbc"},"type":"Foreach"}}}
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$connections": { "defaultValue": {}, "type": "Object" },
+    "$authentication": { "defaultValue": {}, "type": "SecureObject" }
+  },
+  "triggers": {
+    "manual": {
+      "metadata": {
+        "operationMetadataId": "1b2e7aa3-6e5a-4711-9962-5dde8cfb5d99"
+      },
+      "type": "Request",
+      "kind": "Button",
+      "inputs": {
+        "schema": { "type": "object", "properties": {}, "required": [] },
+        "headersSchema": {
+          "x-ms-user-timestamp": {
+            "title": "Timestamp",
+            "type": "string",
+            "x-ms-dynamically-added": false
+          }
+        }
+      }
+    }
+  },
+  "actions": {
+    "Export_To_File_for_Paginated_Reports": {
+      "runAfter": {},
+      "metadata": {
+        "operationMetadataId": "f5607dce-3e35-4f9d-81eb-36483d5eeca4"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+          "connectionName": "shared_powerbi",
+          "operationId": "InitiateExportToFileForPaginatedReports"
+        },
+        "parameters": {
+          "groupid": "d7383efc-6fb7-4e7f-a934-644da3b756b3",
+          "reportid": "153a0430-d4dc-4a03-9524-f4719aa87cc6",
+          "ExportPayloadPaginatedReport/format": "XLSX",
+          "ExportPayloadPaginatedReport/paginatedReportConfiguration/parameterValues": [
+            { "name": "ReportParameter1", "value": "2023" }
+          ]
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Create_file": {
+      "runAfter": { "Export_To_File_for_Paginated_Reports": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "986d48f6-3035-4517-9798-dd8151f30e20"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "CreateFile"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "folderPath": "/Shared Documents/outputs",
+          "name": "wsaa-bills-@{triggerOutputs()['headers']['x-ms-user-timestamp']}.xlsx",
+          "body": "@body('Export_To_File_for_Paginated_Reports')"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      },
+      "runtimeConfiguration": {
+        "contentTransfer": { "transferMode": "Chunked" }
+      }
+    },
+    "Create_table_-_system": {
+      "runAfter": { "Create_file": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "27f5bee0-11d2-451d-a938-42a76601cb27",
+        "tableId": null
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "connectionName": "shared_excelonlinebusiness",
+          "operationId": "CreateTable"
+        },
+        "parameters": {
+          "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+          "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+          "file": "@outputs('Create_file')?['body/Path']",
+          "table/Range": "Sheet1!B2:h100",
+          "table/TableName": "system"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Create_worksheet": {
+      "runAfter": { "Create_table_-_webapp": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "07493da1-d961-40ef-aec9-03e396a9c5de",
+        "tableId": null
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "connectionName": "shared_excelonlinebusiness",
+          "operationId": "CreateWorksheet"
+        },
+        "parameters": {
+          "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+          "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+          "file": "@outputs('Create_file')?['body/Path']",
+          "body/name": "Summary"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Create_table_-_database": {
+      "runAfter": { "Create_table_-_system": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "b7d2e38c-d2d0-4006-bacc-fc9b522c735b",
+        "tableId": null
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "connectionName": "shared_excelonlinebusiness",
+          "operationId": "CreateTable"
+        },
+        "parameters": {
+          "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+          "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+          "file": "@outputs('Create_file')?['body/Path']",
+          "table/Range": "Sheet3!B2:h100",
+          "table/TableName": "database"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Create_table_-_file": {
+      "runAfter": { "Create_table_-_database": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "4cd12c36-b7e5-4843-a8c5-eac6cb945efd",
+        "tableId": null
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "connectionName": "shared_excelonlinebusiness",
+          "operationId": "CreateTable"
+        },
+        "parameters": {
+          "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+          "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+          "file": "@outputs('Create_file')?['body/Path']",
+          "table/Range": "Sheet5!B2:h100",
+          "table/TableName": "file"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Create_table_-_webapp": {
+      "runAfter": { "Create_table_-_file": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "06560b28-5915-4a86-9e44-a55b0a18b8e5",
+        "tableId": null
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "connectionName": "shared_excelonlinebusiness",
+          "operationId": "CreateTable"
+        },
+        "parameters": {
+          "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+          "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+          "file": "@outputs('Create_file')?['body/Path']",
+          "table/Range": "Sheet7!B2:h100",
+          "table/TableName": "webapp"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Create_table": {
+      "runAfter": { "Create_worksheet": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "9f696222-9474-4949-9834-30612c542cc9",
+        "tableId": null
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "connectionName": "shared_excelonlinebusiness",
+          "operationId": "CreateTable"
+        },
+        "parameters": {
+          "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+          "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+          "file": "@outputs('Create_file')?['body/Path']",
+          "table/Range": "Summary!a1:h1",
+          "table/TableName": "summary",
+          "table/ColumnsNames": "group,cfop,activity,system,database,file,webapp,total"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Get_items": {
+      "runAfter": { "Create_table": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "19bd1ef4-1f07-4cf8-901f-3c293b5126f9"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems"
+        },
+        "parameters": {
+          "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+          "table": "ee78fac5-47ff-4607-a959-a6d3e6efdb8f"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Apply_to_each": {
+      "foreach": "@outputs('Get_items')?['body/value']",
+      "actions": {
+        "Add_a_row_into_a_table": {
+          "runAfter": {},
+          "metadata": {
+            "017W2FLZTI7URXQTC2XVAYG7YMIEYZVD6Q": "/outputs/wsaa-bills-2023-07-17T20_09_13.0259528Z.xlsx",
+            "operationMetadataId": "69c25139-68cc-4110-b092-b586b56af8e2",
+            "tableId": "summary",
+            "017W2FLZQ5UTDFDZ55FVGKKGFM4FEDNJ6X": "/outputs/wsaa-bills-2023-07-17T20_33_16.2357275Z.xlsx"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "AddRowV2"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@outputs('Create_file')?['body/Id']",
+              "table": "summary",
+              "item": {
+                "group": "@items('Apply_to_each')?['Title']",
+                "cfop": "@items('Apply_to_each')?['field_1']",
+                "activity": "@items('Apply_to_each')?['field_2']",
+                "system": "=ifna(VLOOKUP([@group],system,7,FALSE),0)",
+                "database": "=ifna(VLOOKUP([@group],database,7,FALSE),0)",
+                "file": "=ifna(VLOOKUP([@group],file,7,FALSE),0)",
+                "webapp": "=ifna(VLOOKUP([@group],webapp,7,FALSE),0)",
+                "total": "=SUM(summary[@[system]:[webapp]])"
+              }
+            },
+            "authentication": {
+              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+              "type": "Raw"
+            }
+          }
+        }
+      },
+      "runAfter": { "Get_items": ["Succeeded"] },
+      "metadata": {
+        "operationMetadataId": "b4842ef7-7c79-4860-83c1-d1907c7ecfbc"
+      },
+      "type": "Foreach"
+    }
+  }
+}
