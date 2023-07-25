@@ -690,7 +690,175 @@
       },
       "type": "If"
     },
-    "08_Condition_-_WSAA_File_Storage": {
+    "08_Condition_-_WSAA_Database_storage": {
+      "actions": {
+        "Set_variable_-_WSAA_Database_storage": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "33e87728-b405-4a83-8113-320e8567070c"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "rowCount",
+            "value": "@int(substring(outputs('03_Get_file_metadata')?['body/Name'],15,2))"
+          }
+        },
+        "Increment_variable_-_WSAA_Database_storage": {
+          "runAfter": {
+            "Set_variable_-_WSAA_Database_storage": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "caf4ba22-36ae-4d6b-af88-35ae4c88c368"
+          },
+          "type": "IncrementVariable",
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
+        },
+        "Set_variable_-_WSAA_Database_storage_-_monthYear": {
+          "runAfter": {
+            "Increment_variable_-_WSAA_Database_storage": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "ded932c9-4d15-40d6-a9d9-9c74fa053ab9"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "monthYear",
+            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],18,7)}"
+          }
+        },
+        "Create_table_-_WSAA_Database_storage": {
+          "runAfter": {
+            "Set_variable_-_WSAA_Database_storage_-_monthYear": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "2d921f47-ff89-49b2-8ec3-241dec0cb093",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:h@{variables('rowCount')}",
+              "table/TableName": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "List_rows_-_WSAA_Database_storage": {
+          "runAfter": {
+            "Create_table_-_WSAA_Database_storage": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "8e008747-0c59-494c-8324-a39475a94c6b",
+            "tableId": "Export_Table"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Export_Table"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_WSAA_Database_storage": {
+          "foreach": "@outputs('List_rows_-_WSAA_Database_storage')?['body/value']",
+          "actions": {
+            "Get_items_from_WSAA_Database_Cluster": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "47a5f2ed-e37f-407b-9c90-b17e2fd295b0"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "GetItems"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "b8660d3f-bf62-4d31-9ffb-800bf55c1c47",
+                  "$filter": "field_8 eq '@{items('Apply_to_each_-_WSAA_Database_storage')?['LogicalDiskName']}' AND field_9 eq '@{variables('monthYear')}'"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            },
+            "WSAA_Database_Cluster_Apply_to_each": {
+              "foreach": "@outputs('Get_items_from_WSAA_Database_Cluster')?['body/value']",
+              "actions": {
+                "Update_item_3": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "fdfa0a3b-ce96-46fc-b885-f433447b8f55"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "PatchItem"
+                    },
+                    "parameters": {
+                      "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                      "table": "b8660d3f-bf62-4d31-9ffb-800bf55c1c47",
+                      "id": "@items('WSAA_Database_Cluster_Apply_to_each')?['ID']",
+                      "item/DriveLetter": "@items('Apply_to_each_-_WSAA_Database_storage')?['DriveLetter']",
+                      "item/LogicalDiskName": "@items('Apply_to_each_-_WSAA_Database_storage')?['LogicalDiskName']",
+                      "item/Capacity": "@items('Apply_to_each_-_WSAA_Database_storage')?['Capacity']",
+                      "item/FreeSpace": "@items('Apply_to_each_-_WSAA_Database_storage')?['FreeSpace']"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_items_from_WSAA_Database_Cluster": ["Succeeded"]
+              },
+              "metadata": {
+                "operationMetadataId": "c2f9fe28-ff9e-421a-8196-277fef223d56"
+              },
+              "type": "Foreach"
+            }
+          },
+          "runAfter": {
+            "List_rows_-_WSAA_Database_storage": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "2da9cfd7-74c7-4143-b5a7-df3f6c0f417a"
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": {
+        "07_Condition_-_WSAA_Database": ["Succeeded"]
+      },
+      "expression": {
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-fs-database_"]
+      },
+      "metadata": {
+        "operationMetadataId": "3d08415e-09c0-479a-b0d9-38060de8e660"
+      },
+      "type": "If"
+    },
+    "09_Condition_-_WSAA_File_Storage": {
       "actions": {
         "List_rows_-_WSAA_File_Storage": {
           "runAfter": {
@@ -820,7 +988,7 @@
         }
       },
       "runAfter": {
-        "07_Condition_-_WSAA_Database": ["Succeeded"]
+        "08_Condition_-_WSAA_Database_storage": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-filestor_"]
@@ -830,7 +998,7 @@
       },
       "type": "If"
     },
-    "09_Condition_-_WSAA_WebApp": {
+    "10_Condition_-_WSAA_WebApp": {
       "actions": {
         "List_rows_-_WSAA_WebApp": {
           "runAfter": {
@@ -960,7 +1128,7 @@
         }
       },
       "runAfter": {
-        "08_Condition_-_WSAA_File_Storage": ["Succeeded"]
+        "09_Condition_-_WSAA_File_Storage": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-webahost_"]
@@ -970,7 +1138,7 @@
       },
       "type": "If"
     },
-    "10_Condition_-_SMG_System_Admin": {
+    "11_Condition_-_SMG_System_Admin": {
       "actions": {
         "Create_table_-_SMG_System_Admin": {
           "runAfter": {},
@@ -1210,7 +1378,7 @@
         }
       },
       "runAfter": {
-        "09_Condition_-_WSAA_WebApp": ["Succeeded"]
+        "10_Condition_-_WSAA_WebApp": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "smg_"]
@@ -1220,7 +1388,7 @@
       },
       "type": "If"
     },
-    "10_Condition_-_SMG_Daily_System_Admin": {
+    "12_Condition_-_SMG_Daily_System_Admin": {
       "actions": {
         "List_Rows_-_SMG_Daily_System_Admin": {
           "runAfter": {
@@ -1375,7 +1543,7 @@
         }
       },
       "runAfter": {
-        "10_Condition_-_SMG_System_Admin": ["Succeeded"]
+        "11_Condition_-_SMG_System_Admin": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "dailysmg_"]
@@ -1385,7 +1553,7 @@
       },
       "type": "If"
     },
-    "10_Condition_-_SMG_Daily_Status": {
+    "13_Condition_-_SMG_Daily_Status": {
       "actions": {
         "List_Rows_-_SMG_Daily_Status": {
           "runAfter": {
@@ -1538,7 +1706,7 @@
         }
       },
       "runAfter": {
-        "10_Condition_-_SMG_Daily_System_Admin": ["Succeeded"]
+        "12_Condition_-_SMG_Daily_System_Admin": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "smg-daily-status"]
@@ -1548,7 +1716,7 @@
       },
       "type": "If"
     },
-    "11_Condition_-_AWS_Charges": {
+    "14_Condition_-_AWS_Charges": {
       "actions": {
         "List_rows_-_AWS_Charges": {
           "runAfter": {},
@@ -1611,7 +1779,7 @@
         }
       },
       "runAfter": {
-        "10_Condition_-_SMG_Daily_Status": ["Succeeded"]
+        "13_Condition_-_SMG_Daily_Status": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "AWS-MonthlyCostByTag"]
@@ -1621,175 +1789,7 @@
       },
       "type": "If"
     },
-    "12_Condition_-_WSAA_Database_storage": {
-      "actions": {
-        "Set_variable_-_WSAA_Database_storage": {
-          "runAfter": {},
-          "metadata": {
-            "operationMetadataId": "33e87728-b405-4a83-8113-320e8567070c"
-          },
-          "type": "SetVariable",
-          "inputs": {
-            "name": "rowCount",
-            "value": "@int(substring(outputs('03_Get_file_metadata')?['body/Name'],15,2))"
-          }
-        },
-        "Increment_variable_-_WSAA_Database_storage": {
-          "runAfter": {
-            "Set_variable_-_WSAA_Database_storage": ["Succeeded"]
-          },
-          "metadata": {
-            "operationMetadataId": "caf4ba22-36ae-4d6b-af88-35ae4c88c368"
-          },
-          "type": "IncrementVariable",
-          "inputs": {
-            "name": "rowCount",
-            "value": 1
-          }
-        },
-        "Set_variable_-_WSAA_Database_storage_-_monthYear": {
-          "runAfter": {
-            "Increment_variable_-_WSAA_Database_storage": ["Succeeded"]
-          },
-          "metadata": {
-            "operationMetadataId": "ded932c9-4d15-40d6-a9d9-9c74fa053ab9"
-          },
-          "type": "SetVariable",
-          "inputs": {
-            "name": "monthYear",
-            "value": "@{substring(outputs('03_Get_file_metadata')?['body/Name'],18,7)}"
-          }
-        },
-        "Create_table_-_WSAA_Database_storage": {
-          "runAfter": {
-            "Set_variable_-_WSAA_Database_storage_-_monthYear": ["Succeeded"]
-          },
-          "metadata": {
-            "operationMetadataId": "2d921f47-ff89-49b2-8ec3-241dec0cb093",
-            "tableId": null
-          },
-          "type": "OpenApiConnection",
-          "inputs": {
-            "host": {
-              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
-              "connectionName": "shared_excelonlinebusiness",
-              "operationId": "CreateTable"
-            },
-            "parameters": {
-              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
-              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
-              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
-              "table/Range": "a1:h@{variables('rowCount')}",
-              "table/TableName": "Export_Table"
-            },
-            "authentication": "@parameters('$authentication')"
-          }
-        },
-        "List_rows_-_WSAA_Database_storage": {
-          "runAfter": {
-            "Create_table_-_WSAA_Database_storage": ["Succeeded"]
-          },
-          "metadata": {
-            "operationMetadataId": "8e008747-0c59-494c-8324-a39475a94c6b",
-            "tableId": "Export_Table"
-          },
-          "type": "OpenApiConnection",
-          "inputs": {
-            "host": {
-              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
-              "connectionName": "shared_excelonlinebusiness",
-              "operationId": "GetItems"
-            },
-            "parameters": {
-              "source": "groups/7f7837e4-e4ba-4b2c-b949-2be5375728a9",
-              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
-              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
-              "table": "Export_Table"
-            },
-            "authentication": "@parameters('$authentication')"
-          }
-        },
-        "Apply_to_each_-_WSAA_Database_storage": {
-          "foreach": "@outputs('List_rows_-_WSAA_Database_storage')?['body/value']",
-          "actions": {
-            "Get_items_from_WSAA_Database_Cluster": {
-              "runAfter": {},
-              "metadata": {
-                "operationMetadataId": "47a5f2ed-e37f-407b-9c90-b17e2fd295b0"
-              },
-              "type": "OpenApiConnection",
-              "inputs": {
-                "host": {
-                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
-                  "connectionName": "shared_sharepointonline",
-                  "operationId": "GetItems"
-                },
-                "parameters": {
-                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-                  "table": "b8660d3f-bf62-4d31-9ffb-800bf55c1c47",
-                  "$filter": "field_8 eq '@{items('Apply_to_each_-_WSAA_Database_storage')?['LogicalDiskName']}' AND field_9 eq '@{variables('monthYear')}'"
-                },
-                "authentication": "@parameters('$authentication')"
-              }
-            },
-            "WSAA_Database_Cluster_Apply_to_each": {
-              "foreach": "@outputs('Get_items_from_WSAA_Database_Cluster')?['body/value']",
-              "actions": {
-                "Update_item_3": {
-                  "runAfter": {},
-                  "metadata": {
-                    "operationMetadataId": "fdfa0a3b-ce96-46fc-b885-f433447b8f55"
-                  },
-                  "type": "OpenApiConnection",
-                  "inputs": {
-                    "host": {
-                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
-                      "connectionName": "shared_sharepointonline",
-                      "operationId": "PatchItem"
-                    },
-                    "parameters": {
-                      "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-                      "table": "b8660d3f-bf62-4d31-9ffb-800bf55c1c47",
-                      "id": "@items('WSAA_Database_Cluster_Apply_to_each')?['ID']",
-                      "item/DriveLetter": "@items('Apply_to_each_-_WSAA_Database_storage')?['DriveLetter']",
-                      "item/LogicalDiskName": "@items('Apply_to_each_-_WSAA_Database_storage')?['LogicalDiskName']",
-                      "item/Capacity": "@items('Apply_to_each_-_WSAA_Database_storage')?['Capacity']",
-                      "item/FreeSpace": "@items('Apply_to_each_-_WSAA_Database_storage')?['FreeSpace']"
-                    },
-                    "authentication": "@parameters('$authentication')"
-                  }
-                }
-              },
-              "runAfter": {
-                "Get_items_from_WSAA_Database_Cluster": ["Succeeded"]
-              },
-              "metadata": {
-                "operationMetadataId": "c2f9fe28-ff9e-421a-8196-277fef223d56"
-              },
-              "type": "Foreach"
-            }
-          },
-          "runAfter": {
-            "List_rows_-_WSAA_Database_storage": ["Succeeded"]
-          },
-          "metadata": {
-            "operationMetadataId": "2da9cfd7-74c7-4143-b5a7-df3f6c0f417a"
-          },
-          "type": "Foreach"
-        }
-      },
-      "runAfter": {
-        "11_Condition_-_AWS_Charges": ["Succeeded"]
-      },
-      "expression": {
-        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-fs-database_"]
-      },
-      "metadata": {
-        "operationMetadataId": "3d08415e-09c0-479a-b0d9-38060de8e660"
-      },
-      "type": "If"
-    },
-    "13_Condition_-_Azure_Charges": {
+    "15_Condition_-_Azure_Charges": {
       "actions": {
         "Create_table_-_Azure_Charges": {
           "runAfter": {},
@@ -1877,7 +1877,7 @@
         }
       },
       "runAfter": {
-        "12_Condition_-_WSAA_Database_storage": ["Succeeded"]
+        "14_Condition_-_AWS_Charges": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "CostManagement_"]
@@ -1887,7 +1887,7 @@
       },
       "type": "If"
     },
-    "14_Condition_-_VH_Charges": {
+    "16_Condition_-_VH_Charges": {
       "actions": {
         "Apply_to_each_-_VH_Charges": {
           "foreach": "@variables('csvRows')",
@@ -1981,7 +1981,7 @@
         }
       },
       "runAfter": {
-        "13_Condition_-_Azure_Charges": ["Succeeded"]
+        "15_Condition_-_Azure_Charges": ["Succeeded"]
       },
       "expression": {
         "endsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "-todate.csv"]
@@ -2045,7 +2045,7 @@
         }
       },
       "runAfter": {
-        "14_Condition_-_VH_Charges": ["Succeeded"]
+        "16_Condition_-_VH_Charges": ["Succeeded"]
       },
       "expression": "@equals(variables('fileLocked'), false)",
       "limit": {
