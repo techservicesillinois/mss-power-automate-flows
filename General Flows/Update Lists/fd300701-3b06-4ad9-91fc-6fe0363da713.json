@@ -2,12 +2,21 @@
   "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "$connections": { "defaultValue": {}, "type": "Object" },
-    "$authentication": { "defaultValue": {}, "type": "SecureObject" }
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    },
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    }
   },
   "triggers": {
     "01_When_a_file_is_created_in_a_folder": {
-      "recurrence": { "frequency": "Minute", "interval": 5 },
+      "recurrence": {
+        "frequency": "Minute",
+        "interval": 1
+      },
       "metadata": {
         "operationMetadataId": "5f475d6c-7f0c-4c5e-80e2-7e15cf6df7d4"
       },
@@ -35,65 +44,109 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{ "name": "rowCount", "type": "integer", "value": 0 }]
+        "variables": [{
+          "name": "rowCount",
+          "type": "integer",
+          "value": 0
+        }]
       }
     },
     "02_Initialize_variable_-_monthYear": {
-      "runAfter": { "02_Initialize_variable_-_rowCount": ["Succeeded"] },
+      "runAfter": {
+        "02_Initialize_variable_-_rowCount": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "192d5cfa-af68-447e-83b7-9ad7bbc09e26"
       },
       "type": "InitializeVariable",
-      "inputs": { "variables": [{ "name": "monthYear", "type": "string" }] }
+      "inputs": {
+        "variables": [{
+          "name": "monthYear",
+          "type": "string"
+        }]
+      }
     },
     "02_Initialize_variable_-_itPros": {
-      "runAfter": { "02_Initialize_variable_-_monthYear": ["Succeeded"] },
+      "runAfter": {
+        "02_Initialize_variable_-_monthYear": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "65def80d-8990-4304-baa2-e2f24ae2a850"
       },
       "type": "InitializeVariable",
-      "inputs": { "variables": [{ "name": "itPros", "type": "string" }] }
+      "inputs": {
+        "variables": [{
+          "name": "itPros",
+          "type": "string"
+        }]
+      }
     },
     "02_Initialize_variable_-_lineBreak": {
-      "runAfter": { "02_Initialize_variable_-_itPros": ["Succeeded"] },
+      "runAfter": {
+        "02_Initialize_variable_-_itPros": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "e235bb04-a6d4-49d6-a9fd-61c464ec2e13"
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{ "name": "lineBreak", "type": "string", "value": "\n" }]
+        "variables": [{
+          "name": "lineBreak",
+          "type": "string",
+          "value": "\n"
+        }]
       }
     },
     "02_Initialize_variable_-_csvRows": {
-      "runAfter": { "02_Initialize_variable_-_lineBreak": ["Succeeded"] },
+      "runAfter": {
+        "02_Initialize_variable_-_lineBreak": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "6b3ab166-6d8a-410f-a761-0c176c7ec5d6"
       },
       "type": "InitializeVariable",
-      "inputs": { "variables": [{ "name": "csvRows", "type": "array" }] }
+      "inputs": {
+        "variables": [{
+          "name": "csvRows",
+          "type": "array"
+        }]
+      }
     },
     "02_Initialize_variable_-_rowCells": {
-      "runAfter": { "02_Initialize_variable_-_csvRows": ["Succeeded"] },
+      "runAfter": {
+        "02_Initialize_variable_-_csvRows": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "9fc67b0a-cf01-4069-8a2c-7be41fe2ddee"
       },
       "type": "InitializeVariable",
-      "inputs": { "variables": [{ "name": "rowCells", "type": "array" }] }
+      "inputs": {
+        "variables": [{
+          "name": "rowCells",
+          "type": "array"
+        }]
+      }
     },
     "02_Initialize_variable_-_fileLocked": {
-      "runAfter": { "02_Initialize_variable_-_rowCells": ["Succeeded"] },
+      "runAfter": {
+        "02_Initialize_variable_-_rowCells": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "43af5f89-0739-43a1-8b98-d88d5550334a"
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [
-          { "name": "fileLocked", "type": "boolean", "value": true }
-        ]
+        "variables": [{
+          "name": "fileLocked",
+          "type": "boolean",
+          "value": true
+        }]
       }
     },
     "03_Get_file_metadata": {
-      "runAfter": { "02_Initialize_variable_-_fileLocked": ["Succeeded"] },
+      "runAfter": {
+        "02_Initialize_variable_-_fileLocked": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "4be93abf-9014-4622-b695-1198a2c18823"
       },
@@ -112,19 +165,19 @@
       }
     },
     "03_Initialize_variable_-_fileName": {
-      "runAfter": { "03_Get_file_metadata": ["Succeeded"] },
+      "runAfter": {
+        "03_Get_file_metadata": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "582c2d83-3f50-468f-884d-6afd378394d8"
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [
-          {
-            "name": "fileName",
-            "type": "array",
-            "value": "@split(outputs('03_Get_file_metadata')?['body/Name'],'_')"
-          }
-        ]
+        "variables": [{
+          "name": "fileName",
+          "type": "array",
+          "value": "@split(outputs('03_Get_file_metadata')?['body/Name'],'_')"
+        }]
       }
     },
     "04_Condition_-_TDX_Surveys": {
@@ -181,19 +234,20 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_TDX_Surveys": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_TDX_Surveys": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "7338bb29-ab35-4e0d-aafd-9db56db74606"
           },
           "type": "Foreach"
         }
       },
-      "runAfter": { "03_Initialize_variable_-_fileName": ["Succeeded"] },
+      "runAfter": {
+        "03_Initialize_variable_-_fileName": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "tdx-survey-"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "tdx-survey-"]
       },
       "metadata": {
         "operationMetadataId": "431877e2-7402-4436-bcb0-14354b2c048c"
@@ -259,19 +313,20 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_TDX_Tickets": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_TDX_Tickets": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "14913abd-751f-49c2-9958-98e2203b2a31"
           },
           "type": "Foreach"
         }
       },
-      "runAfter": { "04_Condition_-_TDX_Surveys": ["Succeeded"] },
+      "runAfter": {
+        "04_Condition_-_TDX_Surveys": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "tdx-ticket-"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "tdx-ticket-"]
       },
       "metadata": {
         "operationMetadataId": "933b6c3b-27e0-4ff7-b8ba-e198f733e817"
@@ -281,7 +336,9 @@
     "06_Condition_-_WSAA_System_Admin": {
       "actions": {
         "List_rows_-_WSAA_System_Admin": {
-          "runAfter": { "Create_table_-_WSAA_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_WSAA_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "0fc357e3-8ee1-431f-93cd-8db0faa9db23",
             "tableId": "Export_Table"
@@ -315,12 +372,17 @@
           }
         },
         "Increment_variable_-_WSAA_System_Admin": {
-          "runAfter": { "Set_variable_-_WSAA_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "6fbc0143-412c-45e6-9b88-14022ca4effc"
           },
           "type": "IncrementVariable",
-          "inputs": { "name": "rowCount", "value": 1 }
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
         },
         "Create_table_-_WSAA_System_Admin": {
           "runAfter": {
@@ -382,7 +444,9 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_WSAA_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_WSAA_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "d154638b-7560-4fae-bb2a-f77e8614b59c"
           },
@@ -402,12 +466,11 @@
           }
         }
       },
-      "runAfter": { "05_Condition_-_TDX_Tickets": ["Succeeded"] },
+      "runAfter": {
+        "05_Condition_-_TDX_Tickets": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "ls-sysadmin_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-sysadmin_"]
       },
       "metadata": {
         "operationMetadataId": "4b4ac23c-cc53-451d-9114-fcccd5340cd7"
@@ -428,15 +491,22 @@
           }
         },
         "Increment_variable_-_WSAA_Database": {
-          "runAfter": { "Set_variable_-_WSAA_Database": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_Database": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "860922e4-5bd8-47a3-84b8-74bcb7bf50da"
           },
           "type": "IncrementVariable",
-          "inputs": { "name": "rowCount", "value": 1 }
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
         },
         "Set_variable_-_WSAA_Database_-_monthYear": {
-          "runAfter": { "Increment_variable_-_WSAA_Database": ["Succeeded"] },
+          "runAfter": {
+            "Increment_variable_-_WSAA_Database": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "7ec7a676-8af0-4c80-a953-49733d6ef31b"
           },
@@ -472,7 +542,9 @@
           }
         },
         "List_rows_-_WSAA_Database": {
-          "runAfter": { "Create_table_-_WSAA_Database": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_WSAA_Database": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "ac3bb910-ceb3-4ec8-842f-865bd779d440",
             "tableId": "Export_Table"
@@ -559,10 +631,7 @@
                 }
               },
               "expression": {
-                "equals": [
-                  "@{items('Apply_to_each_-_WSAA_Database')?['InstanceName']}",
-                  " [[[ DISABLED ]]] "
-                ]
+                "equals": ["@{items('Apply_to_each_-_WSAA_Database')?['InstanceName']}", " [[[ DISABLED ]]] "]
               },
               "metadata": {
                 "operationMetadataId": "5b1e1899-866b-493c-bd7d-9fec46347cc5"
@@ -601,19 +670,20 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_WSAA_Database": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_WSAA_Database": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "670207ce-6783-409e-b421-d37032b913ca"
           },
           "type": "Foreach"
         }
       },
-      "runAfter": { "06_Condition_-_WSAA_System_Admin": ["Succeeded"] },
+      "runAfter": {
+        "06_Condition_-_WSAA_System_Admin": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "ls-database_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-database_"]
       },
       "metadata": {
         "operationMetadataId": "65aa756b-7a50-43ee-ac31-1f8c7a31b60b"
@@ -623,7 +693,9 @@
     "08_Condition_-_WSAA_File_Storage": {
       "actions": {
         "List_rows_-_WSAA_File_Storage": {
-          "runAfter": { "Create_table_-_WSAA_File_Storage": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_WSAA_File_Storage": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "625c3018-5b09-4db5-94d6-a6ba4cb9fbf2",
             "tableId": "Export_Table"
@@ -657,12 +729,17 @@
           }
         },
         "Increment_variable_-_WSAA_File_Storage": {
-          "runAfter": { "Set_variable_-_WSAA_File_Storage": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_File_Storage": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "e5a46525-6973-4711-a9ff-a548d7c2df7d"
           },
           "type": "IncrementVariable",
-          "inputs": { "name": "rowCount", "value": 1 }
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
         },
         "Create_table_-_WSAA_File_Storage": {
           "runAfter": {
@@ -720,7 +797,9 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_WSAA_File_Storage": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_WSAA_File_Storage": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "7ff1afcf-fdbb-477c-ad90-7d7d369c0b63"
           },
@@ -740,12 +819,11 @@
           }
         }
       },
-      "runAfter": { "07_Condition_-_WSAA_Database": ["Succeeded"] },
+      "runAfter": {
+        "07_Condition_-_WSAA_Database": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "ls-filestor_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-filestor_"]
       },
       "metadata": {
         "operationMetadataId": "ebb1e792-cf49-4111-979d-ad5788f473cf"
@@ -755,7 +833,9 @@
     "09_Condition_-_WSAA_WebApp": {
       "actions": {
         "List_rows_-_WSAA_WebApp": {
-          "runAfter": { "Create_table_-_WSAA_WebApp": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_WSAA_WebApp": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "5d6f9d7f-7ca4-49bb-9767-85c840302650",
             "tableId": "Export_Table"
@@ -789,12 +869,17 @@
           }
         },
         "Increment_variable_-_WSAA_WebApp": {
-          "runAfter": { "Set_variable_-_WSAA_WebApp": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_WebApp": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "5f2c43bd-4edf-466f-9660-4b277a214520"
           },
           "type": "IncrementVariable",
-          "inputs": { "name": "rowCount", "value": 1 }
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
         },
         "Create_table_-_WSAA_WebApp": {
           "runAfter": {
@@ -852,14 +937,18 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_WSAA_WebApp": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_WSAA_WebApp": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "d1092687-2ef8-4904-83a1-e6123b26c701"
           },
           "type": "Foreach"
         },
         "Set_variable_-_WSAA_WebApp_-_monthYear": {
-          "runAfter": { "Increment_variable_-_WSAA_WebApp": ["Succeeded"] },
+          "runAfter": {
+            "Increment_variable_-_WSAA_WebApp": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "8e075a8b-35a9-46c4-aae8-c64083596023"
           },
@@ -870,12 +959,11 @@
           }
         }
       },
-      "runAfter": { "08_Condition_-_WSAA_File_Storage": ["Succeeded"] },
+      "runAfter": {
+        "08_Condition_-_WSAA_File_Storage": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "ls-webahost_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-webahost_"]
       },
       "metadata": {
         "operationMetadataId": "9c424dbc-62b9-4556-8774-c390e8e238cd"
@@ -936,14 +1024,18 @@
               }
             }
           },
-          "runAfter": { "Set_variable": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "5e16f5b6-7fc1-4f3d-8d79-b3c068cb1141"
           },
           "type": "Foreach"
         },
         "Set_variable": {
-          "runAfter": { "Filter_array": ["Succeeded"] },
+          "runAfter": {
+            "Filter_array": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "bfba90ed-ded7-4cbc-bc76-a1925863b32b"
           },
@@ -954,7 +1046,9 @@
           }
         },
         "11_Get_items_-_SMG_departments": {
-          "runAfter": { "Apply_to_each_-_SMG_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "Apply_to_each_-_SMG_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "8f9a8c2c-15ad-473a-b070-7c8256bea03c"
           },
@@ -1049,7 +1143,9 @@
                         }
                       }
                     },
-                    "runAfter": { "Get_items_from_Crosswalk": ["Succeeded"] },
+                    "runAfter": {
+                      "Get_items_from_Crosswalk": ["Succeeded"]
+                    },
                     "metadata": {
                       "operationMetadataId": "289cb4ce-43a7-47ef-b0f5-af85acaa1f26"
                     },
@@ -1058,10 +1154,7 @@
                 }
               },
               "expression": {
-                "contains": [
-                  "@items('12_Apply_to_each_-_SMG_departments')?['field_3']",
-                  "_"
-                ]
+                "contains": ["@items('12_Apply_to_each_-_SMG_departments')?['field_3']", "_"]
               },
               "metadata": {
                 "operationMetadataId": "fb748f1d-b8a0-4ed7-b40b-93a2b431ff9c"
@@ -1069,14 +1162,18 @@
               "type": "If"
             }
           },
-          "runAfter": { "11_Get_items_-_SMG_departments": ["Succeeded"] },
+          "runAfter": {
+            "11_Get_items_-_SMG_departments": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "52422942-1750-46bf-a78b-bf6d7c0e63f0"
           },
           "type": "Foreach"
         },
         "List_Rows_-_SMG_System_Admin": {
-          "runAfter": { "Create_table_-_SMG_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_SMG_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "5d7b4871-530e-4b0f-a8c6-d7e747e88c17",
             "tableId": "Table1"
@@ -1099,7 +1196,9 @@
           }
         },
         "Filter_array": {
-          "runAfter": { "List_Rows_-_SMG_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "List_Rows_-_SMG_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "02f87cef-ff5c-466f-8b3a-71e9f9481c76"
           },
@@ -1110,7 +1209,9 @@
           }
         }
       },
-      "runAfter": { "09_Condition_-_WSAA_WebApp": ["Succeeded"] },
+      "runAfter": {
+        "09_Condition_-_WSAA_WebApp": ["Succeeded"]
+      },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "smg_"]
       },
@@ -1147,7 +1248,9 @@
           }
         },
         "Filter_array_-_SMG_Daily_System_Admin": {
-          "runAfter": { "List_Rows_-_SMG_Daily_System_Admin": ["Succeeded"] },
+          "runAfter": {
+            "List_Rows_-_SMG_Daily_System_Admin": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "02f87cef-ff5c-466f-8b3a-71e9f9481c76"
           },
@@ -1213,7 +1316,9 @@
           }
         },
         "Create_table_-_SMG_Daily_System_Admin": {
-          "runAfter": { "Apply_to_each_-_Delete_items": ["Succeeded"] },
+          "runAfter": {
+            "Apply_to_each_-_Delete_items": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "64d868b3-18d6-48b4-a9d7-563883b88900",
             "tableId": null
@@ -1260,19 +1365,183 @@
               }
             }
           },
-          "runAfter": { "Get_items_for_Delete": ["Succeeded"] },
+          "runAfter": {
+            "Get_items_for_Delete": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "c226a20d-6826-4813-aa0b-9cbeb835ec48"
           },
           "type": "Foreach"
         }
       },
-      "runAfter": { "10_Condition_-_SMG_System_Admin": ["Succeeded"] },
+      "runAfter": {
+        "10_Condition_-_SMG_System_Admin": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "dailysmg_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "dailysmg_"]
+      },
+      "metadata": {
+        "operationMetadataId": "4339773b-ca88-4e32-bf77-35a578c87424"
+      },
+      "type": "If"
+    },
+    "10_Condition_-_SMG_Daily_Status": {
+      "actions": {
+        "List_Rows_-_SMG_Daily_Status": {
+          "runAfter": {
+            "Create_table_-_SMG_Daily_Status": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "5d7b4871-530e-4b0f-a8c6-d7e747e88c17",
+            "tableId": "Table1"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table": "Table1",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Filter_array_-_SMG_Daily_Status": {
+          "runAfter": {
+            "List_Rows_-_SMG_Daily_Status": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "02f87cef-ff5c-466f-8b3a-71e9f9481c76"
+          },
+          "type": "Query",
+          "inputs": {
+            "from": "@outputs('List_Rows_-_SMG_Daily_Status')?['body/value']",
+            "where": "@not(equals(item()?['service'],''))"
+          }
+        },
+        "Apply_to_each_-_SMG_Daily_Status": {
+          "foreach": "@body('Filter_array_-_SMG_Daily_Status')",
+          "actions": {
+            "Create_item_-_SMG_Daily_Status": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "3f56075f-3666-4769-897c-212141d53609"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "b234c592-ad15-4fff-8d10-ef65ed626c62",
+                  "item/Title": "@items('Apply_to_each_-_SMG_Daily_Status')?['service']",
+                  "item/field_1": "@items('Apply_to_each_-_SMG_Daily_Status')?['status']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "Filter_array_-_SMG_Daily_Status": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "5e16f5b6-7fc1-4f3d-8d79-b3c068cb1141"
+          },
+          "type": "Foreach"
+        },
+        "Get_items_for_Delete_-_SMG_Daily_Status": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "c8679c9d-36b1-4901-88df-6c3972aefa7b"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "table": "b234c592-ad15-4fff-8d10-ef65ed626c62",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Create_table_-_SMG_Daily_Status": {
+          "runAfter": {
+            "Apply_to_each_-_Delete_items_-_SMG_Daily_Status": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "64d868b3-18d6-48b4-a9d7-563883b88900",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "CreateTable"
+            },
+            "parameters": {
+              "source": "sites/uillinoisedu.sharepoint.com,d9e14fac-92b0-41b0-8a7e-2fb0d9460c4f,3e36e6af-263b-4663-9991-55549fc5367d",
+              "drive": "b!rE_h2bCSsEGKfi-w2UYMT6_mNj47JmNGmZFVVJ_FNn2XtsfYoTJ1RLmOR_JNuMDs",
+              "file": "@triggerOutputs()?['headers/x-ms-file-id']",
+              "table/Range": "a1:b200",
+              "table/TableName": "Table1",
+              "table/ColumnsNames": "service,status"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_Delete_items_-_SMG_Daily_Status": {
+          "foreach": "@outputs('Get_items_for_Delete_-_SMG_Daily_Status')?['body/value']",
+          "actions": {
+            "Delete_item_-_SMG_Daily_Status": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "deda2a8c-47a4-404d-9f94-9d240ddbad63"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "DeleteItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "b234c592-ad15-4fff-8d10-ef65ed626c62",
+                  "id": "@items('Apply_to_each_-_Delete_items_-_SMG_Daily_Status')?['ID']"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "Get_items_for_Delete_-_SMG_Daily_Status": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "c226a20d-6826-4813-aa0b-9cbeb835ec48"
+          },
+          "type": "Foreach"
+        }
+      },
+      "runAfter": {
+        "10_Condition_-_SMG_Daily_System_Admin": ["Succeeded"]
+      },
+      "expression": {
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "smg-daily-status"]
       },
       "metadata": {
         "operationMetadataId": "4339773b-ca88-4e32-bf77-35a578c87424"
@@ -1332,19 +1601,20 @@
               }
             }
           },
-          "runAfter": { "List_rows_-_AWS_Charges": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_AWS_Charges": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "12e46232-9728-4c3b-af4e-bcc853c08173"
           },
           "type": "Foreach"
         }
       },
-      "runAfter": { "10_Condition_-_SMG_Daily_System_Admin": ["Succeeded"] },
+      "runAfter": {
+        "10_Condition_-_SMG_Daily_Status": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "AWS-MonthlyCostByTag"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "AWS-MonthlyCostByTag"]
       },
       "metadata": {
         "operationMetadataId": "4b81dab4-8dbb-444a-919e-d9c979cf047d"
@@ -1365,12 +1635,17 @@
           }
         },
         "Increment_variable_-_WSAA_Database_storage": {
-          "runAfter": { "Set_variable_-_WSAA_Database_storage": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_WSAA_Database_storage": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "caf4ba22-36ae-4d6b-af88-35ae4c88c368"
           },
           "type": "IncrementVariable",
-          "inputs": { "name": "rowCount", "value": 1 }
+          "inputs": {
+            "name": "rowCount",
+            "value": 1
+          }
         },
         "Set_variable_-_WSAA_Database_storage_-_monthYear": {
           "runAfter": {
@@ -1411,7 +1686,9 @@
           }
         },
         "List_rows_-_WSAA_Database_storage": {
-          "runAfter": { "Create_table_-_WSAA_Database_storage": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_WSAA_Database_storage": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "8e008747-0c59-494c-8324-a39475a94c6b",
             "tableId": "Export_Table"
@@ -1492,19 +1769,20 @@
               "type": "Foreach"
             }
           },
-          "runAfter": { "List_rows_-_WSAA_Database_storage": ["Succeeded"] },
+          "runAfter": {
+            "List_rows_-_WSAA_Database_storage": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "2da9cfd7-74c7-4143-b5a7-df3f6c0f417a"
           },
           "type": "Foreach"
         }
       },
-      "runAfter": { "11_Condition_-_AWS_Charges": ["Succeeded"] },
+      "runAfter": {
+        "11_Condition_-_AWS_Charges": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "ls-fs-database_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-fs-database_"]
       },
       "metadata": {
         "operationMetadataId": "3d08415e-09c0-479a-b0d9-38060de8e660"
@@ -1537,7 +1815,9 @@
           }
         },
         "List_rows_present_in_a_table_-_Azure_Charges": {
-          "runAfter": { "Create_table_-_Azure_Charges": ["Succeeded"] },
+          "runAfter": {
+            "Create_table_-_Azure_Charges": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "a2ea4c08-63ef-4434-a3da-f53b82dbb35b",
             "tableId": "ExportTable"
@@ -1596,12 +1876,11 @@
           "type": "Foreach"
         }
       },
-      "runAfter": { "12_Condition_-_WSAA_Database_storage": ["Succeeded"] },
+      "runAfter": {
+        "12_Condition_-_WSAA_Database_storage": ["Succeeded"]
+      },
       "expression": {
-        "startsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "CostManagement_"
-        ]
+        "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "CostManagement_"]
       },
       "metadata": {
         "operationMetadataId": "e8e59f87-4038-4302-b16d-ef800f51cfe4"
@@ -1650,24 +1929,17 @@
                   }
                 }
               },
-              "runAfter": { "Set_variable_-_rowCells": ["Succeeded"] },
+              "runAfter": {
+                "Set_variable_-_rowCells": ["Succeeded"]
+              },
               "expression": {
-                "and": [
-                  {
-                    "not": {
-                      "startsWith": [
-                        "@items('Apply_to_each_-_VH_Charges')",
-                        "Service Description"
-                      ]
-                    }
-                  },
-                  {
-                    "greater": [
-                      "@length(items('Apply_to_each_-_VH_Charges'))",
-                      1
-                    ]
+                "and": [{
+                  "not": {
+                    "startsWith": ["@items('Apply_to_each_-_VH_Charges')", "Service Description"]
                   }
-                ]
+                }, {
+                  "greater": ["@length(items('Apply_to_each_-_VH_Charges'))", 1]
+                }]
               },
               "metadata": {
                 "operationMetadataId": "9c22584a-eb41-4ffd-8d02-94df4b30fa98"
@@ -1675,7 +1947,9 @@
               "type": "If"
             }
           },
-          "runAfter": { "Set_variable_-_monthYear": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_monthYear": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "6c169dca-6d18-453a-9e00-3c031b37eb79"
           },
@@ -1693,7 +1967,9 @@
           }
         },
         "Set_variable_-_monthYear": {
-          "runAfter": { "Set_variable_-_csvRows": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_csvRows": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "45018399-9872-4bac-88b6-d0bf7201b9bf"
           },
@@ -1704,12 +1980,11 @@
           }
         }
       },
-      "runAfter": { "13_Condition_-_Azure_Charges": ["Succeeded"] },
+      "runAfter": {
+        "13_Condition_-_Azure_Charges": ["Succeeded"]
+      },
       "expression": {
-        "endsWith": [
-          "@outputs('03_Get_file_metadata')?['body/Name']",
-          "-todate.csv"
-        ]
+        "endsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "-todate.csv"]
       },
       "metadata": {
         "operationMetadataId": "411440f0-cbef-4a41-8caa-734a349496b0"
@@ -1741,7 +2016,9 @@
           }
         },
         "Set_variable_-_fileLocked": {
-          "runAfter": { "Move_file": ["Failed", "TimedOut", "Succeeded"] },
+          "runAfter": {
+            "Move_file": ["Failed", "TimedOut", "Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "905bb211-5e58-4b11-915f-a43befa21bbe"
           },
@@ -1752,24 +2029,38 @@
           }
         },
         "Delay": {
-          "runAfter": { "Set_variable_-_fileLocked": ["Succeeded"] },
+          "runAfter": {
+            "Set_variable_-_fileLocked": ["Succeeded"]
+          },
           "metadata": {
             "operationMetadataId": "a13082d8-13d5-49c8-ba99-d4ab6c7ebeaf"
           },
           "type": "Wait",
-          "inputs": { "interval": { "count": 30, "unit": "Second" } }
+          "inputs": {
+            "interval": {
+              "count": 30,
+              "unit": "Second"
+            }
+          }
         }
       },
-      "runAfter": { "14_Condition_-_VH_Charges": ["Succeeded"] },
+      "runAfter": {
+        "14_Condition_-_VH_Charges": ["Succeeded"]
+      },
       "expression": "@equals(variables('fileLocked'), false)",
-      "limit": { "count": 60, "timeout": "PT1H" },
+      "limit": {
+        "count": 60,
+        "timeout": "PT1H"
+      },
       "metadata": {
         "operationMetadataId": "a3709b5e-e5a2-4bd7-98e1-05cac061ac50"
       },
       "type": "Until"
     },
     "99_Refresh_a_dataset": {
-      "runAfter": { "98_Do_until_-_Move_to_backup": ["Succeeded"] },
+      "runAfter": {
+        "98_Do_until_-_Move_to_backup": ["Succeeded"]
+      },
       "metadata": {
         "operationMetadataId": "1d5651ec-5a48-4665-aacc-a99f54463116"
       },
