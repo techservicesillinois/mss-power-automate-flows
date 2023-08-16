@@ -1,17 +1,23 @@
 [
   {
-    "connectionName": "shared-excelonlinebu-a5bd1d42-96d3-4b3d-9c86-63d420e8d35f",
-    "displayName": "Excel Online (Business)",
-    "id": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
-  },
-  {
     "connectionName": "8e79b94c279044d685b6cc247d15d83a",
     "displayName": "SharePoint",
-    "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+    "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+    "source": "Embedded",
+    "connectionReferenceLogicalName": null
+  },
+  {
+    "connectionName": "shared-excelonlinebu-a5bd1d42-96d3-4b3d-9c86-63d420e8d35f",
+    "displayName": "Excel Online (Business)",
+    "id": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+    "source": "Embedded",
+    "connectionReferenceLogicalName": null
   },
   {
     "connectionName": "shared-powerbi-c5e075f9-2a41-4875-8c12-af7364c9deea",
     "displayName": "Power BI",
-    "id": "/providers/Microsoft.PowerApps/apis/shared_powerbi"
+    "id": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+    "source": "Embedded",
+    "connectionReferenceLogicalName": null
   }
 ]
