@@ -180,7 +180,7 @@
         }]
       }
     },
-    "04_Condition_-_TDX_Surveys": {
+    "11_Condition_-_TDX_Surveys": {
       "actions": {
         "List_rows_-_TDX_Surveys": {
           "runAfter": {},
@@ -254,7 +254,7 @@
       },
       "type": "If"
     },
-    "05_Condition_-_TDX_Tickets": {
+    "12_Condition_-_TDX_Tickets": {
       "actions": {
         "List_rows_-_TDX_Tickets": {
           "runAfter": {},
@@ -323,7 +323,7 @@
         }
       },
       "runAfter": {
-        "04_Condition_-_TDX_Surveys": ["Succeeded"]
+        "11_Condition_-_TDX_Surveys": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "tdx-ticket-"]
@@ -333,7 +333,7 @@
       },
       "type": "If"
     },
-    "06_Condition_-_WSAA_System_Admin": {
+    "21_Condition_-_WSAA_System_Admin": {
       "actions": {
         "List_rows_-_WSAA_System_Admin": {
           "runAfter": {
@@ -467,7 +467,7 @@
         }
       },
       "runAfter": {
-        "05_Condition_-_TDX_Tickets": ["Succeeded"]
+        "12_Condition_-_TDX_Tickets": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-sysadmin_"]
@@ -477,7 +477,7 @@
       },
       "type": "If"
     },
-    "07_Condition_-_WSAA_Database": {
+    "23_Condition_-_WSAA_Database": {
       "actions": {
         "Set_variable_-_WSAA_Database": {
           "runAfter": {},
@@ -680,7 +680,7 @@
         }
       },
       "runAfter": {
-        "06_Condition_-_WSAA_System_Admin": ["Succeeded"]
+        "21_Condition_-_WSAA_System_Admin": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-database_"]
@@ -690,7 +690,7 @@
       },
       "type": "If"
     },
-    "08_Condition_-_WSAA_Database_storage": {
+    "24_Condition_-_WSAA_Database_storage": {
       "actions": {
         "Set_variable_-_WSAA_Database_storage": {
           "runAfter": {},
@@ -848,7 +848,7 @@
         }
       },
       "runAfter": {
-        "07_Condition_-_WSAA_Database": ["Succeeded"]
+        "23_Condition_-_WSAA_Database": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-fs-database_"]
@@ -858,7 +858,7 @@
       },
       "type": "If"
     },
-    "09_Condition_-_WSAA_File_Storage": {
+    "25_Condition_-_WSAA_File_Storage": {
       "actions": {
         "List_rows_-_WSAA_File_Storage": {
           "runAfter": {
@@ -988,7 +988,7 @@
         }
       },
       "runAfter": {
-        "08_Condition_-_WSAA_Database_storage": ["Succeeded"]
+        "24_Condition_-_WSAA_Database_storage": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-filestor_"]
@@ -998,7 +998,7 @@
       },
       "type": "If"
     },
-    "10_Condition_-_WSAA_WebApp": {
+    "26_Condition_-_WSAA_WebApp": {
       "actions": {
         "List_rows_-_WSAA_WebApp": {
           "runAfter": {
@@ -1128,7 +1128,7 @@
         }
       },
       "runAfter": {
-        "09_Condition_-_WSAA_File_Storage": ["Succeeded"]
+        "25_Condition_-_WSAA_File_Storage": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "ls-webahost_"]
@@ -1138,7 +1138,7 @@
       },
       "type": "If"
     },
-    "11_Condition_-_SMG_System_Admin": {
+    "31_Condition_-_SMG_System_Admin": {
       "actions": {
         "Create_table_-_SMG_System_Admin": {
           "runAfter": {},
@@ -1378,7 +1378,7 @@
         }
       },
       "runAfter": {
-        "10_Condition_-_WSAA_WebApp": ["Succeeded"]
+        "26_Condition_-_WSAA_WebApp": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "smg_"]
@@ -1388,7 +1388,7 @@
       },
       "type": "If"
     },
-    "12_Condition_-_SMG_Daily_System_Admin": {
+    "32_Condition_-_SMG_Daily_System_Admin": {
       "actions": {
         "List_Rows_-_SMG_Daily_System_Admin": {
           "runAfter": {
@@ -1543,7 +1543,7 @@
         }
       },
       "runAfter": {
-        "11_Condition_-_SMG_System_Admin": ["Succeeded"]
+        "31_Condition_-_SMG_System_Admin": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "dailysmg_"]
@@ -1553,7 +1553,7 @@
       },
       "type": "If"
     },
-    "13_Condition_-_SMG_Daily_Status": {
+    "33_Condition_-_SMG_Daily_Status": {
       "actions": {
         "List_Rows_-_SMG_Daily_Status": {
           "runAfter": {
@@ -1706,7 +1706,7 @@
         }
       },
       "runAfter": {
-        "12_Condition_-_SMG_Daily_System_Admin": ["Succeeded"]
+        "32_Condition_-_SMG_Daily_System_Admin": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "smg-daily-status"]
@@ -1716,7 +1716,7 @@
       },
       "type": "If"
     },
-    "14_Condition_-_AWS_Charges": {
+    "41_Condition_-_AWS_Charges": {
       "actions": {
         "List_rows_-_AWS_Charges": {
           "runAfter": {},
@@ -1779,7 +1779,7 @@
         }
       },
       "runAfter": {
-        "13_Condition_-_SMG_Daily_Status": ["Succeeded"]
+        "33_Condition_-_SMG_Daily_Status": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "AWS-MonthlyCostByTag"]
@@ -1789,7 +1789,7 @@
       },
       "type": "If"
     },
-    "15_Condition_-_Azure_Charges": {
+    "42_Condition_-_Azure_Charges": {
       "actions": {
         "Create_table_-_Azure_Charges": {
           "runAfter": {},
@@ -1877,7 +1877,7 @@
         }
       },
       "runAfter": {
-        "14_Condition_-_AWS_Charges": ["Succeeded"]
+        "41_Condition_-_AWS_Charges": ["Succeeded"]
       },
       "expression": {
         "startsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "CostManagement_"]
@@ -1887,7 +1887,7 @@
       },
       "type": "If"
     },
-    "16_Condition_-_VH_Charges": {
+    "43_Condition_-_VH_Charges": {
       "actions": {
         "Apply_to_each_-_VH_Charges": {
           "foreach": "@variables('csvRows')",
@@ -1981,7 +1981,7 @@
         }
       },
       "runAfter": {
-        "15_Condition_-_Azure_Charges": ["Succeeded"]
+        "42_Condition_-_Azure_Charges": ["Succeeded"]
       },
       "expression": {
         "endsWith": ["@outputs('03_Get_file_metadata')?['body/Name']", "-todate.csv"]
@@ -2045,7 +2045,7 @@
         }
       },
       "runAfter": {
-        "16_Condition_-_VH_Charges": ["Succeeded"]
+        "43_Condition_-_VH_Charges": ["Succeeded"]
       },
       "expression": "@equals(variables('fileLocked'), false)",
       "limit": {
