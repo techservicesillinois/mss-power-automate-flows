@@ -143,9 +143,25 @@
         }]
       }
     },
-    "03_Get_file_metadata": {
+    "02_Initialize_variable_-_skipRefresh": {
       "runAfter": {
         "02_Initialize_variable_-_fileLocked": ["Succeeded"]
+      },
+      "metadata": {
+        "operationMetadataId": "a1550c2a-a6d2-42f4-a1e7-62b8814926f1"
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [{
+          "name": "skipRefresh",
+          "type": "boolean",
+          "value": false
+        }]
+      }
+    },
+    "03_Get_file_metadata": {
+      "runAfter": {
+        "02_Initialize_variable_-_skipRefresh": ["Succeeded"]
       },
       "metadata": {
         "operationMetadataId": "4be93abf-9014-4622-b695-1198a2c18823"
@@ -180,6 +196,7 @@
         }]
       }
     },
+	  
     "11_Condition_-_TDX_Surveys": {
       "actions": {
         "List_rows_-_TDX_Surveys": {
@@ -333,6 +350,7 @@
       },
       "type": "If"
     },
+	  
     "21_Condition_-_WSAA_System_Admin": {
       "actions": {
         "List_rows_-_WSAA_System_Admin": {
@@ -1278,6 +1296,7 @@
       },
       "type": "If"
     },
+	  
     "31_Condition_-_SMG_System_Admin": {
       "actions": {
         "Create_table_-_SMG_System_Admin": {
@@ -1376,7 +1395,7 @@
             "authentication": "@parameters('$authentication')"
           }
         },
-        "12_Apply_to_each_-_SMG_departments": {
+        "Apply_to_each_-_SMG_departments": {
           "foreach": "@outputs('11_Get_items_-_SMG_departments')?['body/value']",
           "actions": {
             "Condition": {
@@ -1396,8 +1415,8 @@
                     "parameters": {
                       "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                       "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
-                      "id": "@items('12_Apply_to_each_-_SMG_departments')?['ID']",
-                      "item/dept": "@replace(items('12_Apply_to_each_-_SMG_departments')?['field_3'],substring(items('12_Apply_to_each_-_SMG_departments')?['field_3'],indexOf(items('12_Apply_to_each_-_SMG_departments')?['field_3'],'_')),'')"
+                      "id": "@items('Apply_to_each_-_SMG_departments')?['ID']",
+                      "item/dept": "@replace(items('Apply_to_each_-_SMG_departments')?['field_3'],substring(items('Apply_to_each_-_SMG_departments')?['field_3'],indexOf(items('Apply_to_each_-_SMG_departments')?['field_3'],'_')),'')"
                     },
                     "authentication": "@parameters('$authentication')"
                   }
@@ -1421,7 +1440,7 @@
                       "parameters": {
                         "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                         "table": "bcc3081a-ba78-4dc3-95d8-6c72aa2d6f8f",
-                        "$filter": "Title eq '@{items('12_Apply_to_each_-_SMG_departments')?['field_3']}'"
+                        "$filter": "Title eq '@{items('Apply_to_each_-_SMG_departments')?['field_3']}'"
                       },
                       "authentication": "@parameters('$authentication')"
                     }
@@ -1444,7 +1463,7 @@
                           "parameters": {
                             "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                             "table": "0b1e303d-bc9c-4261-8b00-7ce62164f72b",
-                            "id": "@items('12_Apply_to_each_-_SMG_departments')?['ID']",
+                            "id": "@items('Apply_to_each_-_SMG_departments')?['ID']",
                             "item/dept": "@items('Apply_to_each_2')?['field_1']"
                           },
                           "authentication": "@parameters('$authentication')"
@@ -1462,7 +1481,7 @@
                 }
               },
               "expression": {
-                "contains": ["@items('12_Apply_to_each_-_SMG_departments')?['field_3']", "_"]
+                "contains": ["@items('Apply_to_each_-_SMG_departments')?['field_3']", "_"]
               },
               "metadata": {
                 "operationMetadataId": "fb748f1d-b8a0-4ed7-b40b-93a2b431ff9c"
@@ -1603,7 +1622,7 @@
           },
           "type": "Foreach"
         },
-        "Get_items_for_Delete": {
+        "Get_items_for_Delete_-_SMG_Daily_System_Admin": {
           "runAfter": {},
           "metadata": {
             "operationMetadataId": "c8679c9d-36b1-4901-88df-6c3972aefa7b"
@@ -1625,7 +1644,7 @@
         },
         "Create_table_-_SMG_Daily_System_Admin": {
           "runAfter": {
-            "Apply_to_each_-_Delete_items": ["Succeeded"]
+            "Apply_to_each_-_Delete_items_-_SMG_Daily_System_Admin": ["Succeeded"]
           },
           "metadata": {
             "operationMetadataId": "64d868b3-18d6-48b4-a9d7-563883b88900",
@@ -1649,10 +1668,10 @@
             "authentication": "@parameters('$authentication')"
           }
         },
-        "Apply_to_each_-_Delete_items": {
-          "foreach": "@outputs('Get_items_for_Delete')?['body/value']",
+        "Apply_to_each_-_Delete_items_-_SMG_Daily_System_Admin": {
+          "foreach": "@outputs('Get_items_for_Delete_-_SMG_Daily_System_Admin')?['body/value']",
           "actions": {
-            "Delete_item": {
+            "Delete_item_-_SMG_Daily_System_Admin": {
               "runAfter": {},
               "metadata": {
                 "operationMetadataId": "deda2a8c-47a4-404d-9f94-9d240ddbad63"
@@ -1667,19 +1686,77 @@
                 "parameters": {
                   "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
                   "table": "81e26213-f723-4b04-bfaf-3a5284cdb007",
-                  "id": "@items('Apply_to_each_-_Delete_items')?['ID']"
+                  "id": "@items('Apply_to_each_-_Delete_items_-_SMG_Daily_System_Admin')?['ID']"
                 },
                 "authentication": "@parameters('$authentication')"
               }
             }
           },
           "runAfter": {
-            "Get_items_for_Delete": ["Succeeded"]
+            "Get_items_for_Delete_-_SMG_Daily_System_Admin": ["Succeeded"]
           },
           "metadata": {
             "operationMetadataId": "c226a20d-6826-4813-aa0b-9cbeb835ec48"
           },
           "type": "Foreach"
+        },
+        "Export_To_File_for_Paginated_Reports_-_SMG_Daily_System_Admin": {
+          "runAfter": {
+            "Apply_to_each_-_SMG_Daily_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "8c9b9c9b-5f33-44a1-a588-8684aae6b149"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "connectionName": "shared_powerbi",
+              "operationId": "InitiateExportToFileForPaginatedReports"
+            },
+            "parameters": {
+              "groupid": "d7383efc-6fb7-4e7f-a934-644da3b756b3",
+              "reportid": "e414088c-0994-42e3-80e9-a4130676a9fd",
+              "ExportPayloadPaginatedReport/format": "XLSX"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Create_file_-_daily_status_-_SMG_Daily_System_Admin": {
+          "runAfter": {
+            "Export_To_File_for_Paginated_Reports_-_SMG_Daily_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "8a018d45-2688-46b1-8a4d-60a24ad5961b"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "CreateFile"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "folderPath": "/Shared Documents/inbox",
+              "name": "smg-daily-status.xlsx",
+              "body": "@body('Export_To_File_for_Paginated_Reports_-_SMG_Daily_System_Admin')"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Set_variable_-_skip_refresh_-_SMG_Daily_System_Admin": {
+          "runAfter": {
+            "Create_file_-_daily_status_-_SMG_Daily_System_Admin": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "89ad32f2-d978-4fb2-956c-0110b57d81de"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "skipRefresh",
+            "value": true
+          }
         }
       },
       "runAfter": {
@@ -1692,7 +1769,7 @@
         "operationMetadataId": "4339773b-ca88-4e32-bf77-35a578c87424"
       },
       "type": "If"
-    },
+	},
     "33_Condition_-_SMG_Daily_Status": {
       "actions": {
         "List_Rows_-_SMG_Daily_Status": {
@@ -1843,6 +1920,243 @@
             "operationMetadataId": "c226a20d-6826-4813-aa0b-9cbeb835ec48"
           },
           "type": "Foreach"
+        },
+        "Get_items_-_Daily_Inventory_-_SMG_Daily_Status": {
+          "runAfter": {
+            "Apply_to_each_-_SMG_Daily_Status": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "a2caad3a-539f-443d-b7b7-efd935f75cb4"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+              "table": "81e26213-f723-4b04-bfaf-3a5284cdb007",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_-_Update_Migration_Status_-_SMG_Daily_Status": {
+          "foreach": "@outputs('Get_items_-_Daily_Inventory_-_SMG_Daily_Status')?['body/value']",
+          "actions": {
+            "Get_items_-_Crosswalk_match_-_SMG_Daily_Status": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "44d7b962-fe93-4f94-ae1c-b165e3e96bc3"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "GetItems"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "bcc3081a-ba78-4dc3-95d8-6c72aa2d6f8f",
+                  "$filter": "Title eq '@{items('Apply_to_each_-_Update_Migration_Status_-_SMG_Daily_Status')?['field_2']}'"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            },
+            "Compose_-_Crosswalk_match_count_-_SMG_Daily_Status": {
+              "runAfter": {
+                "Apply_to_each_-_Crosswalk_migration_service_-_SMG_Daily_Status": ["Succeeded"]
+              },
+              "metadata": {
+                "operationMetadataId": "c463609b-f8b8-4727-a1bf-cbe4fcd1a194"
+              },
+              "type": "Compose",
+              "inputs": "@length(outputs('Get_items_-_Crosswalk_match_-_SMG_Daily_Status')?['body/value'])"
+            },
+            "Condition_-_Crosswalk_match_found_-_SMG_Daily_Status": {
+              "actions": {
+                "Get_items_-_status_by_crosswalk_-_SMG_Daily_Status": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "b2ae3799-223f-4767-9d53-ba82533312ef"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "GetItems"
+                    },
+                    "parameters": {
+                      "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                      "table": "b234c592-ad15-4fff-8d10-ef65ed626c62",
+                      "$filter": "Title eq '@{variables('itPros')}'"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                },
+                "Apply_to_each_-_status_by_crosswalk_-_SMG_Daily_Status": {
+                  "foreach": "@outputs('Get_items_-_status_by_crosswalk_-_SMG_Daily_Status')?['body/value']",
+                  "actions": {
+                    "Set_variable_-_status_by_crosswalk_-_SMG_Daily_Status": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "9e9abcf8-263d-4009-a96f-4b7918b3d60f"
+                      },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "itPros",
+                        "value": "@items('Apply_to_each_-_status_by_crosswalk_-_SMG_Daily_Status')?['field_1']"
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Get_items_-_status_by_crosswalk_-_SMG_Daily_Status": ["Succeeded"]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "6452864f-f886-4ab9-9d55-134901d9b425"
+                  },
+                  "type": "Foreach"
+                }
+              },
+              "runAfter": {
+                "Compose_-_Crosswalk_match_count_-_SMG_Daily_Status": ["Succeeded"]
+              },
+              "else": {
+                "actions": {
+                  "Get_items_-_status_by_service_-_SMG_Daily_Status": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "ce9e662b-711c-4fca-a721-5f79b03060c1"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      },
+                      "parameters": {
+                        "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                        "table": "b234c592-ad15-4fff-8d10-ef65ed626c62",
+                        "$filter": "Title eq '@{items('Apply_to_each_-_Update_Migration_Status_-_SMG_Daily_Status')?['field_2']}'"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Apply_to_each_-_status_by_service_-_SMG_Daily_Status": {
+                    "foreach": "@outputs('Get_items_-_status_by_service_-_SMG_Daily_Status')?['body/value']",
+                    "actions": {
+                      "Set_variable_-_status_by_service_-_SMG_Daily_Status": {
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "ca160c54-448c-4dd2-b987-066c1bf05061"
+                        },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "itPros",
+                          "value": "@items('Apply_to_each_-_status_by_service_-_SMG_Daily_Status')?['field_1']"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Get_items_-_status_by_service_-_SMG_Daily_Status": ["Succeeded"]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "9226ca33-758d-4d7c-9973-c23177a2b7b5"
+                    },
+                    "type": "Foreach"
+                  }
+                }
+              },
+              "expression": {
+                "and": [{
+                  "not": {
+                    "equals": ["@variables('itPros')", ""]
+                  }
+                }, {
+                  "greater": ["@outputs('Compose_-_Crosswalk_match_count_-_SMG_Daily_Status')", 0]
+                }]
+              },
+              "metadata": {
+                "operationMetadataId": "824c4721-f90e-4669-9c46-d6150c8b974e"
+              },
+              "type": "If"
+            },
+            "Apply_to_each_-_Crosswalk_migration_service_-_SMG_Daily_Status": {
+              "foreach": "@outputs('Get_items_-_Crosswalk_match_-_SMG_Daily_Status')?['body/value']",
+              "actions": {
+                "Set_variable_-_migration_service_-_SMG_Daily_Status": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "bd5f505b-8bba-4476-b1b2-365b385f55bc"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "itPros",
+                    "value": "@items('Apply_to_each_-_Crosswalk_migration_service_-_SMG_Daily_Status')?['C7R9Service']"
+                  }
+                }
+              },
+              "runAfter": {
+                "Set_variable_-_reset_value_to_blank_-_SMG_Daily_Status": ["Succeeded"]
+              },
+              "metadata": {
+                "operationMetadataId": "3b8cc57d-4d03-4a83-9a5c-356e956c8442"
+              },
+              "type": "Foreach"
+            },
+            "Update_item_-_SMG_Daily_Status": {
+              "runAfter": {
+                "Condition_-_Crosswalk_match_found_-_SMG_Daily_Status": ["Succeeded"]
+              },
+              "metadata": {
+                "operationMetadataId": "e01ba042-3012-4d75-9305-d89e36ec5bb7"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PatchItem"
+                },
+                "parameters": {
+                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
+                  "table": "81e26213-f723-4b04-bfaf-3a5284cdb007",
+                  "id": "@items('Apply_to_each_-_Update_Migration_Status_-_SMG_Daily_Status')?['ID']",
+                  "item/Title": "@items('Apply_to_each_-_Update_Migration_Status_-_SMG_Daily_Status')?['Title']",
+                  "item/field_1": "@items('Apply_to_each_-_Update_Migration_Status_-_SMG_Daily_Status')?['field_1']",
+                  "item/field_2": "@items('Apply_to_each_-_Update_Migration_Status_-_SMG_Daily_Status')?['field_2']",
+                  "item/field_3": "@items('Apply_to_each_-_Update_Migration_Status_-_SMG_Daily_Status')?['field_3']",
+                  "item/migration_service": "@variables('itPros')"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            },
+            "Set_variable_-_reset_value_to_blank_-_SMG_Daily_Status": {
+              "runAfter": {
+                "Get_items_-_Crosswalk_match_-_SMG_Daily_Status": ["Succeeded"]
+              },
+              "metadata": {
+                "operationMetadataId": "a25b232b-6b89-4258-a26f-88b450c86bcd"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "itPros",
+                "value": " "
+              }
+            }
+          },
+          "runAfter": {
+            "Get_items_-_Daily_Inventory_-_SMG_Daily_Status": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "bb7cc9bb-3950-4c29-81d2-08b23238b5ff"
+          },
+          "type": "Foreach"
         }
       },
       "runAfter": {
@@ -1856,6 +2170,7 @@
       },
       "type": "If"
     },
+	  
     "41_Condition_-_AWS_Charges": {
       "actions": {
         "List_rows_-_AWS_Charges": {
@@ -2131,6 +2446,7 @@
       },
       "type": "If"
     },
+	  
     "98_Do_until_-_Move_to_backup": {
       "actions": {
         "Move_file": {
@@ -2197,26 +2513,44 @@
       },
       "type": "Until"
     },
-    "99_Refresh_a_dataset": {
+    "99_Condition_-_Refresh_Dataset": {
+      "actions": {
+        "99_Refresh_a_dataset": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "1d5651ec-5a48-4665-aacc-a99f54463116"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "connectionName": "shared_powerbi",
+              "operationId": "RefreshDataset"
+            },
+            "parameters": {
+              "groupid": "5dec65c6-dca4-47c9-a96a-5023e52854fc",
+              "datasetid": "c1c9a291-0fcc-445d-9fde-9ef456ab14c9"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
       "runAfter": {
         "98_Do_until_-_Move_to_backup": ["Succeeded"]
       },
-      "metadata": {
-        "operationMetadataId": "1d5651ec-5a48-4665-aacc-a99f54463116"
+      "expression": {
+        "and": [{
+          "not": {
+            "equals": ["@variables('skipRefresh')", true]
+          }
+        }, {
+          "greater": ["@int(startOfHour(utcNow(),'HH'))", 13]
+        }]
       },
-      "type": "OpenApiConnection",
-      "inputs": {
-        "host": {
-          "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
-          "connectionName": "shared_powerbi",
-          "operationId": "RefreshDataset"
-        },
-        "parameters": {
-          "groupid": "5dec65c6-dca4-47c9-a96a-5023e52854fc",
-          "datasetid": "c1c9a291-0fcc-445d-9fde-9ef456ab14c9"
-        },
-        "authentication": "@parameters('$authentication')"
-      }
+      "metadata": {
+        "operationMetadataId": "e32a8ca2-78eb-4a31-be15-99622a9c24f5"
+      },
+      "type": "If"
     }
   }
 }
