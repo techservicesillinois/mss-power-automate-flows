@@ -14,7 +14,21 @@
     "connectionReferenceLogicalName": null
   },
   {
-    "connectionName": "shared-powerbi-c5e075f9-2a41-4875-8c12-af7364c9deea",
+    "connectionName": "shared-documentdb-0c1e4945-704a-4eb1-8d73-6a3f57a1c749",
+    "displayName": "Azure Cosmos DB",
+    "id": "/providers/Microsoft.PowerApps/apis/shared_documentdb",
+    "source": "Embedded",
+    "connectionReferenceLogicalName": null
+  },
+  {
+    "connectionName": "shared-dataflows-5ffba0c1-267f-4440-90dc-51d4c30dc8fe",
+    "displayName": "Power Query Dataflows",
+    "id": "/providers/Microsoft.PowerApps/apis/shared_dataflows",
+    "source": "Embedded",
+    "connectionReferenceLogicalName": null
+  },
+  {
+    "connectionName": "shared-powerbi-150f592c-433e-4ca5-8bcf-0d94d27971b7",
     "displayName": "Power BI",
     "id": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
     "source": "Embedded",
