@@ -35,7 +35,13 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{ "name": "rowCount", "type": "integer", "value": 0 }]
+        "variables": [
+          {
+            "name": "rowCount",
+            "type": "integer",
+            "value": 0
+          }
+        ]
       }
     },
     "02_Initialize_variable_-_monthYear": {
@@ -44,7 +50,14 @@
         "operationMetadataId": "192d5cfa-af68-447e-83b7-9ad7bbc09e26"
       },
       "type": "InitializeVariable",
-      "inputs": { "variables": [{ "name": "monthYear", "type": "string" }] }
+      "inputs": {
+        "variables": [
+          {
+            "name": "monthYear",
+            "type": "string"
+          }
+        ]
+      }
     },
     "02_Initialize_variable_-_itPros": {
       "runAfter": { "02_Initialize_variable_-_monthYear": ["Succeeded"] },
@@ -52,7 +65,14 @@
         "operationMetadataId": "65def80d-8990-4304-baa2-e2f24ae2a850"
       },
       "type": "InitializeVariable",
-      "inputs": { "variables": [{ "name": "itPros", "type": "string" }] }
+      "inputs": {
+        "variables": [
+          {
+            "name": "itPros",
+            "type": "string"
+          }
+        ]
+      }
     },
     "02_Initialize_variable_-_lineBreak": {
       "runAfter": { "02_Initialize_variable_-_itPros": ["Succeeded"] },
@@ -61,7 +81,13 @@
       },
       "type": "InitializeVariable",
       "inputs": {
-        "variables": [{ "name": "lineBreak", "type": "string", "value": "\n" }]
+        "variables": [
+          {
+            "name": "lineBreak",
+            "type": "string",
+            "value": "\n"
+          }
+        ]
       }
     },
     "02_Initialize_variable_-_csvRows": {
@@ -70,7 +96,14 @@
         "operationMetadataId": "6b3ab166-6d8a-410f-a761-0c176c7ec5d6"
       },
       "type": "InitializeVariable",
-      "inputs": { "variables": [{ "name": "csvRows", "type": "array" }] }
+      "inputs": {
+        "variables": [
+          {
+            "name": "csvRows",
+            "type": "array"
+          }
+        ]
+      }
     },
     "02_Initialize_variable_-_rowCells": {
       "runAfter": { "02_Initialize_variable_-_csvRows": ["Succeeded"] },
@@ -78,7 +111,14 @@
         "operationMetadataId": "9fc67b0a-cf01-4069-8a2c-7be41fe2ddee"
       },
       "type": "InitializeVariable",
-      "inputs": { "variables": [{ "name": "rowCells", "type": "array" }] }
+      "inputs": {
+        "variables": [
+          {
+            "name": "rowCells",
+            "type": "array"
+          }
+        ]
+      }
     },
     "02_Initialize_variable_-_fileLocked": {
       "runAfter": { "02_Initialize_variable_-_rowCells": ["Succeeded"] },
@@ -88,7 +128,11 @@
       "type": "InitializeVariable",
       "inputs": {
         "variables": [
-          { "name": "fileLocked", "type": "boolean", "value": true }
+          {
+            "name": "fileLocked",
+            "type": "boolean",
+            "value": true
+          }
         ]
       }
     },
