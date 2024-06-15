@@ -260,37 +260,8 @@
         "Apply_to_each_-_TDX_Survey": {
           "foreach": "@outputs('List_rows_-_TDX_Surveys')?['body/value']",
           "actions": {
-            "Create_item_-_TDX_Survey": {
-              "runAfter": {},
-              "metadata": {
-                "operationMetadataId": "36c1b93d-8e99-40c8-bab1-45505ce7bff1"
-              },
-              "type": "OpenApiConnection",
-              "inputs": {
-                "host": {
-                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
-                  "connectionName": "shared_sharepointonline",
-                  "operationId": "PostItem"
-                },
-                "parameters": {
-                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-                  "table": "86dbed14-4bca-4d0e-b90b-9324a1759657",
-                  "item/Title": "@items('Apply_to_each_-_TDX_Survey')?['Ticket ID']",
-                  "item/field_1/Value": "@items('Apply_to_each_-_TDX_Survey')?['Satsified']",
-                  "item/field_2": "@items('Apply_to_each_-_TDX_Survey')?['Comments-TS']",
-                  "item/field_3": "@items('Apply_to_each_-_TDX_Survey')?['*TechSvc-Request Area']",
-                  "item/field_4": "@items('Apply_to_each_-_TDX_Survey')?['Pri Resp Group']",
-                  "item/SurveyCompleted2": "@items('Apply_to_each_-_TDX_Survey')?['Survey Completed']"
-                },
-                "authentication": "@parameters('$authentication')"
-              }
-            },
             "Create_or_update_document_(V3)_-_TDX_Survey": {
-              "runAfter": {
-                "Create_item_-_TDX_Survey": [
-                  "Succeeded"
-                ]
-              },
+              "runAfter": {},
               "metadata": {
                 "operationMetadataId": "9025c00d-f051-4c38-9888-eabe043d9a62"
               },
@@ -397,42 +368,8 @@
         "Apply_to_each_-_TDX_Tickets": {
           "foreach": "@outputs('List_rows_-_TDX_Tickets')?['body/value']",
           "actions": {
-            "Create_item_-_TDX_Tickets": {
-              "runAfter": {},
-              "metadata": {
-                "operationMetadataId": "07a89a95-163f-41b8-a360-f4bf36b997ac"
-              },
-              "type": "OpenApiConnection",
-              "inputs": {
-                "host": {
-                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
-                  "connectionName": "shared_sharepointonline",
-                  "operationId": "PostItem"
-                },
-                "parameters": {
-                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-                  "table": "818f3f6b-a92c-420e-bc92-22764fb04ccb",
-                  "item/Title": "@items('Apply_to_each_-_TDX_Tickets')?['Title']",
-                  "item/Ticket_x0020_ID": "@items('Apply_to_each_-_TDX_Tickets')?['ID']",
-                  "item/field_2": "@items('Apply_to_each_-_TDX_Tickets')?['Classification']",
-                  "item/field_3": "@items('Apply_to_each_-_TDX_Tickets')?['Requestor']",
-                  "item/field_4": "@items('Apply_to_each_-_TDX_Tickets')?['Acct~1Dept']",
-                  "item/field_6": "@items('Apply_to_each_-_TDX_Tickets')?['Status']",
-                  "item/field_7": "@items('Apply_to_each_-_TDX_Tickets')?['Priority']",
-                  "item/field_8": "@items('Apply_to_each_-_TDX_Tickets')?['Resp Group']",
-                  "item/field_9": "@items('Apply_to_each_-_TDX_Tickets')?['Prim Resp']",
-                  "item/field_10": "@items('Apply_to_each_-_TDX_Tickets')?['Due']",
-                  "item/LastModified": "@items('Apply_to_each_-_TDX_Tickets')?['Modified']"
-                },
-                "authentication": "@parameters('$authentication')"
-              }
-            },
             "Create_or_update_document_(V3)_-_TDX_Tickets": {
-              "runAfter": {
-                "Create_item_-_TDX_Tickets": [
-                  "Succeeded"
-                ]
-              },
+              "runAfter": {},
               "metadata": {
                 "operationMetadataId": "1d96ec91-2743-4d29-a533-11c231d9f8f9"
               },
@@ -2498,36 +2435,8 @@
         "Apply_to_each_-_AWS_Charges": {
           "foreach": "@outputs('List_rows_-_AWS_Charges')?['body/value']",
           "actions": {
-            "Create_item_-_AWS_Charges": {
-              "runAfter": {},
-              "metadata": {
-                "operationMetadataId": "f8c68319-ad98-431f-b4a0-70d060a941b4"
-              },
-              "type": "OpenApiConnection",
-              "inputs": {
-                "host": {
-                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
-                  "connectionName": "shared_sharepointonline",
-                  "operationId": "PostItem"
-                },
-                "parameters": {
-                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-                  "table": "2033cb82-e40f-426e-ba64-58bc834c9cc9",
-                  "item/Title": "@items('Apply_to_each_-_AWS_Charges')?['Service']",
-                  "item/field_3": "@items('Apply_to_each_-_AWS_Charges')?['Month']",
-                  "item/field_0": "@items('Apply_to_each_-_AWS_Charges')?['Account']",
-                  "item/field_1": "@items('Apply_to_each_-_AWS_Charges')?['Tag']",
-                  "item/field_4": "@items('Apply_to_each_-_AWS_Charges')?['Amount']"
-                },
-                "authentication": "@parameters('$authentication')"
-              }
-            },
             "Increment_variable_-_AWS_Charges": {
-              "runAfter": {
-                "Create_item_-_AWS_Charges": [
-                  "Succeeded"
-                ]
-              },
+              "runAfter": {},
               "metadata": {
                 "operationMetadataId": "197ac915-c948-491b-8c33-dc0c60078914"
               },
@@ -2602,36 +2511,8 @@
         "Apply_to_each_-_Azure_Charges": {
           "foreach": "@outputs('List_rows_present_in_a_table_-_Azure_Charges')?['body/value']",
           "actions": {
-            "Create_item_-_Azure_Charges": {
-              "runAfter": {},
-              "metadata": {
-                "operationMetadataId": "1cfe67b2-4f27-4724-98a6-24c95a4ea564"
-              },
-              "type": "OpenApiConnection",
-              "inputs": {
-                "host": {
-                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
-                  "connectionName": "shared_sharepointonline",
-                  "operationId": "PostItem"
-                },
-                "parameters": {
-                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-                  "table": "78a76bf5-60db-48a3-9523-b0709e3eadc7",
-                  "item/Title": "@items('Apply_to_each_-_Azure_Charges')?['MeterCategory']",
-                  "item/field_0": "@items('Apply_to_each_-_Azure_Charges')?['BillingMonth']",
-                  "item/field_3": "@items('Apply_to_each_-_Azure_Charges')?['CostInBillingCurrency']",
-                  "item/Subscription": "@items('Apply_to_each_-_Azure_Charges')?['SubscriptionName']",
-                  "item/Resource_x0020_Group": "@items('Apply_to_each_-_Azure_Charges')?['ResourceGroup']"
-                },
-                "authentication": "@parameters('$authentication')"
-              }
-            },
             "Increment_variable_-_Azure_Charges": {
-              "runAfter": {
-                "Create_item_-_Azure_Charges": [
-                  "Succeeded"
-                ]
-              },
+              "runAfter": {},
               "metadata": {
                 "operationMetadataId": "b8d83a17-d0a1-4254-9f53-bbe85b4e251c"
               },
@@ -2936,45 +2817,8 @@
         "Apply_to_each_-_Crowdstrike_Hosts": {
           "foreach": "@outputs('List_rows_present_in_a_table_-_Crowdstrike_Hosts')?['body/value']",
           "actions": {
-            "Create_item_-_Crowdstrike_Hosts": {
-              "runAfter": {},
-              "metadata": {
-                "operationMetadataId": "20823818-914b-48a3-b70d-244d1e945445"
-              },
-              "type": "OpenApiConnection",
-              "inputs": {
-                "host": {
-                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
-                  "connectionName": "shared_sharepointonline",
-                  "operationId": "PostItem"
-                },
-                "parameters": {
-                  "dataset": "https://uillinoisedu.sharepoint.com/sites/EricLEpps-TEST",
-                  "table": "6a51d781-d30b-465e-ae67-9da238b3bf91",
-                  "item/Title": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['Hostname']",
-                  "item/Month": "@variables('monthYear')",
-                  "item/LastSeen": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['Last Seen']",
-                  "item/FirstSeen": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['First Seen']",
-                  "item/Platform": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['Platform']",
-                  "item/OSVersion": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['OS Version']",
-                  "item/OSProductName": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['OS Product Name']",
-                  "item/KernelVersion": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['Kernel Version']",
-                  "item/PreventionPolicy": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['Prevention Policy']",
-                  "item/ResponsePolicy": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['Response Policy']",
-                  "item/SensorVersion": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['Sensor Version']",
-                  "item/SensorTags": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['Sensor Tags']",
-                  "item/CloudServiceGroup": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['Cloud Service Group']",
-                  "item/LinuxSensorMode": "@items('Apply_to_each_-_Crowdstrike_Hosts')?['Linux Sensor Mode']"
-                },
-                "authentication": "@parameters('$authentication')"
-              }
-            },
             "Increment_variable_-_Crowdstrike_Hosts": {
-              "runAfter": {
-                "Create_item_-_Crowdstrike_Hosts": [
-                  "Succeeded"
-                ]
-              },
+              "runAfter": {},
               "metadata": {
                 "operationMetadataId": "65656d04-d296-4933-ac38-f74540607993"
               },
